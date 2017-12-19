@@ -20,7 +20,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ bin/extract -s StanfordResearchers
+
+## Help
+
+    $ bin/extract -s StanfordResearchers
+    Usage: bin/extract [options]
+        -s, --source NAME                Name of the data source to extract
 
 ## Development
 
