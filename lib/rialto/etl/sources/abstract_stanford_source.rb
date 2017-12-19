@@ -8,7 +8,7 @@ module Rialto::Etl::Sources
     attr_reader :access_token, :access_token_expiry_time
 
     def extract
-      raise NotImplementedError, 'Implement #client in a child class'
+      raise NotImplementedError, 'Implement #extract in a child class'
     end
 
     private
