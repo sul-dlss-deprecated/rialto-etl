@@ -4,7 +4,7 @@ require 'base64'
 require 'json'
 
 module Rialto::Etl::Sources
-  class StanfordProfiles
+  class StanfordResearchers
     attr_reader :access_token, :access_token_expiry_time
 
     def extract

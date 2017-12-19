@@ -1,6 +1,19 @@
 #!/usr/bin/env ruby
 
 require 'bundler/setup'
+require 'optparse'
 require 'rialto/etl'
 
-puts Rialto::Etl::Sources::StanfordProfiles.new.extract
+options = {}
+
+OptionParser.new do |parser|
+  parser.banner = 'Usage: bin/extract [options]'
+
+  parser.on('-s', '--source NAME', 'Name of the data source to extract') do |value|
+    options[:source] = value
+  end
+end.parse!
+
+raise OptionParser::MissingArgument, '-s NAME' unless options[:source]
+
+puts Rialto::Etl::Sources.const_get(options[:source]).new.extract
