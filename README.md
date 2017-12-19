@@ -20,13 +20,26 @@ Or install it yourself as:
 
 ## Usage
 
+### Extract
+
+Run `bin/extract` to hit a named data source and print output to STDOUT.
+
     $ bin/extract -s StanfordResearchers
+    {"count":10,"firstPage":true,"lastPage":false,"page":1,"totalCount":29089,"totalPages":2909,"values":[{"administrativeAppointments":[...
+
+### Transform
+
+TBD. Planning to use TrajectPlus
+
+### Load
+
+TBD
 
 ## Help
 
-    $ bin/extract -s StanfordResearchers
+    $ bin/extract -h
     Usage: bin/extract [options]
-        -s, --source NAME                Name of the data source to extract
+        -s, --source NAME                Name of the data source to extract (REQUIRED)
 
 ## Development
 
