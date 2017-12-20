@@ -2,6 +2,6 @@
 
 module Rialto
   module Etl
-    VERSION = '0.0.1'.freeze
+    VERSION = '0.0.1'
   end
 end
