@@ -1,5 +1,7 @@
 # Rialto::Etl
 
+[![Build Status](https://travis-ci.org/sul-dlss-labs/rialto-etl.svg?branch=master)](https://travis-ci.org/sul-dlss-labs/rialto-etl)
+
 Rialto::Etl is a set of ETL tools for RIALTO, Stanford University Libraries' research intelligence project
 
 ## Installation

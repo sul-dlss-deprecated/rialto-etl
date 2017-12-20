@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'bundler/setup'
 require 'optparse'
@@ -8,7 +9,6 @@ options = {}
 
 OptionParser.new do |parser|
   parser.banner = 'Usage: bin/extract [options]'
-
   parser.on('-s', '--source NAME', 'Name of the data source to extract (REQUIRED)') do |value|
     options[:source] = value
   end
