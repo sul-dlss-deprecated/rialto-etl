@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'optparse'
+require 'rialto/etl'
+
+options = {}
+
+OptionParser.new do |parser|
+  parser.banner = 'Usage: bin/transform [options]'
+  parser.on('-n', '--name NAME', 'Name of the transformer to run (REQUIRED)') do |value|
+    options[:name] = value
+  end
+  parser.on('-i', '--input-file FILENAME', 'Name of file holding data to be transformed (REQUIRED)') do |value|
+    options[:input] = value
+  end
+end.parse!
+
+raise OptionParser::MissingArgument, '-n NAME' unless options[:name]
+raise OptionParser::MissingArgument, '-i FILENAME' unless options[:input]
+
+puts Rialto::Etl::Transformers.const_get(options[:name]).new(input: options[:input]).transform

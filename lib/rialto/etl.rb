@@ -2,10 +2,10 @@
 
 require 'rialto/etl/version'
 require 'rialto/etl/extractors'
+require 'rialto/etl/transformers'
 
 module Rialto
   # The top-level Rialto::Etl module
   module Etl
-    # Your code goes here...
   end
 end
