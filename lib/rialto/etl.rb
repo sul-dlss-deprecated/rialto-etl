@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/version'
-require 'rialto/etl/sources'
+require 'rialto/etl/extractors'
 
 module Rialto
   # The top-level Rialto::Etl module

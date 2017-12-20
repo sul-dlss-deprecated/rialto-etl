@@ -9,11 +9,11 @@ options = {}
 
 OptionParser.new do |parser|
   parser.banner = 'Usage: bin/extract [options]'
-  parser.on('-s', '--source NAME', 'Name of the data source to extract (REQUIRED)') do |value|
-    options[:source] = value
+  parser.on('-n', '--name NAME', 'Name of the extractor to run (REQUIRED)') do |value|
+    options[:name] = value
   end
 end.parse!
 
-raise OptionParser::MissingArgument, '-s NAME' unless options[:source]
+raise OptionParser::MissingArgument, '-n NAME' unless options[:name]
 
-puts Rialto::Etl::Sources.const_get(options[:source]).new.extract
+puts Rialto::Etl::Extractors.const_get(options[:name]).new.extract

@@ -7,9 +7,9 @@ require 'json'
 
 module Rialto
   module Etl
-    module Sources
+    module Extractors
       # Abstract class hitting Stanford APIs using Stanford authz
-      class AbstractStanfordSource
+      class AbstractStanfordExtractor
         attr_reader :access_token_expiry_time
 
         def extract

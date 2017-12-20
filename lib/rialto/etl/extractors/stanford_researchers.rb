@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'rialto/etl/sources/abstract_stanford_source'
+require 'rialto/etl/extractors/abstract_stanford_extractor'
 
 module Rialto
   module Etl
-    module Sources
+    module Extractors
       # Stanford Profiles API
-      class StanfordResearchers < AbstractStanfordSource
+      class StanfordResearchers < AbstractStanfordExtractor
         def extract
           client.get('/profiles/v1?p=1&ps=10').body
         rescue StandardError => exception

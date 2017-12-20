@@ -24,12 +24,12 @@ Or install it yourself as:
 
 ### Extract
 
-Run `bin/extract` to hit a named data source and print output to STDOUT.
+Run `bin/extract` to run a named extractor and print output to STDOUT.
 
     $ bin/extract -s StanfordResearchers
     {"count":10,"firstPage":true,"lastPage":false,"page":1,"totalCount":29089,"totalPages":2909,"values":[{"administrativeAppointments":[...
 
-Note: if you need to hit any of the data sources that inherit from `AbstractStanfordSource`, you will first need to obtain a token for the CAP API and set the `CAP_TOKEN` environment variable in your session.
+Note: if you need to run any of the extractors that inherit from `AbstractStanfordExtractor`, you will first need to obtain a token for the CAP API and set the `CAP_TOKEN` environment variable in your session.
 
 ### Transform
 
@@ -43,7 +43,7 @@ TBD
 
     $ bin/extract -h
     Usage: bin/extract [options]
-        -s, --source NAME                Name of the data source to extract (REQUIRED)
+        -n, --name NAME                Name of the extractor to run (REQUIRED)
 
 ## Development
 

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'rialto/etl/sources/abstract_stanford_source'
+require 'rialto/etl/extractors/abstract_stanford_extractor'
 
 module Rialto
   module Etl
-    module Sources
+    module Extractors
       # Stanford CAP API for orgs
-      class StanfordOrganizations < AbstractStanfordSource
+      class StanfordOrganizations < AbstractStanfordExtractor
         def extract
           client.get('/cap/v1/orgs/stanford?p=1&ps=10').body
         rescue StandardError => exception
