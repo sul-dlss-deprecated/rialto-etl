@@ -8,12 +8,15 @@ module Rialto
     module Transformers
       # Transformer turning Stanford org info into Vivo format
       class StanfordOrganizationsToVivo
+        # A valid file path
         attr_reader :input
 
+        # Constructor
         def initialize(input:)
           @input = input
         end
 
+        # Transform a stream into a new representation, using Traject
         def transform
           File.open(input, 'r') do |stream|
             transformer.process(stream)

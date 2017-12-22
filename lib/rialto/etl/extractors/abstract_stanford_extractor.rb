@@ -10,8 +10,10 @@ module Rialto
     module Extractors
       # Abstract class hitting Stanford APIs using Stanford authz
       class AbstractStanfordExtractor
+        # Time at which access token expires (as integer)
         attr_reader :access_token_expiry_time
 
+        # Hit an API endpoint and return the results
         def extract
           raise NotImplementedError, 'Implement #extract in a child class'
         end
@@ -53,6 +55,7 @@ module Rialto
                             end
         end
 
+        # Set the access token to `nil` to force retrieving a new one
         def reset_access_token!
           @access_token = nil
         end
@@ -63,6 +66,7 @@ module Rialto
           true
         end
 
+        # Set token expiry time to a new value based on current time
         def reset_expiry_time!(expires_in:)
           @access_token_expiry_time = current_time + expires_in.to_i
         end

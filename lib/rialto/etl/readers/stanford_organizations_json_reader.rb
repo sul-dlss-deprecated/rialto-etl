@@ -6,6 +6,7 @@ module Rialto
     module Readers
       # Read JSON that maps to Stanford orgs
       class StanfordOrganizationsJsonReader < TrajectPlus::JsonReader
+        # Overrides the implementation inherited from superclass
         def each(&block)
           yield_children(json, block)
         end

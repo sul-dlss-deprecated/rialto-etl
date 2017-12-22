@@ -7,6 +7,7 @@ module Rialto
     module Extractors
       # Stanford Profiles API
       class StanfordResearchers < AbstractStanfordExtractor
+        # Hit an API endpoint and return the results
         def extract
           client.get('/profiles/v1?p=1&ps=10').body
         rescue StandardError => exception
