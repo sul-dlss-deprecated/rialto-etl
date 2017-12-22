@@ -1,0 +1,658 @@
+{
+  "alias": "stanford-test",
+  "browsable": false,
+  "children": [{
+      "alias": "department-of-funny-walks",
+      "browsable": false,
+      "children": [{
+          "alias": "department-of-funny-walks/intercollegiate-walks",
+          "browsable": false,
+          "name": "Intercollegiate Walks",
+          "onboarding": true,
+          "orgCodes": [
+            "WALK",
+            "WALZ"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/coed-walks",
+          "browsable": false,
+          "name": "Coed Walks",
+          "onboarding": true,
+          "orgCodes": [
+            "COED"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/walks-education",
+          "browsable": false,
+          "children": [{
+              "alias": "department-of-funny-walks/walks-education/adventure-walks",
+              "browsable": false,
+              "name": "Adventure Walks",
+              "onboarding": true,
+              "orgCodes": [
+                "ADVE"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/walk-centers",
+              "browsable": false,
+              "name": "Walk Centers",
+              "onboarding": false,
+              "orgCodes": [
+                "CENT"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/wellness-walks",
+              "browsable": false,
+              "name": "Wellness Walks",
+              "onboarding": true,
+              "orgCodes": [
+                "WELL"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/competitive-walks",
+              "browsable": false,
+              "name": "Competitive Walks",
+              "onboarding": true,
+              "orgCodes": [
+                "COMP"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/walks-wellness-general",
+              "browsable": false,
+              "name": "Walks & Wellness General",
+              "onboarding": true,
+              "orgCodes": [
+                "GENE"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/summer-camp-walks",
+              "browsable": false,
+              "name": "Summer Camp Walks",
+              "onboarding": false,
+              "orgCodes": [
+                "SUMM"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/rec-walks-general",
+              "browsable": false,
+              "name": "Rec Walks General",
+              "onboarding": true,
+              "orgCodes": [
+                "RECW"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/walks-services",
+              "browsable": false,
+              "name": "Walks Services",
+              "onboarding": true,
+              "orgCodes": [
+                "SERV"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/walks-general",
+              "browsable": false,
+              "name": "Walks General",
+              "onboarding": true,
+              "orgCodes": [
+                "GENW"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/walks-education/walks-leadership-institute",
+              "browsable": false,
+              "name": "Walks Leadership Institute",
+              "onboarding": true,
+              "orgCodes": [
+                "LEAD"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Walks Education",
+          "onboarding": true,
+          "orgCodes": [
+            "EDUC",
+            "WEDU",
+            "EDUW",
+            "WAED",
+            "EDWA"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/mens-walks-programs",
+          "browsable": false,
+          "name": "Men's Walks Programs",
+          "onboarding": true,
+          "orgCodes": [
+            "MENW",
+            "WMEN",
+            "MPRO",
+            "PROM"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/business-and-operations",
+          "browsable": false,
+          "children": [{
+              "alias": "department-of-funny-walks/business-and-operations/Walk-training-WELLlex",
+              "browsable": false,
+              "name": "Walk Training Complex",
+              "onboarding": true,
+              "orgCodes": [
+                "TRAI"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/business-and-operations/walking-range",
+              "browsable": false,
+              "name": "Walking Range",
+              "onboarding": true,
+              "orgCodes": [
+                "RANG"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/business-and-operations/walk-meet-management",
+              "browsable": false,
+              "name": "Walk Meet Management",
+              "onboarding": true,
+              "orgCodes": [
+                "MNGT"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Business and Operations",
+          "onboarding": true,
+          "orgCodes": [
+            "BOPS",
+            "OPSB"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/walk-departmentwide-operations",
+          "browsable": false,
+          "name": "WALK Departmentwide Operations",
+          "onboarding": true,
+          "orgCodes": [
+            "DOPT"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/directors-office",
+          "browsable": false,
+          "name": "Director's Office",
+          "onboarding": true,
+          "orgCodes": [
+            "DIRE"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/womens-walks-programs",
+          "browsable": false,
+          "children": [{
+              "alias": "department-of-funny-walks/womens-sport-programs/womens-walking-program",
+              "browsable": false,
+              "name": "Women's Walking Program",
+              "onboarding": false,
+              "orgCodes": [
+                "WWAL"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "department-of-funny-walks/womens-sport-programs/womens-power-walking-program",
+              "browsable": false,
+              "name": "Women's Power Walking Program",
+              "onboarding": false,
+              "orgCodes": [
+                "PWAL"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Women's Walks Programs",
+          "onboarding": true,
+          "orgCodes": [
+            "WOME",
+            "WOWA",
+            "WAWO"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/foot-services",
+          "browsable": false,
+          "name": "Foot Services",
+          "onboarding": true,
+          "orgCodes": [
+            "FOOT",
+            "FOTS"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/external-relations",
+          "browsable": false,
+          "children": [{
+            "alias": "department-of-funny-walks/external-relations/student-affairs",
+            "browsable": false,
+            "name": "Student Affairs",
+            "onboarding": false,
+            "orgCodes": [
+              "AFFA"
+            ],
+            "type": "DIVISION"
+          }],
+          "name": "External Relations",
+          "onboarding": true,
+          "orgCodes": [
+            "EREL",
+            "XREL",
+            "RELX"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/other-walk-administration",
+          "browsable": false,
+          "name": "Other WALK Administration",
+          "onboarding": false,
+          "orgCodes": [
+            "OTHE"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/step",
+          "browsable": false,
+          "name": "STEP",
+          "onboarding": false,
+          "orgCodes": [
+            "STEP"
+          ],
+          "type": "DEPARTMENT"
+        }
+      ],
+      "name": "Department of Funny Walks",
+      "onboarding": false,
+      "orgCodes": [
+        "HAAA"
+      ],
+      "type": "SCHOOL"
+    },
+    {
+      "alias": "graduate-school-of-parrots",
+      "browsable": false,
+      "children": [{
+          "alias": "graduate-school-of-parrots/marketing-communication",
+          "browsable": true,
+          "name": "Marketing & Communication",
+          "onboarding": false,
+          "orgCodes": [
+            "UHKG",
+            "UMDI"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/casewriting",
+          "browsable": true,
+          "name": "Casewriting",
+          "onboarding": false,
+          "orgCodes": [
+            "UENS"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/faculty-support",
+          "browsable": true,
+          "name": "Faculty Support",
+          "onboarding": false,
+          "orgCodes": [
+            "UEFW"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/centers-initiatives-for-research",
+          "browsable": true,
+          "name": "Centers & Initiatives for Research (DEAD)",
+          "onboarding": false,
+          "orgCodes": [
+            "UCWO",
+            "UCOS",
+            "UFLG",
+            "UCSQ",
+            "UCKU"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/store",
+          "browsable": true,
+          "children": [{
+              "alias": "graduate-school-of-parrots/store/returns",
+              "browsable": false,
+              "name": "Returns",
+              "onboarding": false,
+              "orgCodes": [
+                "UCAV"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/store/customer-support",
+              "browsable": false,
+              "name": "Customer Support",
+              "onboarding": false,
+              "orgCodes": [
+                "UCAR"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/store/dead-as-a-doornail",
+              "browsable": false,
+              "name": "Dead as a Doornail",
+              "onboarding": false,
+              "orgCodes": [
+                "UCBD"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Parrots Store",
+          "onboarding": false,
+          "orgCodes": [
+            "UHSC",
+            "UCAS"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/centers",
+          "browsable": false,
+          "children": [{
+              "alias": "graduate-school-of-parrots/centers-and-programs/center-for-flying",
+              "browsable": false,
+              "name": "Center for Flying (FLY)",
+              "onboarding": false,
+              "orgCodes": [
+                "UDAM"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/centers-and-programs/mastery-in-life",
+              "browsable": false,
+              "name": "Mastery in Life",
+              "onboarding": false,
+              "orgCodes": [
+                "UDMC"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Centers",
+          "onboarding": false,
+          "orgCodes": [
+            "UDFS"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/institute-for-innovation-in-pets",
+          "browsable": true,
+          "name": "Institute for Innovation in Pets",
+          "onboarding": false,
+          "orgCodes": [
+            "UASE"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/global-parrots",
+          "browsable": false,
+          "name": "Global Parrots",
+          "onboarding": false,
+          "orgCodes": [
+            "UGET"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/pet-behavior",
+          "browsable": true,
+          "children": [{
+              "alias": "graduate-school-of-parrots/pet-behavior/parrot",
+              "browsable": false,
+              "name": "Parrot",
+              "onboarding": false,
+              "orgCodes": [
+                "UBST"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/pet-behavior/fish",
+              "browsable": false,
+              "name": "Fish",
+              "onboarding": false,
+              "orgCodes": [
+                "UBSQ"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/pet-behavior/cat",
+              "browsable": false,
+              "name": "Cat",
+              "onboarding": false,
+              "orgCodes": [
+                "UBTE"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Pet Behavior",
+          "onboarding": false,
+          "orgCodes": [
+            "UBSP",
+            "UBTA"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/pet-administration",
+          "browsable": true,
+          "name": "Pet Administration",
+          "onboarding": false,
+          "orgCodes": [
+            "UBFK"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/academic-areas",
+          "browsable": false,
+          "children": [{
+              "alias": "graduate-school-of-parrots/academic-areas/accounting",
+              "browsable": true,
+              "name": "Accounting",
+              "onboarding": false,
+              "orgCodes": [
+                "UBHB",
+                "UBNE",
+                "UBND",
+                "UBNB",
+                "UBLN",
+                "UBKK",
+                "UBJH",
+                "UBPZ",
+                "UBOW",
+                "UBRC",
+                "UBRA",
+                "UBDS",
+                "UBBM"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/academic-areas/information-technology",
+              "browsable": true,
+              "name": "Information & Technology",
+              "onboarding": false,
+              "orgCodes": [
+                "UAYS",
+                "UAZQ",
+                "UAXO",
+                "UBAC",
+                "UBBC",
+                "UAZW",
+                "UAXU",
+                "UAZE",
+                "UBBI",
+                "UBBH",
+                "UBBG",
+                "UBAO",
+                "UAYG"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/academic-areas/economy",
+              "browsable": true,
+              "name": "Economy",
+              "onboarding": false,
+              "orgCodes": [
+                "UAVA",
+                "UAXP",
+                "UATZ",
+                "UAXM",
+                "UAVJ",
+                "UAUI",
+                "UAXK",
+                "UAXI",
+                "UAUR",
+                "UATQ"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Academic Areas",
+          "onboarding": false,
+          "orgCodes": [
+            "UAJV"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/vets-office",
+          "browsable": true,
+          "name": "Vet's Office",
+          "onboarding": false,
+          "orgCodes": [
+            "UADY",
+            "UCAN"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/digital-solutions",
+          "browsable": true,
+          "name": "Digital Solutions",
+          "onboarding": false,
+          "orgCodes": [
+            "UERQ"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "graduate-school-of-parrots/parrots",
+          "browsable": true,
+          "children": [{
+              "alias": "graduate-school-of-parrots/parrots/smith",
+              "browsable": false,
+              "name": "Smith",
+              "onboarding": false,
+              "orgCodes": [
+                "UBWI"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/parrots/khat",
+              "browsable": false,
+              "name": "Khat",
+              "onboarding": false,
+              "orgCodes": [
+                "UBWT"
+              ],
+              "type": "DIVISION"
+            },
+            {
+              "alias": "graduate-school-of-parrots/parrots/whee",
+              "browsable": false,
+              "name": "Whee",
+              "onboarding": false,
+              "orgCodes": [
+                "UBYO"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Parrots",
+          "onboarding": false,
+          "orgCodes": [
+            "UBWH",
+            "UBWF"
+          ],
+          "type": "DEPARTMENT"
+        }
+      ],
+      "name": "Graduate School of Parrots",
+      "onboarding": true,
+      "orgCodes": [
+        "STAN"
+      ],
+      "type": "SCHOOL",
+      "url": "http://walks.stanford.pizza/"
+    }],
+  "name": "Stanford Test",
+  "onboarding": false,
+  "orgCodes": [
+    "STAN"
+  ],
+  "type": "ROOT",
+  "url": "http://python.pizza/"
+}
