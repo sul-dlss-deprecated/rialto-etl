@@ -18,5 +18,3 @@ SUB_DIVISION    @type: http://vivoweb.org/ontology/core#Division
 ROOT            @type: http://vivoweb.org/ontology/core#University
 SCHOOL          @type: http://vivoweb.org/ontology/core#School
 DEPARTMENT      @type: http://vivoweb.org/ontology/core#Department
-
-
