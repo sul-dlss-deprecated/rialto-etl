@@ -3,16 +3,10 @@
 [![Version](https://badge.fury.io/rb/rialto-etl.png)](http://badge.fury.io/rb/rialto-etl)
 [![Build](https://travis-ci.org/sul-dlss-labs/rialto-etl.svg?branch=master)](https://travis-ci.org/sul-dlss-labs/rialto-etl)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/maintainability)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/maintainability)
-[![Coverage](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/test_coverage)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/test_coverage)# Rialto::Etl
-
-[![Version](https://badge.fury.io/rb/rialto-etl.png)](http://badge.fury.io/rb/rialto-etl)
-[![Build](https://travis-ci.org/sul-dlss-labs/rialto-etl.svg?branch=master)](https://travis-ci.org/sul-dlss-labs/rialto-etl)
-[![Maintainability](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/maintainability)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/maintainability)
 [![Coverage](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/test_coverage)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/test_coverage)
-[![API](http://img.shields.io/badge/API-docs-blue.svg)](http://rubydoc.info/gems/rialto-etl
+[![API](http://img.shields.io/badge/API-docs-blue.svg)](http://rubydoc.info/gems/rialto-etl)
 [![Documentation](https://inch-ci.org/github/sul-dlss-labs/rialto-etl.svg?branch=master)](https://inch-ci.org/github/sul-dlss-labs/rialto-etl)
 [![Apache 2.0 License](http://img.shields.io/badge/APACHE2-license-blue.svg)](./LICENSE)
-)
 
 Rialto::Etl is a set of ETL tools for RIALTO, Stanford University Libraries' research intelligence project
 
