@@ -1,0 +1,69 @@
+{
+  "alias": "stanford-test",
+  "browsable": false,
+  "children": [{
+      "alias": "department-of-funny-walks",
+      "browsable": false,
+      "children": [{
+          "alias": "department-of-funny-walks/intercollegiate-walks",
+          "browsable": false,
+          "name": "Intercollegiate Walks",
+          "onboarding": true,
+          "orgCodes": [
+            "WALK",
+            "WALZ"
+          ],
+          "type": "DEPARTMENT"
+        },
+        {
+          "alias": "department-of-funny-walks/walks-education",
+          "browsable": false,
+          "children": [{
+              "alias": "department-of-funny-walks/walks-education/adventure-walks",
+              "browsable": false,
+              "name": "Adventure Walks",
+              "onboarding": true,
+              "orgCodes": [
+                "ADVE"
+              ],
+              "type": "DIVISION"
+            }
+          ],
+          "name": "Walks Education",
+          "onboarding": true,
+          "orgCodes": [
+            "EDUC",
+            "WEDU",
+            "EDUW",
+            "WAED",
+            "EDWA"
+          ],
+          "type": "DEPARTMENT"
+        }
+      ],
+      "name": "Department of Funny Walks",
+      "onboarding": false,
+      "orgCodes": [
+        "HAAA"
+      ],
+      "type": "SCHOOL"
+    },
+    {
+      "alias": "graduate-school-of-parrots",
+      "browsable": false,
+      "name": "Graduate School of Parrots",
+      "onboarding": true,
+      "orgCodes": [
+        "PARR"
+      ],
+      "type": "SCHOOL",
+      "url": "http://parrots.python.pizza/"
+    }],
+  "name": "Stanford Test",
+  "onboarding": false,
+  "orgCodes": [
+    "STAN"
+  ],
+  "type": "ROOT",
+  "url": "http://python.pizza/"
+}
