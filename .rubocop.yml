@@ -1,7 +1,25 @@
+require: rubocop-rspec
 inherit_from: .rubocop_todo.yml
 
 AllCops:
   TargetRubyVersion: 2.3
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*.rb
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/IteratedExpectation:
+  Exclude:
+    - spec/readers/*.rb
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/SubjectStub:
+  Enabled: false
 
 Style/MixinUsage:
   Exclude:

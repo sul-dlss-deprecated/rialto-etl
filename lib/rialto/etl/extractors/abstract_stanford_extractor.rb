@@ -30,7 +30,6 @@ module Rialto
           Faraday.new(uri, headers: connection_headers) do |connection|
             connection.request :retry, max: 3, interval: 0.8, interval_randomness: 0.2, backoff_factor: 2
             connection.ssl.update(verify: true, verify_mode: OpenSSL::SSL::VERIFY_PEER)
-            connection.use Faraday::Response::RaiseError
             connection.adapter :httpclient
             connection.options.timeout = 500
             connection.options.open_timeout = 10
