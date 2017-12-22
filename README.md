@@ -24,7 +24,7 @@ Or install it yourself as:
 
 ### Extract
 
-Run `bin/extract` to run a named extractor and print output to STDOUT.
+Run `bin/extract` to run a named extractor and print output to STDOUT:
 
     $ bin/extract -s StanfordResearchers
     {"count":10,"firstPage":true,"lastPage":false,"page":1,"totalCount":29089,"totalPages":2909,"values":[{"administrativeAppointments":[...
@@ -33,7 +33,10 @@ Note: if you need to run any of the extractors that inherit from `AbstractStanfo
 
 ### Transform
 
-TBD. Planning to use TrajectPlus
+Run `bin/transform` to run a named transformer, based on [Traject](https://github.com/traject/traject), on a named input file and print output to STDOUT:
+
+    $ bin/transform -s StanfordOrganizationsToVivo -i stanford_organizations.json
+    {"@id":"http://authorities.stanford.edu/orgs#vice-provost-for-undergraduate-education/stanford-introductory-studies/freshman-and-sophomore-programs","@type":"http://vivoweb.org/ontology/core#Division","rdfs:label":"Freshman and Sophomore Programs","vivo:abbreviation":["FFQH"]}
 
 ### Load
 
@@ -44,6 +47,11 @@ TBD
     $ bin/extract -h
     Usage: bin/extract [options]
         -n, --name NAME                Name of the extractor to run (REQUIRED)
+
+    $ bin/transform -h
+    Usage: bin/transform [options]
+        -n, --name NAME                Name of the transformer to run (REQUIRED)
+        -i, --input-file FILENAME      Name of file holding data to be transformed (REQUIRED)
 
 ## Development
 

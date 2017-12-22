@@ -2,3 +2,7 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   TargetRubyVersion: 2.3
+
+Style/MixinUsage:
+  Exclude:
+    - lib/rialto/etl/configs/stanford_organizations.rb

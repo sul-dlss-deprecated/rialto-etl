@@ -20,4 +20,4 @@ end.parse!
 raise OptionParser::MissingArgument, '-n NAME' unless options[:name]
 raise OptionParser::MissingArgument, '-i FILENAME' unless options[:input]
 
-puts Rialto::Etl::Transformers.const_get(options[:name]).new(input: options[:input]).transform
+Rialto::Etl::Transformers.const_get(options[:name]).new(input: options[:input]).transform

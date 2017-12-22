@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rialto/etl/transformers/stanford_organizations'
+require 'rialto/etl/transformers/stanford_organizations_to_vivo'
 
 module Rialto
   module Etl
