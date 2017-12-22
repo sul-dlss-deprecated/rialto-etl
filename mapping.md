@@ -112,10 +112,10 @@ Sample source CAP data for a provided Organization is in [our fixtures (this has
       "name": "Graduate School of Parrots",
       "onboarding": true,
       "orgCodes": [
-        "STAN"
+        "PARR"
       ],
       "type": "SCHOOL",
-      "url": "http://funnywalks.stanford.pizza/"
+      "url": "http://parrots.python.pizza/"
     }],
   "name": "Stanford Test",
   "onboarding": false,
@@ -147,251 +147,112 @@ Sample output VIVO JSON-LD data for a provided Organization is in [our fixtures 
 ```JSON
 {
   "@context": {
-    "bibo": "http://purl.org/ontology/bibo/"
+    "dbpedia": "http://dbpedia.org/resource/",
+    "dbo": "http://dbpedia.org/ontology/",
+    "obo": "http://purl.obolibrary.org/obo/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "vivo": "http://vivoweb.org/ontology/core#"
   },
   "@graph": [
     {
-      "@id": "http://vivo.mydomain.edu/individual/n4109",
-      "@type": "vivo:AcademicDepartment",
-      "obo:BFO_0000050": {
-        "@id": "http://vivo.mydomain.edu/individual/n3910"
-      },
-      "rdfs:label": "Music",
-      "vivo:relatedBy": {
-        "@id": "http://vivo.mydomain.edu/individual/n2969"
-      }
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n1927",
-      "@type": [
-        "foaf:Organization",
-        "vivo:AcademicDepartment"
-      ],
-      "obo:BFO_0000050": {
-        "@id": "http://vivo.mydomain.edu/individual/n469"
-      },
-      "obo:RO_0000053": {
-        "@id": "http://vivo.mydomain.edu/individual/n6446"
-      },
-      "rdfs:label": "Physics",
-      "vivo:overview": "The Physics Department is in the College of Science of Sample University",
-      "vivo:relatedBy": [
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n2543"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n4531"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n6053"
-        }
-      ]
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n469",
-      "@type": "vivo:College",
-      "obo:BFO_0000050": {
-        "@id": "http://vivo.mydomain.edu/individual/n6810"
-      },
-      "obo:BFO_0000051": [
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n7257"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n1927"
-        }
-      ],
-      "rdfs:label": "College of Science",
-      "vivo:overview": "A college of Sample University",
-      "vivo:relatedBy": {
-        "@id": "http://vivo.mydomain.edu/individual/n1810"
-      }
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n3910",
-      "@type": "vivo:College",
-      "obo:BFO_0000050": {
-        "@id": "http://vivo.mydomain.edu/individual/n6810"
-      },
-      "obo:BFO_0000051": [
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n4109"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n2837"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n4085"
-        }
-      ],
-      "rdfs:label": "College of Arts and Humanties",
-      "vivo:assigns": {
-        "@id": "http://vivo.mydomain.edu/individual/n4221"
-      },
-      "vivo:overview": "A college of Sample University."
-    },
-    {
-      "@id": "dbpedia:Kansas",
-      "obo:RO_0001015": {
-        "@id": "http://vivo.mydomain.edu/individual/n6810"
-      }
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n2992",
-      "@type": "vcard:URL",
-      "rdfs:label": "Home Page",
-      "vcard:url": {
-        "@type": "xsd:anyURI",
-        "@value": "http://sample.edu"
-      },
-      "vivo:rank": {
-        "@type": "xsd:int",
-        "@value": "1"
-      }
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n6523",
-      "@type": "skos:Concept",
-      "rdfs:label": "Quantum Physics",
-      "vivo:subjectAreaOf": {
-        "@id": "http://vivo.mydomain.edu/individual/n5058"
-      }
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n6810",
+      "@id": "http://rialto.stanford.edu/individual/stanford-test",
       "@type": "vivo:University",
-      "obo:ARG_2000028": {
-        "@id": "http://vivo.mydomain.edu/individual/n1083"
-      },
+      "dbo:alias": "stanford-test",
+      "rdfs:label": "Stanford Test",
+      "rdfs:seeAlso": "http://python.pizza/",
+      "dbo:code": [
+        "STAN"
+      ],
       "obo:BFO_0000051": [
         {
-          "@id": "http://vivo.mydomain.edu/individual/n3910"
+          "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks"
         },
         {
-          "@id": "http://vivo.mydomain.edu/individual/n469"
+          "@id": "http://rialto.stanford.edu/individual/graduate-school-of-parrots"
         }
       ],
       "obo:RO_0001025": {
-        "@id": "dbpedia:Kansas"
-      },
-      "rdfs:label": "Sample University",
-      "vivo:overview": "Sample University is a <em><strong>fictional university</strong></em> created to demonstrate VIVO features."
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n2837",
-      "@type": "vivo:AcademicDepartment",
-      "obo:BFO_0000050": {
-        "@id": "http://vivo.mydomain.edu/individual/n3910"
-      },
-      "rdfs:label": "History",
-      "vivo:overview": "The History Department is in the College of Arts and Humanities of Sample University.",
-      "vivo:relatedBy": [
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n86"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n3674"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n2681"
-        }
-      ]
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n4762",
-      "@type": "vivo:University",
-      "obo:RO_0000056": {
-        "@id": "http://vivo.mydomain.edu/individual/n563"
-      },
-      "rdfs:label": "Harvard University",
-      "vivo:assigns": {
-        "@id": "http://vivo.mydomain.edu/individual/n3390"
+        "@id": "dbpedia:Palo_Alto,_California"
       }
     },
     {
-      "@id": "http://vivo.mydomain.edu/individual/n4085",
-      "@type": "vivo:AcademicDepartment",
-      "obo:BFO_0000050": {
-        "@id": "http://vivo.mydomain.edu/individual/n3910"
-      },
-      "rdfs:label": "English",
-      "vivo:contributingRole": {
-        "@id": "http://vivo.mydomain.edu/individual/n5345"
-      },
-      "vivo:relatedBy": [
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n3684"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n2757"
-        }
-      ]
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n6053",
-      "@type": "vivo:Grant",
-      "rdfs:label": "NSF Postdoctoral training award",
-      "vivo:assignedBy": {
-        "@id": "http://vivo.mydomain.edu/individual/n3787"
-      },
-      "vivo:dateTimeInterval": {
-        "@id": "http://vivo.mydomain.edu/individual/n7274"
-      },
-      "vivo:relates": [
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n6446"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n2816"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n1927"
-        },
-        {
-          "@id": "http://vivo.mydomain.edu/individual/n1158"
-        }
-      ]
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n489",
-      "@type": "vivo:University",
-      "rdfs:label": "California Institute of Technology",
-      "vitro:modTime": {
-        "@type": "xsd:dateTime",
-        "@value": "2016-11-02T17:43:01"
-      },
-      "vivo:relatedBy": {
-        "@id": "http://vivo.mydomain.edu/individual/n2264"
-      }
-    },
-    {
-      "@id": "http://vivo.mydomain.edu/individual/n3787",
-      "@type": [
-        "vivo:GovernmentAgency",
-        "vivo:FundingOrganization",
-        "vivo:ResearchOrganization"
+      "@id": "http://rialto.stanford.edu/individual/graduate-school-of-parrots",
+      "@type": "vivo:School",
+      "dbo:alias": "graduate-school-of-parrots",
+      "rdfs:label": "Graduate School of Parrots",
+      "rdfs:seeAlso": "http://parrots.python.pizza/",
+      "dbo:code": [
+        "PARR"
       ],
-      "rdfs:label": "National Science Foundation",
-      "vitro:modTime": {
-        "@type": "xsd:dateTime",
-        "@value": "2016-11-02T17:52:03"
-      },
-      "vivo:assigns": {
-        "@id": "http://vivo.mydomain.edu/individual/n6053"
+      "obo:BFO_0000050": {
+        "@id": "http://rialto.stanford.edu/individual/stanford-test"
       }
     },
     {
-      "@id": "http://vivo.mydomain.edu/individual/n7257",
-      "@type": "vivo:AcademicDepartment",
+      "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks",
+      "@type": "vivo:School",
+      "dbo:alias": "department-of-funny-walks",
+      "rdfs:label": "Department of Funny Walks",
+      "dbo:code": [
+        "HAAA"
+      ],
       "obo:BFO_0000050": {
-        "@id": "http://vivo.mydomain.edu/individual/n469"
+        "@id": "http://rialto.stanford.edu/individual/stanford-test"
       },
-      "rdfs:label": "Chemistry",
-      "vivo:relatedBy": {
-        "@id": "http://vivo.mydomain.edu/individual/n1467"
+      "obo:BFO_0000051": [
+        {
+          "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks/intercollegiate-walks"
+        },
+        {
+          "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks/walks-education"
+        }
+      ]
+    },
+    {
+      "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks/intercollegiate-walks",
+      "@type": "vivo:Department",
+      "dbo:alias": "department-of-funny-walks/intercollegiate-walks",
+      "rdfs:label": "Intercollegiate Walks",
+      "dbo:code": [
+        "WALK",
+        "WALZ"
+      ],
+      "obo:BFO_0000051": {
+        "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks"
+      }
+    },
+    {
+      "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks/walks-education",
+      "@type": "vivo:Department",
+      "dbo:alias": "department-of-funny-walks/walks-education",
+      "rdfs:label": "Walks Education",
+      "dbo:code": [
+        "EDUC",
+        "WEDU",
+        "EDUW",
+        "WAED",
+        "EDWA"
+      ],
+      "obo:BFO_0000051": {
+        "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks"
+      },
+      "obo:BFO_0000050": {
+        "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks/walks-education/adventure-walks"
+      }
+    },
+    {
+      "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks/walks-education/adventure-walks",
+      "@type": "vivo:Division",
+      "dbo:alias": "department-of-funny-walks/walks-education/adventure-walks",
+      "rdfs:label": "Adventure Walks",
+      "dbo:code": [
+        "ADVE"
+      ],
+      "obo:BFO_0000051": {
+        "@id": "http://rialto.stanford.edu/individual/department-of-funny-walks/walks-education"
       }
     }
   ]
-}
 }
 ```
