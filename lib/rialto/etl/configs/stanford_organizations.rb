@@ -5,7 +5,7 @@ extend TrajectPlus::Macros::JSON
 
 settings do
   provide 'writer_class_name', 'JsonWriter'
-  provide 'reader_class_name', 'Rialto::Etl::StanfordOrganizationsJsonReader'
+  provide 'reader_class_name', 'Rialto::Etl::Readers::StanfordOrganizationsJsonReader'
 end
 
 # context_object = {

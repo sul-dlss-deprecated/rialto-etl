@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'traject_plus'
-require 'rialto/etl/stanford_organizations_json_reader'
+require 'rialto/etl/readers/stanford_organizations_json_reader'
 
 module Rialto
   module Etl
