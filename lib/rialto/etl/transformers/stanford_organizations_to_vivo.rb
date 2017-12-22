@@ -11,7 +11,9 @@ module Rialto
         # A valid file path
         attr_reader :input
 
-        # Constructor
+        # Initialize a new instance of the transformer
+        #
+        # @param [String] input valid file path
         def initialize(input:)
           @input = input
         end

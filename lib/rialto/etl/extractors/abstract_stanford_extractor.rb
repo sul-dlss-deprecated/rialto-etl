@@ -56,6 +56,8 @@ module Rialto
         end
 
         # Set the access token to `nil` to force retrieving a new one
+        #
+        # @return [void]
         def reset_access_token!
           @access_token = nil
         end
@@ -67,6 +69,9 @@ module Rialto
         end
 
         # Set token expiry time to a new value based on current time
+        #
+        # @param [#to_i] expires_in time instance dictating when token expires
+        # @return [void]
         def reset_expiry_time!(expires_in:)
           @access_token_expiry_time = current_time + expires_in.to_i
         end
