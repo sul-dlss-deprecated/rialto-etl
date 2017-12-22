@@ -643,10 +643,10 @@
       "name": "Graduate School of Parrots",
       "onboarding": true,
       "orgCodes": [
-        "STAN"
+        "PARR"
       ],
       "type": "SCHOOL",
-      "url": "http://walks.stanford.pizza/"
+      "url": "http://parrots.python.pizza/"
     }],
   "name": "Stanford Test",
   "onboarding": false,
