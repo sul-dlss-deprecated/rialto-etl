@@ -18,6 +18,7 @@ if coverage_needed?
     add_filter '/spec'
   end
   SimpleCov.command_name 'spec'
+  Coveralls.wear!
 end
 
 WebMock.disable_net_connect!
