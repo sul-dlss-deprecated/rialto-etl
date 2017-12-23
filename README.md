@@ -59,6 +59,11 @@ TBD
         -n, --name NAME                Name of the transformer to run (REQUIRED)
         -i, --input-file FILENAME      Name of file holding data to be transformed (REQUIRED)
 
+## Documentation
+
+* [Mapping / Mapping Target](./mapping.md)
+* [CAP Organizations to VIVO Mapping](./docs/CAP-organizations.md)
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
