@@ -4,8 +4,11 @@ extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
 
 settings do
-  provide 'writer_class_name', 'Rialto::Etl::Writers::StanfordOrganizationsJsonldWriter'
+  provide 'writer_class_name', 'Rialto::Etl::Writers::JsonldWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::StanfordOrganizationsJsonReader'
+  provide 'context_object',
+          rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+          vivo: 'http://vivoweb.org/ontology/core#'
 end
 
 to_field '@id', extract_json('$.alias'), transform: transform(prepend: 'http://authorities.stanford.edu/orgs#'), single: true

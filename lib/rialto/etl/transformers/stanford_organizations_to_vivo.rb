@@ -2,7 +2,7 @@
 
 require 'traject_plus'
 require 'rialto/etl/readers/stanford_organizations_json_reader'
-require 'rialto/etl/writers/stanford_organizations_jsonld_writer'
+require 'rialto/etl/writers/jsonld_writer'
 
 module Rialto
   module Etl

@@ -1,12 +1,18 @@
 # frozen_string_literal: true
 
-RSpec.describe Rialto::Etl::Writers::StanfordOrganizationsJsonldWriter do
+RSpec.describe Rialto::Etl::Writers::JsonldWriter do
   subject(:writer) { described_class.new(settings) }
 
   let(:settings) { instance_double(Traject::Indexer::Settings, each: true) }
+  let(:context_object) do
+    {
+      rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+      vivo: 'http://vivoweb.org/ontology/core#'
+    }
+  end
 
   before do
-    allow(settings).to receive(:[]).and_return(nil)
+    allow(settings).to receive(:[]).with('context_object').and_return(context_object)
   end
 
   describe '#put' do
@@ -34,12 +40,9 @@ RSpec.describe Rialto::Etl::Writers::StanfordOrganizationsJsonldWriter do
     end
     # rubocop:enable RSpec/VerifiedDoubles
 
-    let(:hash) do
+    let(:json_object) do
       {
-        '@context' => {
-          rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-          vivo: 'http://vivoweb.org/ontology/core#'
-        },
+        '@context' => context_object,
         '@graph' => [
           {
             foo: 'bar'
@@ -51,10 +54,8 @@ RSpec.describe Rialto::Etl::Writers::StanfordOrganizationsJsonldWriter do
             baz: 'quux'
           }
         ]
-      }
+      }.to_json
     end
-
-    let(:json_object) { JSON.pretty_generate(hash) }
 
     it 'prints JSON to STDOUT' do
       allow($stdout).to receive(:puts)
