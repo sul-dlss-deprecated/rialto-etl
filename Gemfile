@@ -5,7 +5,9 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in rialto-etl.gemspec
 gemspec
 
-gem 'coveralls', require: false
-gem 'pry'
-gem 'pry-byebug'
-gem 'simplecov'
+group :development, :test do
+  gem 'coveralls', require: false
+  gem 'pry' unless ENV['CI']
+  gem 'pry-byebug' unless ENV['CI']
+  gem 'simplecov', require: false
+end

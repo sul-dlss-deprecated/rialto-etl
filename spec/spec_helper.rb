@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'rialto/etl'
-require 'webmock/rspec'
-
 def coverage_needed?
   ENV['COVERAGE'] || ENV['TRAVIS']
 end
@@ -18,7 +14,9 @@ if coverage_needed?
     add_filter '/spec'
   end
   SimpleCov.command_name 'spec'
-  Coveralls.wear!
 end
 
+require 'rialto/etl'
+
+require 'webmock/rspec'
 WebMock.disable_net_connect!
