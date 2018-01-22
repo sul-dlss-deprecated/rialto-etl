@@ -12,7 +12,7 @@ module Rialto
 
         # Initialize a new instance of the transformer
         #
-        # @param [String] input valid file path
+        # @param input [String] valid file path
         def initialize(input:)
           @input = input
         end

@@ -9,6 +9,11 @@ module Rialto
     module Writers
       # Write NTriples records
       class NtriplesWriter < Traject::LineWriter
+        # Overrides the serialization routine from superclass
+        #
+        # @param context [Traject::Indexer::Context] a Traject context
+        #   object containing the output of the mapping
+        # @return [String] NTriples representation of the mapping
         def serialize(context)
           hash = context.output_hash
           subject = RDF::URI.new(hash.delete('@id'))

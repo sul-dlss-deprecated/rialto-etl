@@ -15,6 +15,10 @@ module Rialto
 
         # Append the hash representing a single mapped record to the
         # list of records held in memory
+        #
+        # @param context [Traject::Indexer::Context] a Traject context
+        #   object containing the output of the mapping
+        # @return [Array] a list of all records mapped
         def put(context)
           records << context.output_hash
         end
