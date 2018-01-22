@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'traject_plus'
+
 module Rialto
   module Etl
     # Holds readers for use in Traject mappings

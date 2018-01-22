@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require 'traject_plus'
-require 'rialto/etl/readers/stanford_organizations_json_reader'
-require 'rialto/etl/writers/jsonld_writer'
+require 'traject'
 
 module Rialto
   module Etl

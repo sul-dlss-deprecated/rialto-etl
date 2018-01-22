@@ -9,12 +9,9 @@ module Rialto
       # #close
       class JsonldWriter
         # Traject settings object
-        attr_reader :settings
 
         # Constructor
-        def initialize(settings)
-          @settings = settings
-        end
+        def initialize(_); end
 
         # Append the hash representing a single mapped record to the
         # list of records held in memory
@@ -25,20 +22,13 @@ module Rialto
         # Print a JSON representation of the records with the
         # JSON-LD context object attached
         def close
-          $stdout.puts build_object.to_json
+          $stdout.puts records.to_json
         end
 
         private
 
         def records
           @records ||= []
-        end
-
-        def build_object
-          {
-            '@context' => settings['context_object'],
-            '@graph' => records
-          }
         end
       end
     end

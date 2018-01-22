@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rialto/etl/readers/stanford_organizations_json_reader'
+
 RSpec.describe Rialto::Etl::Readers::StanfordOrganizationsJsonReader do
   subject(:reader) { described_class.new(json, settings) }
 

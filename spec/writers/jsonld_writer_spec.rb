@@ -1,19 +1,11 @@
 # frozen_string_literal: true
 
+require 'rialto/etl/writers/jsonld_writer'
+
 RSpec.describe Rialto::Etl::Writers::JsonldWriter do
   subject(:writer) { described_class.new(settings) }
 
   let(:settings) { instance_double(Traject::Indexer::Settings, each: true) }
-  let(:context_object) do
-    {
-      rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-      vivo: 'http://vivoweb.org/ontology/core#'
-    }
-  end
-
-  before do
-    allow(settings).to receive(:[]).with('context_object').and_return(context_object)
-  end
 
   describe '#put' do
     let(:context) { Traject::Indexer::Context.new(source_record: { foo: 'bar' }) }
@@ -41,20 +33,17 @@ RSpec.describe Rialto::Etl::Writers::JsonldWriter do
     # rubocop:enable RSpec/VerifiedDoubles
 
     let(:json_object) do
-      {
-        '@context' => context_object,
-        '@graph' => [
-          {
-            foo: 'bar'
-          },
-          {
-            bar: 'baz'
-          },
-          {
-            baz: 'quux'
-          }
-        ]
-      }.to_json
+      [
+        {
+          foo: 'bar'
+        },
+        {
+          bar: 'baz'
+        },
+        {
+          baz: 'quux'
+        }
+      ].to_json
     end
 
     it 'prints JSON to STDOUT' do
