@@ -27,4 +27,13 @@ RSpec.describe Rialto::Etl::Transformers::StanfordOrganizationsToVivo do
       expect(indexer).to have_received(:process).with(input).once
     end
   end
+
+  describe 'integration of transformer with reader and writer' do
+    let(:input) { 'spec/fixtures/cap/organization.json' }
+    let(:null_stream) { StringIO.new }
+
+    it 'outputs transformer results to stdout' do
+      expect { transformer.transform }.to output.to_stdout
+    end
+  end
 end
