@@ -1,9 +1,9 @@
 # Rialto::Etl
 
-[![Gem](https://img.shields.io/gem/v/formatador.svg)]()
-[![Travis](https://img.shields.io/travis/sul-dlss-labs/rialto-etl.svg)]()
-[![Code Climate](https://img.shields.io/codeclimate/maintainability/sul-dlss-labs/rialto-etl.svg)]()
-[![Coveralls github](https://img.shields.io/coveralls/github/sul-dlss-labs/rialto-etl.svg)]()
+[![Gem](https://img.shields.io/gem/v/rialto-etl.svg)](https://rubygems.org/gems/rialto-etl)
+[![Travis](https://img.shields.io/travis/sul-dlss-labs/rialto-etl.svg)](https://travis-ci.org/sul-dlss-labs/rialto-etl)
+[![Code Climate](https://img.shields.io/codeclimate/maintainability/sul-dlss-labs/rialto-etl.svg)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/maintainability)
+[![Coveralls github](https://img.shields.io/coveralls/github/sul-dlss-labs/rialto-etl.svg)](https://coveralls.io/github/sul-dlss-labs/rialto-etl?branch=master)
 [![API](http://img.shields.io/badge/API-docs-blue.svg)](http://rubydoc.info/gems/rialto-etl)
 [![Documentation](https://inch-ci.org/github/sul-dlss-labs/rialto-etl.svg?branch=master)](https://inch-ci.org/github/sul-dlss-labs/rialto-etl)
 [![Apache 2.0 License](http://img.shields.io/badge/APACHE2-license-blue.svg)](./LICENSE)
