@@ -13,17 +13,18 @@ module Rialto
         # @param block [#call] a block that is executed on each organization
         # @return [String] JSON representation of an organization
         def each(&block)
-          yield_children(json, block)
+          yield_children(hash: json, block: block)
         end
 
         private
 
-        def yield_children(hash, block)
+        def yield_children(hash:, block:, parent: nil)
+          hash['parent'] = parent if parent
           block.call(hash)
           children = children_path(hash)
           return if children.blank?
           children.each do |child|
-            yield_children(child, block)
+            yield_children(hash: child, block: block, parent: hash['alias'])
           end
         end
 
