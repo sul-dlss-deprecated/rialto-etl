@@ -35,7 +35,12 @@ Run `bin/extract` to run a named extractor and print output to STDOUT:
     $ bin/extract -s StanfordResearchers
     {"count":10,"firstPage":true,"lastPage":false,"page":1,"totalCount":29089,"totalPages":2909,"values":[{"administrativeAppointments":[...
 
-Note: if you need to run any of the extractors that inherit from `AbstractStanfordExtractor`, you will first need to obtain a token for the CAP API and set the `CAP_TOKEN` environment variable in your session.
+Note: if you need to run any of the extractors that inherit from `AbstractStanfordExtractor`, you will first need to obtain a token for the CAP API and set the `Settings.tokens.cap` value to this token. To set this value, either set an environment variable named `SETTINGS__TOKENS__CAP` or add the value for this to `config/settings.local.yml` (which is ignored under version control and should never be checked in), like so:
+
+```yaml
+tokens:
+  cap: 'foobar'
+```
 
 ### Transform
 
@@ -47,6 +52,10 @@ Run `bin/transform` to run a named transformer, based on [Traject](https://githu
 ### Load
 
 TBD
+
+## Configuration
+
+Rialto::Etl uses the [config gem](https://github.com/railsconfig/config) to manage configuration, allowing for flexible variation of configs between environments and hosts. By default, the gem assumes it is running in the `'production'` environment and will look for its configurations per the [config gem documentation](https://github.com/railsconfig/config#accessing-the-settings-object). To explicitly set the environment to `test` or `development`, set an environment variable named `ENV`.
 
 ## Help
 

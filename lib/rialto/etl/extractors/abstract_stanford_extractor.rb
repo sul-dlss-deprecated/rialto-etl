@@ -86,7 +86,7 @@ module Rialto
         end
 
         def auth_code
-          @auth_code ||= Base64.strict_encode64("sul:#{ENV['CAP_TOKEN']}")
+          @auth_code ||= Base64.strict_encode64("sul:#{Settings.tokens.cap}")
         end
       end
     end

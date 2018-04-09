@@ -86,7 +86,7 @@ RSpec.describe Rialto::Etl::Extractors::AbstractStanfordExtractor do
 
   describe '#auth_code' do
     before do
-      allow(ENV).to receive(:[]).with('CAP_TOKEN').and_return('')
+      allow(Settings.tokens).to receive(:cap).and_return('')
     end
 
     subject(:code) { described_class.new.send(:auth_code) }
