@@ -8,3 +8,12 @@ rvm:
 git:
   submodules: false
 before_install: gem install bundler
+env:
+  global:
+    - CC_TEST_REPORTER_ID=a4d38091b68203a6cff44ff22c58cba78bc62e8207b16112d03e8c1fd345b3c5
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
