@@ -8,3 +8,6 @@
 /spec/reports/
 /tmp/
 /spec/sensitive-fixtures/
+.ruby-gemset
+.ruby-version
+
