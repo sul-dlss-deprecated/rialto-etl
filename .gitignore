@@ -8,5 +8,7 @@
 /spec/reports/
 /tmp/
 /spec/sensitive-fixtures/
+.ruby-gemset
+.ruby-version
 config/settings.local.yml
 config/settings/*.local.yml
