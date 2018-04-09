@@ -8,3 +8,5 @@
 /spec/reports/
 /tmp/
 /spec/sensitive-fixtures/
+config/settings.local.yml
+config/settings/*.local.yml

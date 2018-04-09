@@ -1,0 +1,7 @@
+# These settings can also be provided as environment variables, in the form, e.g.:
+#    SETTINGS__TOKENS__CAP=foobar
+#
+# The mapping is described in `./lib/rialto/etl/configuration.rb`.
+
+tokens:
+  cap: 'dummyvalue'
