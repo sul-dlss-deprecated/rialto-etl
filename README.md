@@ -79,6 +79,24 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
+## Sample data
+The sample data we use to work with Rialto::Etl is contained in a private Github repository and included here as a Git submodule. 
+To use the `sample_data` submodule, run the following (after cloning the project locally): 
+ 
+    $rialto-etl> git submodule init
+    Submodule 'sample_data' (git@github.com:sul-dlss/rialto-sample-data.git) registered for path 'sample_data'
+    $rialto-etl> git submodule update
+    Cloning into 'Projects/rialto-etl/sample_data'...
+    Submodule path 'sample_data': checked out '{some hash...}'
+
+Now the sample data can be accessed from the relative path, e.g. `$rialto-etl> cat sample_data/mapped/departments.rdf`. 
+In order to update `sample_data` locally with any upstream changes, from the project root run: 
+
+    $ git submodule update --remote 
+
+You can also modify the `sample_data` repo directly from within this project. For more details, see the "Working on a Project with Submodules" section of 
+https://git-scm.com/book/en/v2/Git-Tools-Submodules.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/sul-dlss-labs/rialto-etl.
