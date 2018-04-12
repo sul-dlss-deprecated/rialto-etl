@@ -5,8 +5,8 @@ require 'traject'
 module Rialto
   module Etl
     module Transformers
-      # Transformer turning Stanford org info into Vivo format
-      class StanfordOrganizationsToVivo
+      # Transformer turning Stanford org info into per-record JSON objects
+      class StanfordOrganizationsToJsonList
         # A valid file path
         attr_reader :input
 
@@ -28,7 +28,7 @@ module Rialto
 
         def transformer
           @transformer ||= Traject::Indexer.new.tap do |indexer|
-            indexer.load_config_file('lib/rialto/etl/configs/stanford_organizations_to_vivo.rb')
+            indexer.load_config_file('lib/rialto/etl/configs/stanford_organizations_to_json_list.rb')
           end
         end
       end

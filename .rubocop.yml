@@ -23,4 +23,4 @@ RSpec/SubjectStub:
 
 Style/MixinUsage:
   Exclude:
-    - lib/rialto/etl/configs/stanford_organizations.rb
+    - lib/rialto/etl/configs/*.rb

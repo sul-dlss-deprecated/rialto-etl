@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'rialto/etl/writers/jsonld_writer'
+require 'rialto/etl/writers/json_list_writer'
 
-RSpec.describe Rialto::Etl::Writers::JsonldWriter do
+RSpec.describe Rialto::Etl::Writers::JsonListWriter do
   subject(:writer) { described_class.new(settings) }
 
   let(:settings) { instance_double(Traject::Indexer::Settings, each: true) }
@@ -33,17 +33,19 @@ RSpec.describe Rialto::Etl::Writers::JsonldWriter do
     # rubocop:enable RSpec/VerifiedDoubles
 
     let(:json_object) do
-      [
-        {
-          foo: 'bar'
-        },
-        {
-          bar: 'baz'
-        },
-        {
-          baz: 'quux'
-        }
-      ].to_json
+      {
+        records: [
+          {
+            foo: 'bar'
+          },
+          {
+            bar: 'baz'
+          },
+          {
+            baz: 'quux'
+          }
+        ]
+      }.to_json
     end
 
     it 'prints JSON to STDOUT' do
