@@ -4,10 +4,10 @@ module Rialto
   module Etl
     # Holds writers for use in Traject mappings
     module Writers
-      # Write JSON-LD records. This writer conforms to Traject's
+      # Write JSON records to a list. This writer conforms to Traject's
       # writer class interface, supporting #initialize, #put, and
       # #close
-      class JsonldWriter
+      class JsonListWriter
         # Traject settings object
 
         # Constructor
@@ -23,10 +23,9 @@ module Rialto
           records << context.output_hash
         end
 
-        # Print a JSON representation of the records with the
-        # JSON-LD context object attached
+        # Print a JSON representation of the records
         def close
-          $stdout.puts records.to_json
+          $stdout.puts({ records: records }.to_json)
         end
 
         private
