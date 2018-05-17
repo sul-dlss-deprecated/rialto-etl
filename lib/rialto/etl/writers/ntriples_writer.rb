@@ -12,7 +12,6 @@ module Rialto
       class NtriplesWriter < Traject::LineWriter
         # rubocop:disable Metrics/AbcSize
         # rubocop:disable Metrics/MethodLength
-        # rubocop:disable Metrics/LineLength
         # Overrides the serialization routine from superclass
         #
         # @param context [Traject::Indexer::Context] a Traject context
@@ -50,7 +49,6 @@ module Rialto
         end
         # rubocop:enable Metrics/AbcSize
         # rubocop:enable Metrics/MethodLength
-        # rubocop:enable Metrics/LineLength
       end
     end
   end

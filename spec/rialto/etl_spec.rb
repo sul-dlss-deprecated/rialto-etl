@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Rialto::Etl do
+RSpec.describe Rialto::Etl do
   it 'has a version number' do
     expect(Rialto::Etl::VERSION).not_to be nil
   end

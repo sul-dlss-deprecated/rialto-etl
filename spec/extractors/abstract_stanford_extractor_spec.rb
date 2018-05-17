@@ -87,7 +87,7 @@ RSpec.describe Rialto::Etl::Extractors::AbstractStanfordExtractor do
   describe '#auth_code' do
     subject(:code) { described_class.new.send(:auth_code) }
 
-    it { is_expected.to eq 'dummyvalue' }
+    it { is_expected.to eq Settings.tokens.cap }
   end
 
   describe '#extract' do

@@ -6,10 +6,8 @@ end
 
 if coverage_needed?
   require 'simplecov'
-  require 'coveralls'
 
   SimpleCov.root(File.expand_path('../..', __FILE__))
-  SimpleCov.formatter = Coveralls::SimpleCov::Formatter
   SimpleCov.start do
     add_filter '/spec'
   end
@@ -17,6 +15,7 @@ if coverage_needed?
 end
 
 require 'rialto/etl'
+require 'rialto/etl/cli'
 
 require 'webmock/rspec'
 WebMock.disable_net_connect!
