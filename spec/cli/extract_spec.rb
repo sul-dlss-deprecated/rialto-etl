@@ -28,7 +28,7 @@ RSpec.describe Rialto::Etl::CLI::Extract do
     it 'prints out callable extractors' do
       allow(extractor).to receive(:say)
       extractor.list
-      expect(extractor).to have_received(:say).with(/StanfordResearchers, StanfordOrganizations/)
+      expect(extractor).to have_received(:say).with(/StanfordOrganizations, StanfordResearchers/)
     end
     it 'omits non-callable extractors' do
       allow(extractor).to receive(:say)
