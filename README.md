@@ -41,24 +41,24 @@ tokens:
 ```
 
 ### Run the extract process
-Run `exe/etl extract` to run a named extractor and print output to STDOUT:
+Run `exe/extract` to run a named extractor and print output to STDOUT:
 
-    $ exe/etl extract call StanfordResearchers
+    $ exe/extract call StanfordResearchers
     {"count":10,"firstPage":true,"lastPage":false,"page":1,"totalCount":29089,"totalPages":2909,"values":[{"administrativeAppointments":[...
 
 ### List registered extract processes
 
-Run `exe/etl extract list` to print out the list of callable extractors.
+Run `exe/extract list` to print out the list of callable extractors.
 
 
 ### Transform
 
-Run `exe/etl transform` to run a named transformer, based on [Traject](https://github.com/traject/traject), on a named input file and print output to STDOUT:
+Run `exe/transform` to run a named transformer, based on [Traject](https://github.com/traject/traject), on a named input file and print output to STDOUT:
 
-    $ exe/etl transform call StanfordOrganizationsToVivo -i stanford_organizations.json
+    $ exe/transform call StanfordOrganizationsToVivo -i stanford_organizations.json
     {"@id":"http://authorities.stanford.edu/orgs#vice-provost-for-undergraduate-education/stanford-introductory-studies/freshman-and-sophomore-programs","@type":"http://vivoweb.org/ontology/core#Division","rdfs:label":"Freshman and Sophomore Programs","vivo:abbreviation":["FFQH"]}
 
-Run `exe/etl transform list` to print out the list of callable transformers.
+Run `exe/transform list` to print out the list of callable transformers.
 
 ### Load
 
@@ -70,17 +70,17 @@ Rialto::Etl uses the [config gem](https://github.com/railsconfig/config) to mana
 
 ## Help
 
-    $ exe/etl extract help
-    etl extract commands:
-      etl extract call NAME       # Call named extractor (`etl extract list` to see available names)
-      etl extract help [COMMAND]  # Describe subcommands or one specific subcommand
-      etl extract list            # List callable extractors
+    $ exe/extract help
+    Commands:
+      extract call NAME       # Call named extractor (`extract list` to see available names)
+      extract help [COMMAND]  # Describe subcommands or one specific subcommand
+      extract list            # List callable extractors
 
-    $ exe/etl transform help
-    etl transform commands:
-      etl transform call NAME       # Call named transformer (`etl transform list` to see available names)
-      etl transform help [COMMAND]  # Describe subcommands or one specific subcommand
-      etl transform list            # List callable transformers
+    $ exe/transform help
+    Commands:
+      transform call NAME       # Call named transformer (`transform list` to see available names)
+      transform help [COMMAND]  # Describe subcommands or one specific subcommand
+      transform list            # List callable transformers
 
 ## Documentation
 

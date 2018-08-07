@@ -3,10 +3,6 @@
 RSpec.describe Rialto::Etl::CLI::Extract do
   subject(:extractor) { described_class.new }
 
-  it 'declares a custom package name' do
-    expect(described_class.instance_variable_get('@package_name')).to eq 'etl extract'
-  end
-
   # rubocop:disable RSpec/VerifiedDoubles
   describe '#call' do
     let(:extractor_name) { 'FooBar' }

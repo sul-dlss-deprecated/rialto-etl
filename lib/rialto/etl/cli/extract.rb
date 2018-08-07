@@ -7,8 +7,6 @@ module Rialto
     module CLI
       # Extract subcommand
       class Extract < Thor
-        package_name 'etl extract'
-
         desc 'call NAME', "Call named extractor (`#{@package_name} list` to see available names)"
         # Call a extractor by name
         def call(name)

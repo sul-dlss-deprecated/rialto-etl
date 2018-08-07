@@ -7,8 +7,6 @@ module Rialto
     module CLI
       # Transform subcommand
       class Transform < Thor
-        package_name 'etl transform'
-
         option :input_file,
                required: true,
                banner: 'FILENAME',
