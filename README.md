@@ -30,19 +30,26 @@ Or install it yourself as:
 
 ### Extract
 
-Run `exe/etl extract` to run a named extractor and print output to STDOUT:
+#### Authentication
 
-    $ exe/etl extract call StanfordResearchers
-    {"count":10,"firstPage":true,"lastPage":false,"page":1,"totalCount":29089,"totalPages":2909,"values":[{"administrativeAppointments":[...
+If you are using the `StanfordResearchers` or `StanfordOrganizations` extract methods, you will first need to obtain a token for the CAP API and set the `Settings.tokens.cap` value to this token. To set this value, either set an environment variable named `SETTINGS__TOKENS__CAP` or add the value for this to `config/settings.local.yml` (which is ignored under version control and should never be checked in), like so:
 
-Note: if you need to run any of the extractors that inherit from `AbstractStanfordExtractor`, you will first need to obtain a token for the CAP API and set the `Settings.tokens.cap` value to this token. To set this value, either set an environment variable named `SETTINGS__TOKENS__CAP` or add the value for this to `config/settings.local.yml` (which is ignored under version control and should never be checked in), like so:
 
 ```yaml
 tokens:
   cap: 'foobar'
 ```
 
+### Run the extract process
+Run `exe/etl extract` to run a named extractor and print output to STDOUT:
+
+    $ exe/etl extract call StanfordResearchers
+    {"count":10,"firstPage":true,"lastPage":false,"page":1,"totalCount":29089,"totalPages":2909,"values":[{"administrativeAppointments":[...
+
+### List registered extract processes
+
 Run `exe/etl extract list` to print out the list of callable extractors.
+
 
 ### Transform
 
