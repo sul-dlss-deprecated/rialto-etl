@@ -15,7 +15,7 @@ module Rialto
         desc 'call NAME', "Call named transformer (`#{@package_name} list` to see available names)"
         # Call a transformer by name
         def call(name)
-          say Rialto::Etl::Transformers.const_get(name).new(input: options[:input_file]).transform
+          Rialto::Etl::Transformers.const_get(name).new(input: options[:input_file]).transform
         end
 
         desc 'list', 'List callable transformers'
