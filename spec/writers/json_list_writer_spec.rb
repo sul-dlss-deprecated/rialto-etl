@@ -33,19 +33,17 @@ RSpec.describe Rialto::Etl::Writers::JsonListWriter do
     # rubocop:enable RSpec/VerifiedDoubles
 
     let(:json_object) do
-      {
-        records: [
-          {
-            foo: 'bar'
-          },
-          {
-            bar: 'baz'
-          },
-          {
-            baz: 'quux'
-          }
-        ]
-      }.to_json
+      [
+        {
+          foo: 'bar'
+        },
+        {
+          bar: 'baz'
+        },
+        {
+          baz: 'quux'
+        }
+      ].to_json
     end
 
     it 'prints JSON to STDOUT' do
