@@ -25,7 +25,7 @@ module Rialto
 
         # Print a JSON representation of the records
         def close
-          $stdout.puts({ records: records }.to_json)
+          $stdout.puts(records.to_json)
         end
 
         private
