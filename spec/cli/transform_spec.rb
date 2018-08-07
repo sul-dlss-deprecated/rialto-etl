@@ -3,10 +3,6 @@
 RSpec.describe Rialto::Etl::CLI::Transform do
   subject(:transformer) { described_class.new }
 
-  it 'declares a custom package name' do
-    expect(described_class.instance_variable_get('@package_name')).to eq 'etl transform'
-  end
-
   describe '#call' do
     let(:transformer_name) { 'FooBar' }
     let(:mock_transformer_class) { double }
