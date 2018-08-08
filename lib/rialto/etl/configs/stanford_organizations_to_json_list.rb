@@ -2,13 +2,12 @@
 
 require 'traject_plus'
 require 'rialto/etl/readers/stanford_organizations_json_reader'
-require 'rialto/etl/writers/json_list_writer'
 
 extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
 
 settings do
-  provide 'writer_class_name', 'Rialto::Etl::Writers::JsonListWriter'
+  provide 'writer_class_name', 'Traject::JsonWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::StanfordOrganizationsJsonReader'
 end
 
