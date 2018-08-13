@@ -3,6 +3,7 @@
 module Rialto
   module Etl
     module Extractors
+      require 'byebug'
       # Stanford Profiles API
       class StanfordResearchers
         def initialize(client: StanfordClient.new)
@@ -10,9 +11,10 @@ module Rialto
         end
 
         # Hit an API endpoint and return the results
-        def extract
+        def each(&_block)
+          return to_enum(:each) unless block_given?
           per_page = 100 # 100 seems to be the max the API allows
-          client.get("/profiles/v1?p=1&ps=#{per_page}")
+          yield client.get("/profiles/v1?p=1&ps=#{per_page}")
         rescue StandardError => exception
           puts "Error: #{exception.message}"
         end

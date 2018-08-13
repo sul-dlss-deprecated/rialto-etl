@@ -10,8 +10,9 @@ module Rialto
         end
 
         # Hit an API endpoint and return the results
-        def extract
-          client.get('/cap/v1/orgs/stanford?p=1&ps=10')
+        def each(&_block)
+          return to_enum(:each) unless block_given?
+          yield client.get('/cap/v1/orgs/stanford?p=1&ps=10')
         rescue StandardError => exception
           puts "Error: #{exception.message}"
         end

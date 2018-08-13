@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
-  describe '#extract' do
+  describe '#each' do
     subject(:extractor) { described_class.new }
 
     let(:authz_json) do
@@ -18,10 +18,10 @@ RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
         .to_return(status: 200, body: 'whatever', headers: {})
     end
 
-    it { is_expected.to respond_to(:extract) }
+    it { is_expected.to respond_to(:each) }
 
     it 'does not raise NotImplementedError' do
-      expect { extractor.extract }.not_to raise_error
+      expect { extractor.each }.not_to raise_error
     end
 
     context 'when client raises an exception' do
@@ -33,7 +33,7 @@ RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
 
       it 'prints out the exception' do
         allow(STDOUT).to receive(:puts)
-        extractor.extract
+        extractor.each { true }
         expect(STDOUT).to have_received(:puts).with("Error: #{error_message}")
       end
     end
