@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'rialto/etl/extractors/stanford_client'
 require 'rialto/etl/extractors/stanford_researchers'
 require 'rialto/etl/extractors/stanford_organizations'
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rialto::Etl::Extractors::AbstractStanfordExtractor do
+RSpec.describe Rialto::Etl::Extractors::StanfordClient do
   before do
     stub_request(:get, /authz.stanford.edu/)
       .to_return(status: authz_status, body: authz_json, headers: {})
@@ -90,13 +90,11 @@ RSpec.describe Rialto::Etl::Extractors::AbstractStanfordExtractor do
     it { is_expected.to eq Settings.tokens.cap }
   end
 
-  describe '#extract' do
+  describe '#get' do
     subject(:extractor) { described_class.new }
 
-    it { is_expected.to respond_to(:extract) }
-
     it 'does not raise NotImplementedError' do
-      expect { extractor.extract }.to raise_error(NotImplementedError)
+      expect(extractor.get('/path')).to eq 'whatever'
     end
   end
 end
