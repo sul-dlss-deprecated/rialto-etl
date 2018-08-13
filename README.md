@@ -28,6 +28,14 @@ Or install it yourself as:
 
 ## Usage
 
+### Pipeline to ingest organizations into Rialto
+
+```
+exe/extract call StanfordOrganizations > step1.json
+exe/transform call StanfordOrganizationsToVivo -i step1.json > step2.nt
+exe/load call Sparql -i step2.nt
+```
+
 ### Extract
 
 #### Authentication
