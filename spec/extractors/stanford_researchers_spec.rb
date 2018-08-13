@@ -15,9 +15,9 @@ RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
       stub_request(:get, /authz.stanford.edu/)
         .to_return(status: 200, body: authz_json, headers: {})
       stub_request(:get, 'https://api.stanford.edu/profiles/v1?p=1&ps=100')
-        .to_return(status: 200, body: '{"lastPage": false, "values":["one"]}', headers: {})
+        .to_return(status: 200, body: '{"lastPage": false, "totalPages": 2, "values":["one"]}', headers: {})
       stub_request(:get, 'https://api.stanford.edu/profiles/v1?p=2&ps=100')
-        .to_return(status: 200, body: '{"lastPage": true, "values":["two", "three"]}', headers: {})
+        .to_return(status: 200, body: '{"lastPage": true, "totalPages": 2, "values":["two", "three"]}', headers: {})
     end
 
     context 'when client raises an exception' do
@@ -28,9 +28,7 @@ RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
       end
 
       it 'prints out the exception' do
-        allow(STDOUT).to receive(:puts)
-        extractor.each { true }
-        expect(STDOUT).to have_received(:puts).with("Error: #{error_message}")
+        expect { extractor.each { true } }.to output("Error: #{error_message}\n").to_stderr
       end
     end
 

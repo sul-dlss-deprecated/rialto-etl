@@ -4,6 +4,7 @@ require 'faraday'
 require 'openssl'
 require 'base64'
 require 'json'
+require 'ruby-progressbar'
 
 module Rialto
   module Etl
@@ -15,7 +16,9 @@ module Rialto
 
         # Hit an API endpoint and return the results
         def get(path)
-          client.get(path).body
+          response = client.get(path)
+          raise "Unacceptable Response from API: Status #{request.status}, #{response.body}" if response.status != 200
+          response.body
         end
 
         private
