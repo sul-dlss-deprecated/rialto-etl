@@ -8,14 +8,14 @@ require 'json'
 module Rialto
   module Etl
     module Extractors
-      # Abstract class hitting Stanford APIs using Stanford authz
-      class AbstractStanfordExtractor
+      # Client for hitting Stanford APIs using Stanford authz
+      class StanfordClient
         # Time at which access token expires (as integer)
         attr_reader :access_token_expiry_time
 
         # Hit an API endpoint and return the results
-        def extract
-          raise NotImplementedError, 'Implement #extract in a child class'
+        def get(path)
+          client.get(path).body
         end
 
         private

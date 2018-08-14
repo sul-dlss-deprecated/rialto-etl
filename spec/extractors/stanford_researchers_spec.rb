@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
-  describe 'subclass' do
-    it { is_expected.to be_a Rialto::Etl::Extractors::AbstractStanfordExtractor }
-  end
-
   describe '#extract' do
     subject(:extractor) { described_class.new }
 

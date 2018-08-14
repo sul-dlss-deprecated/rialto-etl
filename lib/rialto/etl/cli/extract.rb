@@ -16,7 +16,7 @@ module Rialto
         desc 'list', 'List callable extractors'
         # List callable extractors
         def list
-          callable_extractors = Rialto::Etl::Extractors.constants.reject { |name| name.to_s.include?('Abstract') }
+          callable_extractors = Rialto::Etl::Extractors.constants.map(&:to_s) - ['StanfordClient']
           say "Extractors supported: #{callable_extractors.join(', ')}"
         end
       end
