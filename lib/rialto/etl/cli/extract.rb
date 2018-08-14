@@ -18,7 +18,7 @@ module Rialto
         desc 'list', 'List callable extractors'
         # List callable extractors
         def list
-          callable_extractors = Rialto::Etl::Extractors.constants.map(&:to_s) - ['StanfordClient']
+          callable_extractors = Rialto::Etl::Extractors.constants.map(&:to_s).sort - ['StanfordClient']
           say "Extractors supported: #{callable_extractors.join(', ')}"
         end
 

@@ -21,7 +21,7 @@ module Rialto
         desc 'list', 'List callable transformers'
         # List callable transformers
         def list
-          callable_transformers = Rialto::Etl::Transformers.constants
+          callable_transformers = Rialto::Etl::Transformers.constants.map(&:to_s).sort
           say "Transformers supported: #{callable_transformers.join(', ')}"
         end
       end
