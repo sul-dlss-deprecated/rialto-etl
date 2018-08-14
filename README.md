@@ -36,7 +36,18 @@ exe/transform call StanfordOrganizationsToVivo -i step1.json > step2.nt
 exe/load call Sparql -i step2.nt
 ```
 
-### Extract
+
+### Pipeline to harvest Researchers
+
+This takes about 20 min as it has to make ~796 requests to get the full
+1.6GB of data.
+
+```
+exe/extract call StanfordResearchers > researchers.ndj
+```
+
+_TODO_ We need to transform this ntj file to RDF and then load it.
+
 
 #### Authentication
 
