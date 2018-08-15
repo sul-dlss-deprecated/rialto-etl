@@ -4,4 +4,4 @@
 require 'bundler/setup'
 require 'rialto/etl/cli'
 
-Rialto::Etl::CLI.start(ARGV)
+Rialto::Etl::CLI::Load.start(ARGV)

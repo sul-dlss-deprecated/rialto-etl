@@ -1,0 +1,3 @@
+<http://rialto.stanford.edu/organizations/stanford> <http://dbpedia.org/ontology/alias> "stanford" .
+<http://rialto.stanford.edu/organizations/stanford> <http://vivoweb.org/ontology/core#abbreviation> "AA00" .
+<http://rialto.stanford.edu/organizations/stanford> <http://www.w3.org/2000/01/rdf-schema#label> "Stanford University" .

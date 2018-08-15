@@ -4,6 +4,7 @@ require 'thor'
 require 'rialto/etl'
 require 'rialto/etl/cli/extract'
 require 'rialto/etl/cli/transform'
+require 'rialto/etl/cli/load'
 
 module Rialto
   module Etl
