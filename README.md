@@ -2,8 +2,8 @@
 
 [![Gem](https://img.shields.io/gem/v/rialto-etl.svg)](https://rubygems.org/gems/rialto-etl)
 [![Travis](https://img.shields.io/travis/sul-dlss-labs/rialto-etl.svg)](https://travis-ci.org/sul-dlss-labs/rialto-etl)
-[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/sul-dlss-labs/rialto-etl.svg)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/maintainability)
-[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/sul-dlss-labs/rialto-etl.svg)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/maintainability)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/test_coverage)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/test_coverage)
 [![Documentation](https://inch-ci.org/github/sul-dlss-labs/rialto-etl.svg?branch=master)](https://inch-ci.org/github/sul-dlss-labs/rialto-etl)
 [![API](http://img.shields.io/badge/API-docs-blue.svg)](http://rubydoc.info/gems/rialto-etl)
 [![Apache 2.0 License](http://img.shields.io/badge/APACHE2-license-blue.svg)](./LICENSE)
