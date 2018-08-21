@@ -46,7 +46,7 @@ This takes about 20 min as it has to make ~796 requests to get the full
 exe/extract call StanfordResearchers > researchers.ndj
 ```
 
-_TODO_ We need to transform this ntj file to RDF and then load it.
+_TODO_ We need to transform this ndj file to RDF and then load it.
 
 
 #### Authentication
