@@ -59,6 +59,8 @@ tokens:
   cap: 'foobar'
 ```
 
+Tokens are stored in shared_configs.
+
 ### Run the extract process
 Run `exe/extract` to run a named extractor and print output to STDOUT:
 
