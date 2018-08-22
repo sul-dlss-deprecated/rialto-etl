@@ -38,7 +38,7 @@ RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
         extractor.each do |records|
           results << records
         end
-        expect(results).to eq %w[one two three]
+        expect(results).to eq %w["one" "two" "three"]
       end
     end
   end

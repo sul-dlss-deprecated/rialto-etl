@@ -22,7 +22,7 @@ module Rialto
             result = fetch_results_for_page(page) { progress }
             # Yield the block for each result on the page
             result['values'].each do |val|
-              yield val
+              yield val.to_json
             end
           end
         rescue StandardError => exception
