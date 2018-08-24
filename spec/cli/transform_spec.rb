@@ -5,13 +5,13 @@ RSpec.describe Rialto::Etl::CLI::Transform do
 
   describe '#call' do
     let(:transformer_name) { 'FooBar' }
-    let(:mock_transformer_class) { double }
-    let(:mock_transformer_instance) { double }
+    let(:mock_transformer_instance) { instance_double(Rialto::Etl::Transformer) }
 
     context 'with a valid transformer' do
       before do
-        allow(Rialto::Etl::Transformers).to receive(:const_get).with(transformer_name).and_return(mock_transformer_class)
-        allow(mock_transformer_class).to receive(:new).and_return(mock_transformer_instance)
+        allow(Rialto::Etl::Transformer).to receive(:new).and_return(mock_transformer_instance)
+        allow(transformer).to receive(:configs).and_return('FooBar' => 'path/to/config.rb')
+        allow(transformer).to receive(:options).and_return(input_file: 'spec/fixtures/organizations.ndj')
       end
 
       context 'with missing name argument' do

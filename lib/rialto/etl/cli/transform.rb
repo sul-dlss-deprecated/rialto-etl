@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rialto/etl/transformers'
+require 'rialto/etl/transformer'
 
 module Rialto
   module Etl
@@ -16,19 +16,32 @@ module Rialto
         # Call a transformer by name
         def call(name)
           begin
-            klass = Rialto::Etl::Transformers.const_get(name)
-          rescue NameError
+            config = configs.fetch(name)
+          rescue KeyError
             warn "No '#{name}' transformer exists. Call '#{$PROGRAM_NAME} list' to see valid options."
             exit(1)
           end
-          klass.new(input: options[:input_file]).transform
+          Transformer.new(input_stream: stream, config_file_path: config).transform
         end
 
         desc 'list', 'List callable transformers'
         # List callable transformers
         def list
-          callable_transformers = Rialto::Etl::Transformers.constants.map(&:to_s).sort
+          callable_transformers = configs.keys.sort
           say "Transformers supported: #{callable_transformers.join(', ')}"
+        end
+
+        private
+
+        def configs
+          {
+            'OrganizationsListToJSONLD' => 'lib/rialto/etl/configs/organizations_to_jsonld.rb',
+            'StanfordOrganizationsToJsonList' => 'lib/rialto/etl/configs/stanford_organizations_to_json_list.rb'
+          }
+        end
+
+        def stream
+          File.open(options.fetch(:input_file), 'r')
         end
       end
     end

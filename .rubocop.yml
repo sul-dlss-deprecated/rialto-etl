@@ -16,6 +16,10 @@ RSpec/IteratedExpectation:
   Exclude:
     - spec/readers/*.rb
 
+RSpec/DescribeClass:
+  Exclude:
+    - spec/transform/*.rb
+
 RSpec/NestedGroups:
   Max: 4
 

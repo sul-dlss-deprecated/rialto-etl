@@ -18,3 +18,9 @@ require 'rialto/etl'
 require 'rialto/etl/cli'
 require 'webmock/rspec'
 WebMock.disable_net_connect!
+
+RSpec.configure do |config|
+  config.disable_monkey_patching!
+  config.order = :random
+  Kernel.srand config.seed
+end
