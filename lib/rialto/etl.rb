@@ -2,7 +2,7 @@
 
 require 'config'
 require 'rialto/etl/extractors'
-require 'rialto/etl/transformers'
+require 'rialto/etl/transformer'
 require 'rialto/etl/version'
 
 module Rialto

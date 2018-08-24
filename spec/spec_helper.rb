@@ -7,7 +7,7 @@ end
 if coverage_needed?
   require 'simplecov'
 
-  SimpleCov.root(File.expand_path('../..', __FILE__))
+  SimpleCov.root(File.expand_path('..', __dir__))
   SimpleCov.start do
     add_filter '/spec'
   end
@@ -16,6 +16,11 @@ end
 
 require 'rialto/etl'
 require 'rialto/etl/cli'
-
 require 'webmock/rspec'
 WebMock.disable_net_connect!
+
+RSpec.configure do |config|
+  config.disable_monkey_patching!
+  config.order = :random
+  Kernel.srand config.seed
+end

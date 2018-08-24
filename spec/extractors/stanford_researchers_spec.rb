@@ -28,7 +28,7 @@ RSpec.describe Rialto::Etl::Extractors::StanfordResearchers do
       end
 
       it 'prints out the exception' do
-        expect { extractor.each { true } }.to output("Error: #{error_message}\n").to_stderr
+        expect { extractor.each {} }.to output("Error: #{error_message}\n").to_stderr
       end
     end
 

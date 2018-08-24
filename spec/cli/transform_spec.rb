@@ -5,24 +5,33 @@ RSpec.describe Rialto::Etl::CLI::Transform do
 
   describe '#call' do
     let(:transformer_name) { 'FooBar' }
-    let(:mock_transformer_class) { double }
-    let(:mock_transformer_instance) { double }
+    let(:mock_transformer_instance) { instance_double(Rialto::Etl::Transformer) }
 
-    before do
-      allow(Rialto::Etl::Transformers).to receive(:const_get).with(transformer_name).and_return(mock_transformer_class)
-      allow(mock_transformer_class).to receive(:new).and_return(mock_transformer_instance)
-    end
+    context 'with a valid transformer' do
+      before do
+        allow(Rialto::Etl::Transformer).to receive(:new).and_return(mock_transformer_instance)
+        allow(transformer).to receive(:configs).and_return('FooBar' => 'path/to/config.rb')
+        allow(transformer).to receive(:options).and_return(input_file: 'spec/fixtures/organizations.ndj')
+      end
 
-    context 'with missing name argument' do
-      it 'raises ArgumentError when called without args' do
-        expect { transformer.call }.to raise_error(ArgumentError)
+      context 'with missing name argument' do
+        it 'raises ArgumentError when called without args' do
+          expect { transformer.call }.to raise_error(ArgumentError)
+        end
+      end
+
+      it 'calls a transformer' do
+        allow(mock_transformer_instance).to receive(:transform)
+        transformer.call(transformer_name)
+        expect(mock_transformer_instance).to have_received(:transform).once
       end
     end
 
-    it 'calls a transformer' do
-      allow(mock_transformer_instance).to receive(:transform)
-      transformer.call(transformer_name)
-      expect(mock_transformer_instance).to have_received(:transform).once
+    context 'with an invalid transformer' do
+      it 'outputs a message' do
+        expect { transformer.call('Unknown') }.to raise_error(SystemExit)
+          .and output(/^No 'Unknown' transformer exists./).to_stderr
+      end
     end
   end
 
@@ -31,7 +40,7 @@ RSpec.describe Rialto::Etl::CLI::Transform do
       allow(transformer).to receive(:say)
       transformer.list
       expect(transformer).to have_received(:say)
-        .with('Transformers supported: StanfordOrganizationsToJsonList, StanfordOrganizationsToVivo')
+        .with('Transformers supported: OrganizationsListToJSONLD, StanfordOrganizationsToJsonList')
     end
   end
 end

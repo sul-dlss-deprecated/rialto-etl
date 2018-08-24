@@ -1,30 +1,27 @@
 # frozen_string_literal: true
 
-# frozen_string_literal: true
-
 require 'traject'
-require 'rdf'
-require 'rdf/ntriples'
+require 'json/ld'
 
 module Rialto
   module Etl
     module Loaders
-      # Loader that takes Ntriples and puts it in SPARQL
+      # Loader that takes newline delimited JSON, (with JSON-LD records) and puts it in SPARQL
       class Sparql
         # A valid file path
         attr_reader :input
 
         # Initialize a new instance of the loader
         #
-        # @param input [String] valid file path of an Ntriples file
+        # @param input [String] valid file path of a newline delimited JSON-LD file
         def initialize(input:)
           @input = input
         end
 
-        # Load a RDF file into a SPARQL endpoint, using Traject
+        # Load a JSON-LD file into a SPARQL endpoint, using Traject
         def load
-          RDF::Reader.open(input) do |reader|
-            loader.process(reader)
+          File.open(input, 'r') do |stream|
+            loader.process(stream)
           end
         end
 

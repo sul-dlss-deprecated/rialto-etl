@@ -7,6 +7,7 @@ AllCops:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*.rb
+    - rialto-etl.gemspec
 
 RSpec/FilePath:
   Enabled: false
@@ -14,6 +15,10 @@ RSpec/FilePath:
 RSpec/IteratedExpectation:
   Exclude:
     - spec/readers/*.rb
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/transform/*.rb
 
 RSpec/NestedGroups:
   Max: 4

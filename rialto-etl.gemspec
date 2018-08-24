@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rialto/etl/version'
 
@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'config'
   spec.add_dependency 'faraday'
   spec.add_dependency 'httpclient'
+  spec.add_dependency 'json-ld'
   spec.add_dependency 'rdf'
   spec.add_dependency 'ruby-progressbar'
   spec.add_dependency 'sparql-client', '~> 3.0'
@@ -31,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.11'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.52.0'
+  spec.add_development_dependency 'rubocop', '~> 0.58.0'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.21.0'
   spec.add_development_dependency 'webmock'
 end
