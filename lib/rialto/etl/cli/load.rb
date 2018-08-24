@@ -16,7 +16,7 @@ module Rialto
         desc 'call NAME', "Call named loader (`#{@package_name} list` to see available names)"
         # Call a loader by name
         def call(name)
-          say Rialto::Etl::Loaders.const_get(name).new(input: options[:input_file]).load
+          Rialto::Etl::Loaders.const_get(name).new(input: options[:input_file]).load
         end
 
         desc 'list', 'List callable loaders'

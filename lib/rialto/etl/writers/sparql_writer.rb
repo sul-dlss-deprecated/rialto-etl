@@ -6,7 +6,7 @@ require 'traject/util'
 require 'traject/qualified_const_get'
 require 'traject/thread_pool'
 
-require 'sparql/client'
+require 'rialto/sparql/client'
 require 'concurrent' # for atomic_fixnum
 
 module Rialto
@@ -124,7 +124,7 @@ module Rialto
 
         def client
           @client ||= begin
-            settings['sparql_writer.client'] || SPARQL::Client.new(sparql_update_url)
+            settings['sparql_writer.client'] || Rialto::SPARQL::Client.new(sparql_update_url)
           end
         end
 
