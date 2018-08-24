@@ -2,7 +2,6 @@
 
 require 'traject_plus'
 require 'rialto/etl/readers/ndjson_reader'
-require 'rialto/etl/writers/organization_ntriples_writer'
 
 extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
@@ -10,7 +9,7 @@ extend TrajectPlus::Macros::JSON
 # This takes in the Newline Delimited JSON, transforms it to JSON-LD, and writes it out as Ntriples
 
 settings do
-  provide 'writer_class_name', 'Rialto::Etl::Writers::OrganizationNtriplesWriter'
+  provide 'writer_class_name', 'Traject::JsonWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
 end
 

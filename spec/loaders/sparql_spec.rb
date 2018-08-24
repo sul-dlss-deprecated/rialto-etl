@@ -5,13 +5,13 @@ require 'rialto/etl/loaders/sparql'
 RSpec.describe Rialto::Etl::Loaders::Sparql do
   subject(:loader) { described_class.new(input: path) }
 
-  let(:path) { 'spec/fixtures/rdf.nt' }
+  let(:path) { 'spec/fixtures/organizations.ndjsonld' }
   let(:input) { '' }
 
   describe '#load' do
     before do
       allow(Traject::Indexer).to receive(:new).and_return(indexer)
-      allow(RDF::Reader).to receive(:open).and_yield(input)
+      allow(File).to receive(:open).and_yield(input)
     end
 
     let(:indexer) { instance_double(Traject::Indexer, load_config_file: true) }

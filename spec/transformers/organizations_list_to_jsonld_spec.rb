@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rialto::Etl::Transformers::OrganizationsListToTriples do
+RSpec.describe Rialto::Etl::Transformers::OrganizationsListToJSONLD do
   subject(:transformer) { described_class.new(input: input) }
 
   let(:input) { '' }

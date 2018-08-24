@@ -21,12 +21,14 @@ module Rialto
           return enum_for(:each) unless block_given?
 
           @input_stream.each_with_index do |json, i|
-            begin
-              yield JSON.parse(json)
-            rescue JSON::ParserError => e
-              logger.error("Problem with JSON record on line #{i}: #{e.message}")
-            end
+            yield decode(json, i)
           end
+        end
+
+        def decode(row, line_number)
+          JSON.parse(row)
+        rescue JSON::ParserError => e
+          logger.error("Problem with JSON record on line #{line_number}: #{e.message}")
         end
       end
     end
