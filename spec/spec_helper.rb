@@ -7,7 +7,7 @@ end
 if coverage_needed?
   require 'simplecov'
 
-  SimpleCov.root(File.expand_path('../..', __FILE__))
+  SimpleCov.root(File.expand_path('..', __dir__))
   SimpleCov.start do
     add_filter '/spec'
   end

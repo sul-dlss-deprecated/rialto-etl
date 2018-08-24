@@ -17,7 +17,7 @@ RSpec.describe Rialto::Etl::Readers::StanfordOrganizationsJsonReader do
   describe '#each' do
     it 'calls #yield_children' do
       allow(reader).to receive(:yield_children)
-      reader.each { |record| record }
+      reader.each {}
       expect(reader).to have_received(:yield_children).once
     end
   end
