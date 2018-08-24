@@ -18,8 +18,10 @@ to_field '@id',
          transform: transform(prepend: 'http://rialto.stanford.edu/organizations/'),
          single: true
 to_field '@type',
-         extract_json('$.type', translation_map: 'stanford_organizations_to_vivo_types'),
-         single: true
+         extract_json('$.type', translation_map: 'stanford_organizations_to_vivo_types')
+to_field '@type', lambda { |_json, accum|
+  accum.concat(['http://xmlns.com/foaf/0.1/Agent', 'http://xmlns.com/foaf/0.1/Organization'])
+}
 to_field 'parent',
          extract_json('$.parent'),
          transform: transform(prepend: 'http://rialto.stanford.edu/organizations/'),
