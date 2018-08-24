@@ -34,7 +34,7 @@ Or install it yourself as:
 exe/extract call StanfordOrganizations > step1.json
 exe/transform call StanfordOrganizationsToJsonList -i step1.json > step2.json
 exe/transform call OrganizationsListToJSONLD -i step2.json > step3.jsonld
-exe/load call Sparql -i step3.jsonld
+SETTINGS__TOKENS__RIALTO=<Rialto API key> exe/load call Sparql -i step3.jsonld
 ```
 
 
@@ -58,6 +58,13 @@ If you are using the `StanfordResearchers` or `StanfordOrganizations` extract me
 ```yaml
 tokens:
   cap: 'foobar'
+```
+
+Similarly, if you are using the SPARQL writer, then you need to set `SETTINGS__TOKENS__RIALTO` or:
+
+```yaml
+tokens:
+  rialto: 'key' # SPARQL Proxy API key
 ```
 
 Tokens are stored in shared_configs.
