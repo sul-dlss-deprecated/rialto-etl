@@ -32,8 +32,9 @@ Or install it yourself as:
 
 ```
 exe/extract call StanfordOrganizations > step1.json
-exe/transform call StanfordOrganizationsToVivo -i step1.json > step2.nt
-exe/load call Sparql -i step2.nt
+exe/transform call StanfordOrganizationsToJsonList -i step1.json > step2.json
+exe/transform call OrganizationsListToTriples -i step2.json > step3.nt
+exe/load call Sparql -i step3.nt
 ```
 
 

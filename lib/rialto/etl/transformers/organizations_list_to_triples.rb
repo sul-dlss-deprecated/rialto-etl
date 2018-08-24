@@ -6,7 +6,7 @@ module Rialto
   module Etl
     module Transformers
       # Transformer turning Stanford org info into Vivo format
-      class StanfordOrganizationsToVivo
+      class OrganizationsListToTriples
         # A valid file path
         attr_reader :input
 
@@ -28,7 +28,7 @@ module Rialto
 
         def transformer
           @transformer ||= Traject::Indexer.new.tap do |indexer|
-            indexer.load_config_file('lib/rialto/etl/configs/stanford_organizations_to_vivo.rb')
+            indexer.load_config_file('lib/rialto/etl/configs/organizations_to_triples.rb')
           end
         end
       end

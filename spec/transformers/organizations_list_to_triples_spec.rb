@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-RSpec.describe Rialto::Etl::Transformers::StanfordOrganizationsToVivo do
+RSpec.describe Rialto::Etl::Transformers::OrganizationsListToTriples do
   subject(:transformer) { described_class.new(input: input) }
 
   let(:input) { '' }
 
   describe '#input' do
-    it { is_expected.to respond_to(:input) }
-
     it 'returns the value of the passed-in attr' do
       expect(transformer.input).to eq input
     end
@@ -29,8 +27,7 @@ RSpec.describe Rialto::Etl::Transformers::StanfordOrganizationsToVivo do
   end
 
   describe 'integration of transformer with reader and writer' do
-    let(:input) { 'spec/fixtures/cap/organization.json' }
-    let(:null_stream) { StringIO.new }
+    let(:input) { 'spec/fixtures/organizations.ndj' }
 
     it 'outputs transformer results to stdout' do
       expect { transformer.transform }.to output.to_stdout

@@ -16,6 +16,5 @@ end
 
 require 'rialto/etl'
 require 'rialto/etl/cli'
-
 require 'webmock/rspec'
 WebMock.disable_net_connect!
