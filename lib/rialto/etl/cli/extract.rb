@@ -7,6 +7,25 @@ module Rialto
     module CLI
       # Extract subcommand
       class Extract < Thor
+        option :firstname,
+               required: false,
+               banner: 'FIRSTNAME',
+               desc: 'First name of the researcher (for WebOfScience)',
+               aliases: '-f'
+
+        option :lastname,
+               required: false,
+               banner: 'LASTNAME',
+               desc: 'Last name of the researcher (for WebOfScience)',
+               aliases: '-l'
+
+        option :institution,
+               required: false,
+               default: 'Stanford University',
+               banner: 'INSTITUTION',
+               desc: 'Institution name (for WebOfScience)',
+               aliases: '-i'
+
         desc 'call NAME', "Call named extractor (`#{@package_name} list` to see available names)"
         # Call a extractor by name
         def call(name)
@@ -18,14 +37,14 @@ module Rialto
         desc 'list', 'List callable extractors'
         # List callable extractors
         def list
-          callable_extractors = Rialto::Etl::Extractors.constants.map(&:to_s).sort - ['StanfordClient']
+          callable_extractors = Rialto::Etl::Extractors.constants.map(&:to_s).sort
           say "Extractors supported: #{callable_extractors.join(', ')}"
         end
 
         private
 
         def extractor(name)
-          Rialto::Etl::Extractors.const_get(name).new
+          Rialto::Etl::Extractors.const_get(name).new(options)
         end
       end
     end

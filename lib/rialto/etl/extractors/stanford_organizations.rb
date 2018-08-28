@@ -5,7 +5,7 @@ module Rialto
     module Extractors
       # Stanford CAP API for orgs
       class StanfordOrganizations
-        def initialize(client: StanfordClient.new)
+        def initialize(client: ServiceClient::StanfordClient.new)
           @client = client
         end
 

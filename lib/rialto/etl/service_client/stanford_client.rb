@@ -8,7 +8,7 @@ require 'ruby-progressbar'
 
 module Rialto
   module Etl
-    module Extractors
+    module ServiceClient
       # Client for hitting Stanford APIs using Stanford authz
       class StanfordClient
         # Time at which access token expires (as integer)
@@ -30,13 +30,7 @@ module Rialto
         end
 
         def connection(uri:)
-          Faraday.new(uri, headers: connection_headers) do |connection|
-            connection.request :retry, max: 3, interval: 0.8, interval_randomness: 0.2, backoff_factor: 2
-            connection.ssl.update(verify: true, verify_mode: OpenSSL::SSL::VERIFY_PEER)
-            connection.adapter :httpclient
-            connection.options.timeout = 500
-            connection.options.open_timeout = 10
-          end
+          ConnectionFactory.build(uri: uri, headers: connection_headers)
         end
 
         def connection_headers

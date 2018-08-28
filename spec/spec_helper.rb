@@ -17,7 +17,6 @@ end
 require 'rialto/etl'
 require 'rialto/etl/cli'
 require 'webmock/rspec'
-WebMock.disable_net_connect!
 
 RSpec.configure do |config|
   config.disable_monkey_patching!
