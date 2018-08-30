@@ -36,11 +36,11 @@ RSpec.describe Rialto::Etl::CLI::Transform do
   end
 
   describe '#list' do
-    it 'prints out callable transformers' do
+    it 'prints out callable configs' do
       allow(transformer).to receive(:say)
       transformer.list
       expect(transformer).to have_received(:say)
-        .with('Transformers supported: OrganizationsListToJSONLD, StanfordOrganizationsToJsonList, WebOfScience')
+        .with('Transformers supported: StanfordOrganizations, StanfordPeople, WebOfScience')
     end
   end
 end
