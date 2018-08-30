@@ -35,8 +35,8 @@ module Rialto
 
         def configs
           {
-            'OrganizationsListToJSONLD' => 'lib/rialto/etl/configs/organizations_to_jsonld.rb',
-            'StanfordOrganizationsToJsonList' => 'lib/rialto/etl/configs/stanford_organizations_to_json_list.rb'
+            'StanfordPeopleToSparqlStatements' => 'lib/rialto/etl/configs/stanford_people_to_sparql_statements.rb',
+            'StanfordOrganizationsToSparqlStatements' => 'lib/rialto/etl/configs/stanford_organizations_to_sparql_statements.rb',
           }
         end
 

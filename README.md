@@ -45,9 +45,9 @@ This takes about 20 min as it has to make ~796 requests to get the full
 
 ```
 exe/extract call StanfordResearchers > researchers.ndj
+exe/transform call StanfordPeopleToSparqlStatements -i researchers.ndj > researchers.sparql
+exe/load call Sparql -i researchers.sparql
 ```
-
-_TODO_ We need to transform this ndj file to RDF and then load it.
 
 
 ### Pipeline to harvest Publications

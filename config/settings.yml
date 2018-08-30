@@ -7,4 +7,5 @@ tokens:
   cap: 'dummyvalue'
   wos: 'evendumbervalue'
 sparql_writer:
-  update_url: http://127.0.0.1:9999/blazegraph/namespace/kb/sparql
+  update_url: http://127.0.0.1:9999/blazegraph/namespace/rialto/sparql
+  # update_url: http://127.0.0.1:9999/blazegraph/sparql

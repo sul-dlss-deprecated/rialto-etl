@@ -6,7 +6,7 @@ require 'traject/util'
 require 'traject/qualified_const_get'
 require 'traject/thread_pool'
 
-require 'rialto/sparql/client'
+require 'faraday'
 require 'concurrent' # for atomic_fixnum
 
 module Rialto
@@ -94,9 +94,13 @@ module Rialto
         # @param [Array<Traject::Indexer::Context>] an array of contexts
         def send_batch(batch)
           return if batch.empty?
-
+          statements = +''
+          batch.each { |b| statements << b.source_record }
           begin
-            client.insert_data(data_for_batch(batch))
+            client.post do |req|
+              req.headers['Content-Type'] = 'application/sparql-update'
+              req.body = statements
+            end
           rescue StandardError => exception
             logger.error "Error in SPARQL update. #{exception}"
           end
@@ -105,14 +109,6 @@ module Rialto
         # Get the logger from the settings, or default to an effectively null logger
         def logger
           settings['logger'] ||= Yell.new(STDERR, level: 'gt.fatal') # null logger
-        end
-
-        def data_for_batch(batch)
-          RDF::Graph.new do |graph|
-            batch.each do |b|
-              graph << b.source_record
-            end
-          end
         end
 
         # How many threads to use for the writer?
@@ -124,7 +120,9 @@ module Rialto
 
         def client
           @client ||= begin
-            settings['sparql_writer.client'] || Rialto::SPARQL::Client.new(sparql_update_url)
+            Faraday.new(url:sparql_update_url) do |faraday|
+              faraday.adapter(:net_http_persistent)
+            end
           end
         end
 
