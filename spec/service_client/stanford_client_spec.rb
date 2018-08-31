@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rialto::Etl::Extractors::StanfordClient do
+RSpec.describe Rialto::Etl::ServiceClient::StanfordClient do
   before do
     stub_request(:get, /authz.stanford.edu/)
       .to_return(status: authz_status, body: authz_json, headers: {})

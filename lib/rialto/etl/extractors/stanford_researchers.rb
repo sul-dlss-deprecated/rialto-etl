@@ -7,7 +7,7 @@ module Rialto
     module Extractors
       # Stanford Profiles API
       class StanfordResearchers
-        def initialize(client: StanfordClient.new, per_page: 100, start_page: 1)
+        def initialize(client: ServiceClient::StanfordClient.new, per_page: 100, start_page: 1)
           @client = client
           @per_page = per_page # 100 seems to be the max the API allows
           @page = start_page
