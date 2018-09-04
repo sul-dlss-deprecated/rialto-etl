@@ -12,7 +12,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       let(:page) { 1 }
 
       it do
-        is_expected.to eq '/api/wos?databaseId=WOK&' \
+        is_expected.to eq '/api/wos?databaseId=WOS&' \
         'firstRecord=1&count=100&usrQuery=AU%3DAltman%2CRuss+AND+OG%3DStanford+University'
       end
     end
@@ -20,7 +20,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       let(:page) { 2 }
 
       it do
-        is_expected.to eq '/api/wos?databaseId=WOK&' \
+        is_expected.to eq '/api/wos?databaseId=WOS&' \
         'firstRecord=101&count=100&usrQuery=AU%3DAltman%2CRuss+AND+OG%3DStanford+University'
       end
     end
@@ -30,7 +30,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
     subject { instance.request(page: 1).body }
 
     before do
-      stub_request(:get, 'https://api.clarivate.com/api/wos?count=100&databaseId=WOK&firstRecord=1&usrQuery=AU=Altman,Russ%20AND%20OG=Stanford%20University')
+      stub_request(:get, 'https://api.clarivate.com/api/wos?count=100&databaseId=WOS&firstRecord=1&usrQuery=AU=Altman,Russ%20AND%20OG=Stanford%20University')
         .with(
           headers: {
             'X-Apikey' => 'evendumbervalue'

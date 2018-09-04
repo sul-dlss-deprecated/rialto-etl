@@ -36,7 +36,8 @@ module Rialto
         def configs
           {
             'OrganizationsListToJSONLD' => 'lib/rialto/etl/configs/organizations_to_jsonld.rb',
-            'StanfordOrganizationsToJsonList' => 'lib/rialto/etl/configs/stanford_organizations_to_json_list.rb'
+            'StanfordOrganizationsToJsonList' => 'lib/rialto/etl/configs/stanford_organizations_to_json_list.rb',
+            'WebOfScience' => 'lib/rialto/etl/configs/wos.rb'
           }
         end
 
