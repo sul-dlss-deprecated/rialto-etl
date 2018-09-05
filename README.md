@@ -59,6 +59,12 @@ exe/extract call WebOfScience --firstname Russ --lastname Altman > publications.
 _TODO_ We need to transform this ndj file to RDF and then load it.
 
 
+### Pipeline to harvest Grants
+
+```
+exe/extract call Sera --sunetid ascor
+```
+
 #### Authentication
 
 If you are using the `StanfordResearchers` or `StanfordOrganizations` extract methods, you will first need to obtain a token for the CAP API and set the `Settings.tokens.cap` value to this token. To set this value, either set an environment variable named `SETTINGS__TOKENS__CAP` or add the value for this to `config/settings.local.yml` (which is ignored under version control and should never be checked in), like so:
