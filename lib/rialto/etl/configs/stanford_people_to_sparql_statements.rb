@@ -11,8 +11,8 @@ extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
 settings do
-  # provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlStatementWriter'
-  provide 'writer_class_name', 'Traject::JsonWriter'
+  provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlStatementWriter'
+  # provide 'writer_class_name', 'Traject::JsonWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
 end
 
@@ -50,7 +50,7 @@ to_field '@label', lambda { |json, accum|
 
 # Person name (Vcard)
 to_field '!person_name', literal(true), single: true
-compose '@person_name', ->(rec, acc, _context) { acc << rec } do
+compose '@person_name', ->(json, acc, _context) { acc << json } do
   require 'traject_plus'
   extend TrajectPlus::Macros
   extend TrajectPlus::Macros::JSON
@@ -64,5 +64,21 @@ end
 to_field '!' + VIVO.overview.to_s, literal(true)
 to_field VIVO.overview.to_s, extract_json('$.bio.text'), single: true
 
-# TODO: Person address. Depends on geonames lookup
-# TODO: Person position. Depends on mapping departments.
+# Person address
+to_field '!person_address', literal(true), single: true
+compose '@person_address',
+        ->(json, acc, _context) { acc << JsonPath.on(json, '$.contacts[?(@["type"] == "academic")]').first } do
+  require 'traject_plus'
+  extend TrajectPlus::Macros
+  extend TrajectPlus::Macros::JSON
+  to_field VCARD['street-address'].to_s, extract_json('$.address'), single: true
+  to_field VCARD['locality'].to_s, extract_json('$.city'), single: true
+  to_field VCARD['region'].to_s, extract_json('$.state'), single: true
+  to_field VCARD['postal-code'].to_s, extract_json('$.zip'), single: true
+  # Punting on looking up country based on postal code (http://www.geonames.org/export/web-services.html) and
+  # hardcoding to US (http://sws.geonames.org/6252001/)
+  to_field VCARD['country-name'].to_s, literal('United States'), single: true
+  to_field DCTERMS.spatial.to_s, literal(RDF::URI.new('http://sws.geonames.org/6252001/')), single: true
+end
+
+# # TODO: Person position. Depends on mapping departments.

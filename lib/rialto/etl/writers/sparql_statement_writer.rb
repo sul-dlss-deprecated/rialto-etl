@@ -39,6 +39,9 @@ module Rialto
           # Person name vcard
           statements << person_name_to_statements(subject, hash, graph_name) if hash.key?('@person_name')
 
+          # Person address vcard
+          statements << person_address_to_statements(subject, hash, graph_name) if hash.key?('@person_address')
+
           # All other
           statements << hash_to_delete_insert(subject, hash, graph_name)
           statements.flatten.join(";\n") + ";\n"
@@ -89,6 +92,19 @@ module Rialto
           statements
         end
 
+        def hash_to_insert(subject, hash, graph_name, graph = nil)
+          graph ||= RDF::Graph.new
+          hash.each_pair do |field, values|
+            # Ignore any @fields or !fields
+            next if field.start_with?('@', '!')
+            Array(values).each do |value|
+              graph << [subject, RDF::URI.new(field), value]
+            end
+          end
+          graph_to_insert(graph, graph_name) unless graph.empty?
+        end
+
+
         # rubocop:disable Metrics/MethodLength
         def person_name_to_statements(subject, hash, graph_name)
           statements = []
@@ -103,13 +119,44 @@ module Rialto
           graph = RDF::Graph.new
           graph << [subject, Vocabs::VCARD.hasName, vcard]
           graph << [vcard, RDF.type, Vocabs::VCARD.Name]
-          statements << graph_to_insert(graph, graph_name)
-          statements << hash_to_delete_insert(vcard,
-                                              hash['@person_name'].first,
-                                              graph_name)
+          statements << hash_to_insert(vcard,
+                                       hash['@person_name'].first,
+                                       graph_name,
+                                       graph)
+          statements
+        end
+
+        # rubocop:disable Metrics/MethodLength
+        def person_address_to_statements(subject, hash, graph_name)
+          statements = []
+          vcard = Vocabs::RIALTO_CONTEXT_ADDRESSES[hash['@id']]
+          if hash.key?('!person_address')
+            statements << graph_to_delete([[subject,
+                                            Vocabs::VCARD.hasAddress,
+                                            nil]],
+                                          graph_name)
+            statements << graph_to_delete([[vcard, nil, nil]], graph_name)
+          end
+          graph = RDF::Graph.new
+          graph << [subject, Vocabs::VCARD.hasAddress, vcard]
+          graph << [vcard, RDF.type, Vocabs::VCARD.Address]
+          statements << hash_to_insert(vcard,
+                                       hash['@person_address'].first,
+                                       graph_name, graph)
           statements
         end
         # rubocop:enable Metrics/MethodLength
+        #
+        # # Person address: if $.contacts.type == "academic":
+        # #     Person Address URI: RIALTO Address NS (contexts) + $.contacts.address (Literal) + $.contacts.zip (Literal) (encode or replace spaces or other bad characters)
+        # # Person VCARD.hasAddress Person Address URI .
+        # #     Person Address URI RDF.type, VCARD.Address .
+        # #         Person Address URI VCARD.street-address $.contacts.address (Literal)
+        # # Person Address URI VCARD.locality $.contacts.city (Literal)
+        # # Person Address URI VCARD.region $.contacts.state (Literal)
+        # # Person Address URI VCARD.postal-code $.contacts.zip (Literal)
+        # # Address URI DCTERMS.spatial country_uri (Geonames lookup based on $.contacts.zip)
+        # # Address URI VCARD.country-name Name (Literal, from Geonames lookup based on $.contacts.zip)
       end
     end
   end
