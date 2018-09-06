@@ -120,7 +120,7 @@ module Rialto
 
         def client
           @client ||= begin
-            Faraday.new(url:sparql_update_url) do |faraday|
+            Faraday.new(url: sparql_update_url) do |faraday|
               faraday.adapter(:net_http_persistent)
             end
           end

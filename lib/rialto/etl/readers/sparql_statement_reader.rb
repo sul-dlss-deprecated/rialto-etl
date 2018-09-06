@@ -14,6 +14,7 @@ module Rialto
           @input_stream = input_stream
         end
 
+        # rubocop:disable Metrics/MethodLength
         def each
           # Not sure if this is necessay
           return enum_for(:each) unless block_given?
@@ -22,16 +23,16 @@ module Rialto
           statement = +''
           @input_stream.each_line do |line|
             statement << line
-            if statement.end_with?(";\n")
-              statements << statement
-              if statement.start_with?('INSERT')
-                yield statements
-                statements = +''
-              end
-              statement = +''
+            next unless statement.end_with?(";\n")
+            statements << statement
+            if statement.start_with?('INSERT')
+              yield statements
+              statements = +''
             end
+            statement = +''
           end
         end
+        # rubocop:enable Metrics/MethodLength
       end
     end
   end

@@ -36,7 +36,8 @@ module Rialto
         def configs
           {
             'StanfordPeopleToSparqlStatements' => 'lib/rialto/etl/configs/stanford_people_to_sparql_statements.rb',
-            'StanfordOrganizationsToSparqlStatements' => 'lib/rialto/etl/configs/stanford_organizations_to_sparql_statements.rb',
+            'StanfordOrganizationsToSparqlStatements' =>
+                'lib/rialto/etl/configs/stanford_organizations_to_sparql_statements.rb'
           }
         end
 

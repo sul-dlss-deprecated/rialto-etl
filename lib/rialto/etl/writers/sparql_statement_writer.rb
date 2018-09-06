@@ -70,7 +70,7 @@ module Rialto
               graph << [subject, predicate, value]
             end
           end
-          statements << graph_to_insert(graph, graph_name) if !graph.empty?
+          statements << graph_to_insert(graph, graph_name) unless graph.empty?
           statements
         end
         # rubocop:enable Metrics/MethodLength
