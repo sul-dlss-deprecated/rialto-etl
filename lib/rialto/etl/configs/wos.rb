@@ -5,8 +5,6 @@ require 'rialto/etl/readers/ndjson_reader'
 
 extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
-extend TrajectPlus::Macros
-extend TrajectPlus::Macros::JSON
 
 settings do
   provide 'writer_class_name', 'Traject::JsonWriter'
