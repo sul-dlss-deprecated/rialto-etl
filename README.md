@@ -54,6 +54,8 @@ _TODO_ We need to transform this ndj file to RDF and then load it.
 
 ```
 exe/extract call WebOfScience --firstname Russ --lastname Altman > publications.ndj
+exe/transform call WebOfScience -i publications.ndj > publications.jsonld
+exe/load call Sparql -i publications.jsonld
 ```
 
 _TODO_ We need to transform this ndj file to RDF and then load it.

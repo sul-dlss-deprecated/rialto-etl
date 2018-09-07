@@ -7,7 +7,7 @@ module Rialto
       class WebOfScienceClient
         HOST = 'api.clarivate.com'
         PATH = '/api/wos'
-        PARAMS = { 'databaseId' => 'WOK' }.freeze
+        PARAMS = { 'databaseId' => 'WOS' }.freeze
         MAX_PER_PAGE = 100 # 100 is the max the API allows
 
         def initialize(firstname:, lastname:, institution:)
