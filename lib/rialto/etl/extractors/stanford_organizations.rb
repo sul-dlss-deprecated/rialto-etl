@@ -14,7 +14,7 @@ module Rialto
           return to_enum(:each) unless block_given?
           yield client.get('/cap/v1/orgs/stanford?p=1&ps=10')
         rescue StandardError => exception
-          puts "Error: #{exception.message}"
+          warn "Error: #{exception.message}"
         end
 
         private

@@ -26,6 +26,12 @@ module Rialto
                desc: 'Institution name (for WebOfScience)',
                aliases: '-i'
 
+        option :sunetid,
+               required: false,
+               banner: 'SUNETID',
+               desc: 'SUNet ID (for SeRA API)',
+               aliases: '-s'
+
         desc 'call NAME', "Call named extractor (`#{@package_name} list` to see available names)"
         # Call a extractor by name
         def call(name)
