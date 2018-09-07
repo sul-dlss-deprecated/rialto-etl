@@ -29,7 +29,7 @@ module Rialto
         option :sunetid,
                required: false,
                banner: 'SUNETID',
-               desc: 'SunetID (for Sera)',
+               desc: 'SUNet ID (for SeRA API)',
                aliases: '-s'
 
         desc 'call NAME', "Call named extractor (`#{@package_name} list` to see available names)"
