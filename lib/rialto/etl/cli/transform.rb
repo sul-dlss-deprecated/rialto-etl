@@ -24,8 +24,8 @@ module Rialto
           Transformer.new(input_stream: stream, config_file_path: config).transform
         end
 
-        desc 'list', 'List callable transformers'
-        # List callable transformers
+        desc 'list', 'List callable configs'
+        # List callable configs
         def list
           callable_transformers = configs.keys.sort
           say "Transformers supported: #{callable_transformers.join(', ')}"

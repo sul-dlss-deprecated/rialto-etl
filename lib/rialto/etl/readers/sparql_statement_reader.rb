@@ -25,7 +25,7 @@ module Rialto
             statement << line
             next unless statement.end_with?(";\n")
             statements << statement
-            if statement.start_with?('INSERT')
+            if statement.start_with?('INSERT') || @settings['sparql_statement_reader.by_statement']
               yield statements
               statements = +''
             end

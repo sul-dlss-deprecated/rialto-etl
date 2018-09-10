@@ -82,3 +82,25 @@ compose '@person_address',
 end
 
 # # TODO: Person position. Depends on mapping departments.
+
+# Advisees
+# Deleteting advisees not currently supported since logic not clear.
+# to_field '!advisees', literal(true), single: true
+to_field '@advisees', lambda { |json, accum|
+  advisees_json = JsonPath.on(json, '$.advisees')
+  unless advisees_json.empty?
+    advisees_json[0].each do |advisee_json|
+      advisee_hash = {}
+      advisee_hash['@id'] = JsonPath.on(advisee_json, '$.advisee.profileId').first
+      advisee_hash['@id_ns'] = RIALTO_PEOPLE.to_s
+      advisee_hash['@type'] = [FOAF.Agent, FOAF.Person]
+      advisee_hash['!type'] = true
+      name_vcard_hash = {}
+      name_vcard_hash[VCARD['given-name'].to_s] = JsonPath.on(advisee_json, '$.advisee.firstName').first
+      name_vcard_hash[VCARD['family-name'].to_s] = JsonPath.on(advisee_json, '$.advisee.lastName').first
+      advisee_hash['@person_name'] = [name_vcard_hash]
+      advisee_hash['!person_name'] = true
+      accum << advisee_hash
+    end
+  end
+}
