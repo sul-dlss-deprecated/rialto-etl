@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'json-ld'
   spec.add_dependency 'rdf'
   spec.add_dependency 'ruby-progressbar'
+  spec.add_dependency 'sparql'
   spec.add_dependency 'sparql-client', '~> 3.0'
   spec.add_dependency 'thor', '~> 0.20'
   spec.add_dependency 'traject_plus', '>= 0.0.2'
