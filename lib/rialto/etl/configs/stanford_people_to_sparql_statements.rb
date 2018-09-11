@@ -26,16 +26,16 @@ to_field '@id_ns', literal(RIALTO_PEOPLE.to_s), single: true
 # Person types
 to_field '!type', literal(true), single: true
 to_field '@type', lambda { |json, accum|
-  person_types = [FOAF.Agent, FOAF.Person]
-  person_types << VIVO.Student if JsonPath.on(json, '$.affiliations.capPhdStudent').first == true ||
-                                  JsonPath.on(json, '$.affiliations.capMsStudent').first == true ||
-                                  JsonPath.on(json, '$.affiliations.capMdStudent').first == true
-  person_types << VIVO.FacultyMember if JsonPath.on(json, '$.affiliations.capFaculty').first == true
-  person_types << VIVO.NonFacultyAcademic if JsonPath.on(json, '$.affiliations.capFellow').first == true ||
-                                             JsonPath.on(json, '$.affiliations.capResident').first == true ||
-                                             JsonPath.on(json, '$.affiliations.capPostdoc').first == true
-  person_types << VIVO.NonAcademic if JsonPath.on(json, '$.affiliations.physician').first == true ||
-                                      JsonPath.on(json, '$.affiliations.capStaff').first == true
+  person_types = [FOAF['Agent'], FOAF['Person']]
+  person_types << VIVO['Student'] if JsonPath.on(json, '$.affiliations.capPhdStudent').first == true ||
+                                     JsonPath.on(json, '$.affiliations.capMsStudent').first == true ||
+                                     JsonPath.on(json, '$.affiliations.capMdStudent').first == true
+  person_types << VIVO['FacultyMember'] if JsonPath.on(json, '$.affiliations.capFaculty').first
+  person_types << VIVO['NonFacultyAcademic'] if JsonPath.on(json, '$.affiliations.capFellow').first == true ||
+                                                JsonPath.on(json, '$.affiliations.capResident').first == true ||
+                                                JsonPath.on(json, '$.affiliations.capPostdoc').first == true
+  person_types << VIVO['NonAcademic'] if JsonPath.on(json, '$.affiliations.physician').first == true ||
+                                         JsonPath.on(json, '$.affiliations.capStaff').first == true
   accum.concat(person_types)
 }
 
@@ -61,8 +61,8 @@ end
 # TODO: Is there a way to make this single?
 
 # Bio
-to_field '!' + VIVO.overview.to_s, literal(true)
-to_field VIVO.overview.to_s, extract_json('$.bio.text'), single: true
+to_field '!' + VIVO['overview'].to_s, literal(true)
+to_field VIVO['overview'].to_s, extract_json('$.bio.text'), single: true
 
 # Person address
 to_field '!person_address', literal(true), single: true
@@ -78,7 +78,7 @@ compose '@person_address',
   # Punting on looking up country based on postal code (http://www.geonames.org/export/web-services.html) and
   # hardcoding to US (http://sws.geonames.org/6252001/)
   to_field VCARD['country-name'].to_s, literal('United States'), single: true
-  to_field DCTERMS.spatial.to_s, literal(RDF::URI.new('http://sws.geonames.org/6252001/')), single: true
+  to_field DCTERMS['spatial'].to_s, literal(RDF::URI.new('http://sws.geonames.org/6252001/')), single: true
 end
 
 # # TODO: Person position. Depends on mapping departments.
@@ -93,7 +93,7 @@ to_field '@advisees', lambda { |json, accum|
       advisee_hash = {}
       advisee_hash['@id'] = JsonPath.on(advisee_json, '$.advisee.profileId').first
       advisee_hash['@id_ns'] = RIALTO_PEOPLE.to_s
-      advisee_hash['@type'] = [FOAF.Agent, FOAF.Person]
+      advisee_hash['@type'] = [FOAF['Agent'], FOAF['Person']]
       advisee_hash['!type'] = true
       name_vcard_hash = {}
       name_vcard_hash[VCARD['given-name'].to_s] = JsonPath.on(advisee_json, '$.advisee.firstName').first

@@ -38,8 +38,8 @@ module Rialto
           # Label
           # SKOS.prefLabel & VCARD.fn
           statements << values_to_delete_insert(subject,
-                                                [Vocabs::SKOS.prefLabel,
-                                                 Vocabs::FOAF.fn], hash['@label'],
+                                                [Vocabs::SKOS['prefLabel'],
+                                                 Vocabs::FOAF['fn']], hash['@label'],
                                                 graph_name,
                                                 hash.key?('!label'))
 
@@ -120,13 +120,13 @@ module Rialto
           vcard = Vocabs::RIALTO_CONTEXT_NAMES[hash['@id']]
           if hash.key?('!person_name')
             statements << graph_to_delete([[subject,
-                                            Vocabs::VCARD.hasName,
+                                            Vocabs::VCARD['hasName'],
                                             nil]],
                                           graph_name)
             statements << graph_to_delete([[vcard, nil, nil]], graph_name)
           end
           graph = RDF::Graph.new
-          graph << [subject, Vocabs::VCARD.hasName, vcard]
+          graph << [subject, Vocabs::VCARD['hasName'], vcard]
           graph << [vcard, RDF.type, Vocabs::VCARD.Name]
           statements << hash_to_insert(vcard,
                                        hash['@person_name'].first,
@@ -142,13 +142,13 @@ module Rialto
           vcard = Vocabs::RIALTO_CONTEXT_ADDRESSES[hash['@id']]
           if hash.key?('!person_address')
             statements << graph_to_delete([[subject,
-                                            Vocabs::VCARD.hasAddress,
+                                            Vocabs::VCARD['hasAddress'],
                                             nil]],
                                           graph_name)
             statements << graph_to_delete([[vcard, nil, nil]], graph_name)
           end
           graph = RDF::Graph.new
-          graph << [subject, Vocabs::VCARD.hasAddress, vcard]
+          graph << [subject, Vocabs::VCARD['hasAddress'], vcard]
           graph << [vcard, RDF.type, Vocabs::VCARD.Address]
           statements << hash_to_insert(vcard,
                                        hash['@person_address'].first,
@@ -166,18 +166,18 @@ module Rialto
             graph = RDF::Graph.new
             advisee_id = advisee_hash['@id'].to_s
             relationship = Vocabs::RIALTO_CONTEXT_RELATIONSHIPS[advisee_id + '_' + advisor_id]
-            graph << [relationship, RDF.type, Vocabs::VIVO.AdvisingRelationship]
-            advisor_role = Vocabs::RIALTO_CONTEXT_ROLES.AdvisorRole
-            graph << [advisor_role, RDF.type, Vocabs::VIVO.AdvisorRole]
-            advisee_role = Vocabs::RIALTO_CONTEXT_ROLES.AdviseeRole
-            graph << [advisee_role, RDF.type, Vocabs::VIVO.AdviseeRole]
-            graph << [advisor, Vocabs::VIVO.relatedBy, relationship]
+            graph << [relationship, RDF.type, Vocabs::VIVO['AdvisingRelationship']]
+            advisor_role = Vocabs::RIALTO_CONTEXT_ROLES['AdvisorRole']
+            graph << [advisor_role, RDF.type, Vocabs::VIVO['AdvisorRole']]
+            advisee_role = Vocabs::RIALTO_CONTEXT_ROLES['AdviseeRole']
+            graph << [advisee_role, RDF.type, Vocabs::VIVO['AdviseeRole']]
+            graph << [advisor, Vocabs::VIVO['relatedBy'], relationship]
             advisee = RDF::URI.new(advisee_hash['@id_ns'] + advisee_id)
-            graph << [advisee, Vocabs::VIVO.relatedBy, relationship]
-            graph << [advisor, Vocabs::OBO.RO_0000053, advisor_role]
-            graph << [advisor_role, Vocabs::OBO.RO_0000052, advisor]
-            graph << [advisee, Vocabs::OBO.RO_0000053, advisee_role]
-            graph << [advisee_role, Vocabs::OBO.RO_0000052, advisee]
+            graph << [advisee, Vocabs::VIVO['relatedBy'], relationship]
+            graph << [advisor, Vocabs::OBO['RO_0000053'], advisor_role]
+            graph << [advisor_role, Vocabs::OBO['RO_0000052'], advisor]
+            graph << [advisee, Vocabs::OBO['RO_0000053'], advisee_role]
+            graph << [advisee_role, Vocabs::OBO['RO_0000052'], advisee]
             statements << graph_to_insert(graph, graph_name)
           end
           statements

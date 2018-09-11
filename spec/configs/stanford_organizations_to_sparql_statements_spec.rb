@@ -156,7 +156,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::OBO['BFO0000050'],
+                                 Rialto::Etl::Vocabs::OBO['BFO_0000050'],
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']])
                        .true?
         expect(result).to be true
@@ -300,7 +300,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::OBO['BFO0000050'],
+                                 Rialto::Etl::Vocabs::OBO['BFO_0000050'],
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']])
                        .true?
         expect(result).to be false
@@ -308,7 +308,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::OBO['BFO0000050'],
+                                 Rialto::Etl::Vocabs::OBO['BFO_0000050'],
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['amherst']])
                        .true?
         expect(result).to be true
