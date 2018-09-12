@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday_middleware'
   spec.add_dependency 'httpclient'
   spec.add_dependency 'json-ld'
-  spec.add_dependency 'oauth2'
+  spec.add_dependency 'oauth2', '~> 1.4'
   spec.add_dependency 'rdf'
   spec.add_dependency 'ruby-progressbar'
   spec.add_dependency 'sparql-client', '~> 3.0'
