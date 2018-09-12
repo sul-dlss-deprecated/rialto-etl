@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/readers/ndjson_reader'
-# require 'rdf'
+require 'rdf'
+require 'json/ld'
 
 module Rialto
   module Etl

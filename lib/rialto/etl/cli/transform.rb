@@ -24,8 +24,8 @@ module Rialto
           Transformer.new(input_stream: stream, config_file_path: config).transform
         end
 
-        desc 'list', 'List callable transformers'
-        # List callable transformers
+        desc 'list', 'List callable configs'
+        # List callable configs
         def list
           callable_transformers = configs.keys.sort
           say "Transformers supported: #{callable_transformers.join(', ')}"
@@ -35,8 +35,8 @@ module Rialto
 
         def configs
           {
-            'OrganizationsListToJSONLD' => 'lib/rialto/etl/configs/organizations_to_jsonld.rb',
-            'StanfordOrganizationsToJsonList' => 'lib/rialto/etl/configs/stanford_organizations_to_json_list.rb',
+            'StanfordPeople' => 'lib/rialto/etl/configs/stanford_people_to_sparql_statements.rb',
+            'StanfordOrganizations' => 'lib/rialto/etl/configs/stanford_organizations_to_sparql_statements.rb',
             'WebOfScience' => 'lib/rialto/etl/configs/wos.rb'
           }
         end
