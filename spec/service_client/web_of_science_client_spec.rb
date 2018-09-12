@@ -33,7 +33,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       stub_request(:get, 'https://api.clarivate.com/api/wos?count=100&databaseId=WOS&firstRecord=1&usrQuery=AU=Altman,Russ%20AND%20OG=Stanford%20University')
         .with(
           headers: {
-            'X-Apikey' => 'evendumbervalue'
+            'X-Apikey' => /.*/
           }
         )
         .to_return(status: 200, body: 'Dood', headers: {})
