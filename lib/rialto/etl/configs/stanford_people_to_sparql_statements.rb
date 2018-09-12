@@ -12,6 +12,7 @@ extend Rialto::Etl::Vocabs
 
 settings do
   provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlStatementWriter'
+  # For development, may want to use following writer:
   # provide 'writer_class_name', 'Traject::JsonWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
 end
@@ -81,11 +82,8 @@ compose '@person_address',
   to_field DCTERMS['spatial'].to_s, literal(RDF::URI.new('http://sws.geonames.org/6252001/')), single: true
 end
 
-# # TODO: Person position. Depends on mapping departments.
-
 # Advisees
-# Deleteting advisees not currently supported since logic not clear.
-# to_field '!advisees', literal(true), single: true
+# Note that advisees are not deleted.
 to_field '@advisees', lambda { |json, accum|
   advisees_json = JsonPath.on(json, '$.advisees')
   unless advisees_json.empty?
@@ -94,6 +92,8 @@ to_field '@advisees', lambda { |json, accum|
       advisee_hash['@id'] = JsonPath.on(advisee_json, '$.advisee.profileId').first
       advisee_hash['@id_ns'] = RIALTO_PEOPLE.to_s
       advisee_hash['@type'] = [FOAF['Agent'], FOAF['Person']]
+      advisee_hash['@label'] = [JsonPath.on(advisee_json, '$.advisee.firstName').first,
+                                JsonPath.on(advisee_json, '$.advisee.lastName').first].join(' ')
       advisee_hash['!type'] = true
       name_vcard_hash = {}
       name_vcard_hash[VCARD['given-name'].to_s] = JsonPath.on(advisee_json, '$.advisee.firstName').first
@@ -104,3 +104,17 @@ to_field '@advisees', lambda { |json, accum|
     end
   end
 }
+
+# Email
+to_field '!' + VCARD['hasEmail'].to_s, literal(true)
+to_field VCARD['hasEmail'].to_s, extract_json('$.primaryContact.email'), single: true
+
+# SUNet Id
+to_field DCTERMS['identifier'].to_s, lambda { |json, accum|
+  if (sunet_id = JsonPath.on(json, '$.uid').first)
+    accum << RDF::Literal.new(sunet_id, datatype: RIALTO_CONTEXT_IDENTIFIERS['Sunetid'])
+  end
+}, single: true
+
+# TODO: Person position. Depends on mapping organization.
+# TODO: Keywords

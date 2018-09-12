@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'traject'
-# require 'json/ld'
 
 module Rialto
   module Etl

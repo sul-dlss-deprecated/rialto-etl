@@ -32,6 +32,9 @@ module Rialto
           subject = RDF::URI.new(hash['@id_ns'] + subject_id)
           graph_name ||= hash['@graph']
 
+          # Always add a valid date
+          statements << values_to_delete_insert(subject, Vocabs::DCTERMS['valid'], Time.now.to_date, graph_name, true)
+
           # Type
           statements << values_to_delete_insert(subject, RDF.type, hash['@type'], graph_name, hash.key?('!type'))
 
@@ -64,6 +67,8 @@ module Rialto
         end
 
         def graph_to_delete(graph, graph_name)
+          # Note: Cannot perform insert in deleteinsert because insert is only performed when the where clause is
+          # satisfied. Thus, it works for an update but not an initial insert.
           SPARQL::Client::Update::DeleteInsert.new(graph,
                                                    nil,
                                                    nil,
@@ -174,6 +179,7 @@ module Rialto
             graph << [advisor, Vocabs::VIVO['relatedBy'], relationship]
             advisee = RDF::URI.new(advisee_hash['@id_ns'] + advisee_id)
             graph << [advisee, Vocabs::VIVO['relatedBy'], relationship]
+            graph << [relationship, Vocabs::DCTERMS['valid'], RDF::Literal::Date.new(Time.now.to_date)]
             graph << [advisor, Vocabs::OBO['RO_0000053'], advisor_role]
             graph << [advisor_role, Vocabs::OBO['RO_0000052'], advisor]
             graph << [advisee, Vocabs::OBO['RO_0000053'], advisee_role]

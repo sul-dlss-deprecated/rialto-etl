@@ -5,9 +5,12 @@ module Rialto
     module Readers
       # Read SPARQL statements from a file. Statements may be on multiple
       # lines, but are semicolon delimited.
+      # DELETES are grouped with any following INSERTS. This is to avoid concurrency problems when executing in parallel.
       # UTF-8 encoding is required.
       class SparqlStatementReader
         include Enumerable
+
+        attr_reader :settings, :input_stream
 
         def initialize(input_stream, settings)
           @settings = settings
@@ -16,16 +19,16 @@ module Rialto
 
         # rubocop:disable Metrics/MethodLength
         def each
-          # Not sure if this is necessay
           return enum_for(:each) unless block_given?
 
+          # + below makes the string mutable
           statements = +''
           statement = +''
-          @input_stream.each_line do |line|
+          input_stream.each_line do |line|
             statement << line
             next unless statement.end_with?(";\n")
             statements << statement
-            if statement.start_with?('INSERT') || @settings['sparql_statement_reader.by_statement']
+            if statement.start_with?('INSERT') || settings['sparql_statement_reader.by_statement']
               yield statements
               statements = +''
             end

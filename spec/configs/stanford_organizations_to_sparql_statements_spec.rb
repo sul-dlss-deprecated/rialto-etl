@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rdf'
 require 'traject'
 require 'sparql'
 require 'sparql/client'
@@ -148,6 +147,16 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation/other-daper-administration'], :p, :o])
+                       .true?
+        expect(result).to be true
+
+        # Has valid date
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
+                          'education-and-recreation/other-daper-administration'],
+                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
+                                 RDF::Literal::Date.new(Time.now.to_date)])
                        .true?
         expect(result).to be true
 
@@ -313,7 +322,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
 
-        # TODO: Change parent
+        # TODO: Test change children
         # rubocop:enable RSpec/ExampleLength
         # rubocop:enable RSpec/MultipleExpectations
       end
