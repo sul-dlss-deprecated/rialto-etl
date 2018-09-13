@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rdf/vocabulary'
 require 'rdf'
 
 module Rialto
