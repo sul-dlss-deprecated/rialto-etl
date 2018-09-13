@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'digest'
 require 'traject_plus'
 require 'rialto/etl/readers/ndjson_reader'
 
@@ -11,47 +12,35 @@ settings do
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
 end
 
-to_field 'http://purl.org/ontology/bibo/doi',
-         extract_json("$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=='doi')].value"), single: true
-to_field '@id',
-         extract_json('$.UID'),
-         transform: transform(prepend: 'http://rialto.stanford.edu/publications/'),
+to_field '@id', lambda { |json, accumulator|
+  source_id = JsonPath.on(json, '$.UID').first
+  subject_uri = "http://sul.stanford.edu/rialto/publications/#{Digest::MD5.hexdigest(source_id)}"
+  accumulator << subject_uri
+}, single: true
+to_field '@type',
+         extract_json('$.static_data.fullrecord_metadata.normalized_doctypes.doctype',
+                      translation_map: 'wos_document_types_to_rialto'),
          single: true
-to_field '@type', lambda { |_json, accum|
-                    accum.concat(['http://purl.org/ontology/bibo/Document'])
-                  }
-to_field 'http://purl.org/ontology/bibo/abstract',
-         extract_json('$.static_data.fullrecord_metadata.abstracts.abstract.abstract_text.p')
+to_field 'http://purl.org/ontology/bibo/abstract', lambda { |json, accumulator|
+  abstracts = JsonPath.on(json, '$.static_data.fullrecord_metadata.abstracts.abstract.abstract_text.p')
+  accumulator << abstracts.flatten.join(' ') unless abstracts.empty?
+}, single: true
+to_field 'http://purl.org/ontology/bibo/doi', lambda { |json, accumulator|
+  doi = JsonPath.on(json, '$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=="doi")].value').first ||
+        JsonPath.on(json, '$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=="xref_doi")].value').first
+  accumulator << doi if doi
+}, single: true
+to_field 'http://purl.org/ontology/bibo/identifier',
+         extract_json('$.dynamic_data.cluster_related.identifiers.identifier[*].value')
+to_field 'http://purl.org/dc/terms/hasPart',
+         extract_json("$.static_data.summary.titles.title[?(@.type=='source')].content"),
+         single: true
+to_field 'http://vivoweb.org/ontology/core#publisher',
+         extract_json('$.static_data.summary.publishers.publisher.names.name.display_name'),
+         single: true
 to_field 'http://purl.org/dc/terms/title',
-         extract_json("$.static_data.summary.titles.title[?(@.type=='item')].content")
-
-# [
-#   {
-#     "grant_ids": {
-#       "grant_id": [
-#         "GM102365",
-#         "LM05652",
-#         "GM61374"
-#       ],
-#       "count": 3
-#     },
-#     "grant_agency": "NIH"
-#   },
-#   {
-#     "grant_ids": {
-#       "count": 1,
-#       "grant_id": "U01FD004979"
-#     },
-#     "grant_agency": "FDA"
-#   }
-# ]
-# to_field 'http://vivoweb.org/ontology/core#hasFundingVehicle',
-#          extract_json('$.static_data.fullrecord_metadata.fund_ack.grants.grant'),
-#          transform: lambda { |o, tw, thre|
-#            # We want to parse grant agency/id
-#            $stderr.puts "in transform #{o}, #{tw}, #{thre}"
-#          }
-
-# Build vivo:Authorship with this
-# to_field 'http://vivoweb.org/ontology/core#relatedBy',
-#          extract_json("$.static_data.summary.names.name[?(@.role=='author')]")
+         extract_json("$.static_data.summary.titles.title[?(@.type=='item')].content"),
+         single: true
+to_field 'http://purl.org/dc/terms/created',
+         extract_json('$.static_data.summary.pub_info.sortdate'),
+         single: true

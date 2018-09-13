@@ -1,0 +1,9 @@
+__default__:         http://purl.org/ontology/bibo/Document
+Abstract:            http://vivoweb.org/ontology/core#Abstract
+Article:             http://purl.org/ontology/bibo/Article
+Book:                http://purl.org/ontology/bibo/Book
+Data Set:            http://vivoweb.org/ontology/core#Dataset
+Patent:              http://purl.org/ontology/bibo/Patent
+Report:              http://purl.org/ontology/bibo/Report
+Standard:            http://purl.org/ontology/bibo/Standard
+Thesis/Dissertation: http://purl.org/ontology/bibo/Thesis
