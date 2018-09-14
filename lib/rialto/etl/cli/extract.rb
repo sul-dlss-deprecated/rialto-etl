@@ -21,7 +21,6 @@ module Rialto
 
         option :institution,
                required: false,
-               default: 'Stanford University',
                banner: 'INSTITUTION',
                desc: 'Institution name (for WebOfScience)',
                aliases: '-i'
