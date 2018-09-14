@@ -26,6 +26,7 @@ module Rialto
           serialize_hash(context.output_hash).flatten.join(";\n") + ";\n"
         end
 
+        # rubocop:disable Metrics/CyclomaticComplexity
         def serialize_hash(hash, graph_name = nil)
           statements = []
           subject_id = hash['@id'].to_s
@@ -56,9 +57,14 @@ module Rialto
           statements << advisees_to_statements(subject, subject_id, hash, graph_name) if hash.key?('@advisees') &&
                                                                                          !hash['@advisees'].empty?
 
+          # Advisees
+          statements << positions_to_statements(subject, subject_id, hash, graph_name) if hash.key?('@positions') &&
+                                                                                          !hash['@positions'].empty?
+
           # All other
           statements << hash_to_delete_insert(subject, hash, graph_name)
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
         # rubocop:enable Metrics/AbcSize
         # rubocop:enable Metrics/MethodLength
 
@@ -185,6 +191,32 @@ module Rialto
             graph << [advisee, Vocabs::OBO['RO_0000053'], advisee_role]
             graph << [advisee_role, Vocabs::OBO['RO_0000052'], advisee]
             statements << graph_to_insert(graph, graph_name)
+          end
+          statements
+        end
+        # rubocop:enable Metrics/AbcSize
+        # rubocop:enable Metrics/MethodLength
+
+        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable Metrics/AbcSize
+        def positions_to_statements(subject, subject_id, hash, graph_name)
+          statements = []
+          hash['@positions'].each do |position_hash|
+            graph = RDF::Graph.new
+            position = Vocabs::RIALTO_CONTEXT_POSITIONS["#{position_hash['@org_code']}_#{subject_id}"]
+            graph << [position, RDF.type, Vocabs::VIVO['Position']]
+            graph << [subject, Vocabs::VIVO['relatedBy'], position]
+            graph << [position, Vocabs::VIVO['relates'], subject]
+            graph << [position_hash['@organization'], Vocabs::VIVO['relatedBy'], position]
+            graph << [position, Vocabs::VIVO['relates'], position_hash['@organization']]
+            graph << [position, Vocabs::DCTERMS['valid'], RDF::Literal::Date.new(Time.now.to_date)]
+            statements << graph_to_insert(graph, graph_name)
+            statements << values_to_delete_insert(position,
+                                                  Vocabs::RDFS['label'],
+                                                  position_hash['@label'],
+                                                  graph_name,
+                                                  position_hash.key?('!label'))
+            statements << hash_to_delete_insert(position, position_hash, graph_name)
           end
           statements
         end

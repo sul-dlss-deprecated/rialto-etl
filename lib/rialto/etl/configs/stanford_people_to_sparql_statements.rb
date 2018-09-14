@@ -116,5 +116,18 @@ to_field DCTERMS['identifier'].to_s, lambda { |json, accum|
   end
 }, single: true
 
-# TODO: Person position. Depends on mapping organization.
+# Person positions
+compose '@positions', ->(json, acc, _context) { acc.concat(JsonPath.on(json, '$.titles').first || []) } do
+  extend TrajectPlus::Macros
+  extend TrajectPlus::Macros::JSON
+
+  to_field '!label', literal(true), single: true
+  to_field '@label', extract_json('$.label.text'), single: true
+  to_field '!' + VIVO['hrJobTitle'], literal(true), single: true
+  to_field VIVO['hrJobTitle'].to_s, extract_json('$.title'), single: true
+  to_field '@org_code', extract_json('$.organization.orgCode'), single: true
+  to_field '@organization', extract_json('$.organization.orgCode'),
+           transform: transform(translation_map: 'stanford_org_codes_to_organizations'), single: true
+end
+
 # TODO: Keywords

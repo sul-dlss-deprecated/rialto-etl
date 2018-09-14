@@ -31,17 +31,18 @@ Or install it yourself as:
 ### Pipeline to ingest organizations into Rialto
 
 ```
-exe/extract call StanfordOrganizations > step1.json
-exe/transform call StanfordOrganizationsToJsonList -i step1.json > step2.json
-exe/transform call OrganizationsListToJSONLD -i step2.json > step3.jsonld
-SETTINGS__TOKENS__RIALTO=<Rialto API key> exe/load call Sparql -i step3.jsonld
+exe/extract call StanfordOrganizations > organizations.json
+exe/transform call StanfordOrganizations -i organizations.json > organizations.sparql
+SETTINGS__TOKENS__RIALTO=<Rialto API key> exe/load call Sparql -i organizations.sparql
 ```
 
 
 ### Pipeline to harvest Researchers from Stanford
 
-This takes about 20 min as it has to make ~796 requests to get the full
+Notes:
+* This takes about 20 min as it has to make ~796 requests to get the full
 1.6GB of data.
+* Depends on `organizations.json` from organizations pipeline.
 
 ```
 exe/extract call StanfordResearchers > researchers.ndj

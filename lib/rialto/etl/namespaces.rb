@@ -14,12 +14,14 @@ module Rialto
       RIALTO_CONTEXT_RELATIONSHIPS = RDF::Vocabulary.new(rialto_base + 'context/relationships/')
       RIALTO_CONTEXT_ROLES = RDF::Vocabulary.new(rialto_base + 'context/roles/')
       RIALTO_CONTEXT_IDENTIFIERS = RDF::Vocabulary.new(rialto_base + 'context/identifiers/')
+      RIALTO_CONTEXT_POSITIONS = RDF::Vocabulary.new(rialto_base + 'context/positions/')
       SKOS = RDF::Vocabulary.new('http://www.w3.org/2004/02/skos/core#')
       VCARD = RDF::Vocabulary.new('http://www.w3.org/2006/vcard/ns#')
       FOAF = RDF::Vocabulary.new('http://xmlns.com/foaf/0.1/')
       VIVO = RDF::Vocabulary.new('http://vivoweb.org/ontology/core#')
       DCTERMS = RDF::Vocabulary.new('http://purl.org/dc/terms/')
       OBO = RDF::Vocabulary.new('http://purl.obolibrary.org/obo/')
+      RDFS = RDF::Vocabulary.new('http://www.w3.org/2000/01/rdf-schema#')
     end
     # Holds graph names
     module NamedGraphs
