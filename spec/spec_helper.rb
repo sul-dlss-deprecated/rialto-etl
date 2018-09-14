@@ -23,3 +23,6 @@ RSpec.configure do |config|
   config.order = :random
   Kernel.srand config.seed
 end
+
+# Require supporting ruby files from spec/support/ and subdirectories.
+Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
