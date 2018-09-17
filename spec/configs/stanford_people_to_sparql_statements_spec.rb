@@ -184,8 +184,6 @@ RSpec.describe Rialto::Etl::Transformer do
       before do
         transform(STANFORD_PERSON_INSERT)
       end
-
-      # rubocop:disable RSpec/ExampleLength
       # rubocop:disable RSpec/MultipleExpectations
       it 'is inserted with person triples' do
         # Test 3 people
@@ -394,7 +392,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
       end
-      # rubocop:enable RSpec/ExampleLength
+
       # rubocop:enable RSpec/MultipleExpectations
     end
     describe 'update person' do
@@ -402,8 +400,6 @@ RSpec.describe Rialto::Etl::Transformer do
         transform(STANFORD_PERSON_INSERT)
         transform(STANFORD_PERSON_UPDATE)
       end
-
-      # rubocop:disable RSpec/ExampleLength
       # rubocop:disable RSpec/MultipleExpectations
       it 'updates the person' do
         # Test 4 people (removed 2 advisees and added one)
@@ -499,7 +495,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
       end
-      # rubocop:enable RSpec/ExampleLength
+
       # rubocop:enable RSpec/MultipleExpectations
     end
   end
