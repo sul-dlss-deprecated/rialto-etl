@@ -43,10 +43,9 @@ to_field 'http://purl.org/ontology/bibo/doi', lambda { |json, accumulator|
 }, single: true
 
 to_field 'http://vivoweb.org/ontology/core#relatedBy', lambda { |json, accumulator|
-  # Sometimes this returns a hash and othertimes it returns an array, so make it always an array:
-  contributors = Array.wrap(JsonPath.on(json, '$.static_data.contributors.contributor').first)
+  contributors = Array.wrap(JsonPath.on(json, '$.static_data.summary.names.name').first)
   people_uris = contributors.map do |c|
-    { '@id' => resolve_person(c['name'].slice('orcid_id', 'first_name', 'last_name')) }
+    { '@id' => resolve_person(c.slice('orcid_id', 'first_name', 'last_name', 'full_name')) }
   end
   accumulator << { '@type' => 'http://vivoweb.org/ontology/core#Authorship',
                    'http://vivoweb.org/ontology/core#relates' => people_uris }
