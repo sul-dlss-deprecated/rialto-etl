@@ -15,11 +15,11 @@ RSpec.describe 'Transforming organization list to jsonld' do
   end
 
   before do
-    stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018')
+    stub_request(:get, 'http://127.0.0.1:3001/person?country=USA&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
       .with(headers: { 'X-Api-Key' => 'abc123' })
       .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/15bf29be-470a-442e-9389-f66aac440a7b')
 
-    stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Russ%20B.&full_name=Altman,%20Russ%20B.&last_name=Altman')
+    stub_request(:get, 'http://127.0.0.1:3001/person?country=USA&first_name=Russ%20B.&full_name=Altman,%20Russ%20B.&last_name=Altman&organization=Stanford%20University')
       .with(headers: { 'X-Api-Key' => 'abc123' })
       .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/dc934b74-e554-409b-967b-0d555c44cc2c')
   end

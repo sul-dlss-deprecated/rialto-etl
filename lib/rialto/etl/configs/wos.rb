@@ -17,10 +17,38 @@ def resolve_person(params)
   return resp.body if resp.success?
 end
 
+# Find all of the addresses and index them by addr_no into a Hash.
+def fetch_addresses(json)
+  addresses = Array.wrap(JsonPath.on(json, '$.static_data.fullrecord_metadata.addresses.address_name').first)
+  addresses.each_with_object({}) do |addr_name, h|
+    addr = addr_name['address_spec']
+    result = addr.slice('country')
+    org = addr.fetch('organizations').fetch('organization').find { |o| o['pref'] == 'Y' }
+    result['organization'] = org['content']
+    h[addr.fetch('addr_no')] = result
+  end
+end
+
+# @param addresses [Hash] a lookup between the addr_no and the data
+# @param addr_id [Integer,String,NilClass] the address identifier to lookup
+# @return [Hash,NilClass] the address for the provided identifier
+def lookup_address(addresses, addr_id)
+  ### addr_no could be an integer or a space delimited string.
+  address_id = case addr_id
+               when String
+                 addr_id.split(' ').map(&:to_i).first
+               when Integer
+                 addr_id
+               end
+  return unless address_id # it may be nil
+  addresses[address_id]
+end
+
 settings do
   provide 'writer_class_name', 'Traject::JsonWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
   provide 'entity_resolver.url', ::Settings.entity_resolver.url
+  # provide 'processing_thread_pool', 0 # Turns off multithreading, for debugging
 end
 
 to_field '@id', lambda { |json, accumulator|
@@ -43,9 +71,14 @@ to_field 'http://purl.org/ontology/bibo/doi', lambda { |json, accumulator|
 }, single: true
 
 to_field 'http://vivoweb.org/ontology/core#relatedBy', lambda { |json, accumulator|
+  addresses = fetch_addresses(json)
+  # Lookup all the contributors in the entity resolution service to find their URIs.
   contributors = Array.wrap(JsonPath.on(json, '$.static_data.summary.names.name').first)
   people_uris = contributors.map do |c|
-    { '@id' => resolve_person(c.slice('orcid_id', 'first_name', 'last_name', 'full_name')) }
+    address = lookup_address(addresses, c['addr_no'])
+    person_params = c.slice('orcid_id', 'first_name', 'last_name', 'full_name')
+    person_params.merge!(address) if address
+    { '@id' => resolve_person(person_params) }
   end
   accumulator << { '@type' => 'http://vivoweb.org/ontology/core#Authorship',
                    'http://vivoweb.org/ontology/core#relates' => people_uris }
