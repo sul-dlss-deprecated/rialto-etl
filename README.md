@@ -38,7 +38,7 @@ SETTINGS__TOKENS__RIALTO=<Rialto API key> exe/load call Sparql -i step3.jsonld
 ```
 
 
-### Pipeline to harvest Researchers
+### Pipeline to harvest Researchers from Stanford
 
 This takes about 20 min as it has to make ~796 requests to get the full
 1.6GB of data.

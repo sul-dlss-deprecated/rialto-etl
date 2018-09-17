@@ -14,3 +14,6 @@ sparql_writer:
 sera:
   token_url: https://aswsuat.stanford.edu/api/oauth/token
   service_url: https://aswsuat.stanford.edu
+entity_resolver:
+  url: http://127.0.0.1:3001/
+  api_key: abc123
