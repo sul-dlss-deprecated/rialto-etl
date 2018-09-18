@@ -24,4 +24,4 @@ RSpec/MultipleExpectations:
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
 Metrics/LineLength:
-  Max: 122
+  Max: 133

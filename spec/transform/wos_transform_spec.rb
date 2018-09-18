@@ -101,6 +101,10 @@ RSpec.describe 'Transforming organization list to jsonld' do
       stub_request(:get, 'http://127.0.0.1:3001/person?country=USA&first_name=Russ%20B.&full_name=Altman,%20Russ%20B.&last_name=Altman&organization=Stanford%20University')
         .with(headers: { 'X-Api-Key' => 'abc123' })
         .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/dc934b74-e554-409b-967b-0d555c44cc2c')
+
+      stub_request(:get, 'http://127.0.0.1:3001/topic?name=Research%20%26%20Experimental%20Medicine')
+        .with(headers: { 'X-Api-Key' => 'abc123' })
+        .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/concepts/d700824f-ae47-4244-885c-7cfc55b240f9')
     end
 
     it 'outputs transformer results to stdout' do
@@ -109,6 +113,7 @@ RSpec.describe 'Transforming organization list to jsonld' do
         '@type' => 'http://purl.org/ontology/bibo/Document',
         'http://purl.org/dc/terms/created' => '2018-02-01',
         'http://purl.org/dc/terms/hasPart' => 'EXPERIMENTAL BIOLOGY AND MEDICINE',
+        'http://purl.org/dc/terms/subject' => ['http://sul.stanford.edu/rialto/concepts/d700824f-ae47-4244-885c-7cfc55b240f9'],
         'http://purl.org/dc/terms/title' => 'Biomarkers: Delivering on the expectation of ' \
           'molecularly driven, quantitative health',
         'http://purl.org/ontology/bibo/abstract' => 'Biomarkers are the pillars of precision ' \

@@ -9,11 +9,12 @@ extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
 
 # Do a lookup using the entity resolution service.
+# @param [String] type the type of entity
 # @param [Hash] params the values to query for.
-# @return [String] the uri for the person resource
-def resolve_person(params)
+# @return [String] the uri for the resource
+def resolve_entity(type, params)
   conn = Faraday.new(url: settings['entity_resolver.url'])
-  resp = conn.get('person', params, 'X-Api-Key' => 'abc123')
+  resp = conn.get(type, params, 'X-Api-Key' => 'abc123')
   return resp.body if resp.success?
 end
 
@@ -80,7 +81,6 @@ to_field 'http://purl.org/ontology/bibo/doi', lambda { |json, accumulator|
         JsonPath.on(json, '$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=="xref_doi")].value').first
   accumulator << doi if doi
 }, single: true
-
 to_field 'http://vivoweb.org/ontology/core#relatedBy', lambda { |json, accumulator|
   addresses = fetch_addresses(json)
   # Lookup all the contributors in the entity resolution service to find their URIs.
@@ -89,12 +89,17 @@ to_field 'http://vivoweb.org/ontology/core#relatedBy', lambda { |json, accumulat
     address = lookup_address(addresses, c['addr_no'])
     person_params = c.slice('orcid_id', 'first_name', 'last_name', 'full_name')
     person_params.merge!(address) if address
-    { '@id' => resolve_person(person_params) }
+    { '@id' => resolve_entity('person', person_params) }
   end
   accumulator << { '@type' => 'http://vivoweb.org/ontology/core#Authorship',
                    'http://vivoweb.org/ontology/core#relates' => people_uris }
 }, single: true
-
+to_field 'http://purl.org/dc/terms/subject', lambda { |json, accumulator|
+  subjects = JsonPath.on(json, "$.static_data.fullrecord_metadata.category_info.subjects.subject[?(@.ascatype=='extended')].content")
+  accumulator << subjects.map do |subject|
+    resolve_entity('topic', name: subject)
+  end
+}, single: true
 to_field 'http://purl.org/ontology/bibo/identifier',
          extract_json('$.dynamic_data.cluster_related.identifiers.identifier[*].value')
 to_field 'http://purl.org/dc/terms/hasPart',
