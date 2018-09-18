@@ -78,6 +78,27 @@ STANFORD_PERSON_INSERT = <<~JSON
       "title": "Professor of Neurosurgery and of Psychiatry and Behavioral Sciences",
       "type": "primary"
     },
+    "titles": [{
+      "academicInstituteDisplay": false,
+      "affiliation": "capStaff",
+      "bannerDisplay": true,
+      "jobCode": "4441",
+      "label": {
+        "html": "Accountant, Res Ed Central Operations",
+        "text": "Accountant, Res Ed Central Operations"
+      },
+      "organization": {
+        "interDepartmentalProgram": false,
+        "label": {
+          "html": "Res Ed Central Operations",
+          "text": "Res Ed Central Operations"
+        },
+        "org": "Res Ed Central Operations",
+        "orgCode": "HMGN"
+      },
+      "title": "Accountant",
+      "type": "staff"
+    }],
     "uid": "billchen1"
   }
 JSON
@@ -145,6 +166,27 @@ STANFORD_PERSON_UPDATE = <<~JSON
       "title": "Professor of Neurosurgery and of Psychiatry and Behavioral Sciences",
       "type": "primary"
     },
+    "titles": [{
+      "academicInstituteDisplay": false,
+      "affiliation": "capStaff",
+      "bannerDisplay": true,
+      "jobCode": "4441",
+      "label": {
+        "html": "Accountant, Res Ed Central Operations",
+        "text": "Senior accountant, Res Ed Central Operations"
+      },
+      "organization": {
+        "interDepartmentalProgram": false,
+        "label": {
+          "html": "Res Ed Central Operations",
+          "text": "Res Ed Central Operations"
+        },
+        "org": "Res Ed Central Operations",
+        "orgCode": "HMGN"
+      },
+      "title": "Senior accountant",
+      "type": "staff"
+    }],
     "uid": "billchen1"
   }
 JSON
@@ -296,7 +338,9 @@ RSpec.describe Rialto::Etl::Transformer do
                                  RDF::URI.new('http://sws.geonames.org/6252001/')])
                        .true?
         expect(result).to be true
+      end
 
+      it 'is inserted with advisee triples' do
         # Test advisee label
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
@@ -392,7 +436,60 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
       end
+      it 'is inserted with position triples' do
+        # Test 1 position
+        query = client.select(count: { pos: :p })
+                      .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                      .where([:pos, RDF.type, Rialto::Etl::Vocabs::VIVO['Position']])
+        expect(query.solutions.first[:p].to_i).to eq(1)
 
+        # Test position's relationships
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
+                                 Rialto::Etl::Vocabs::VIVO['relatedBy'],
+                                 Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150']])
+                       .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['vice-provost-for-student-affairs/residential'\
+                          '-education/residential-education-operations/residential-education-central-operations'],
+                                 Rialto::Etl::Vocabs::VIVO['relatedBy'],
+                                 Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150']])
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
+                                 Rialto::Etl::Vocabs::VIVO['relates'],
+                                 Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150']])
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
+                                 Rialto::Etl::Vocabs::VIVO['relates'],
+                                 Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['vice-provost-for-student-affairs/residential'\
+                          '-education/residential-education-operations/residential-education-central-operations']])
+                       .true?
+        expect(result).to be true
+
+        # Test position valid date
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
+                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
+                                 RDF::Literal::Date.new(Time.now.to_date)])
+                       .true?
+        expect(result).to be true
+
+        # Test position hrJobTitle
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
+                                 Rialto::Etl::Vocabs::VIVO['hrJobTitle'],
+                                 'Accountant'])
+                       .true?
+        expect(result).to be true
+
+        # Test label
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
+                                 Rialto::Etl::Vocabs::RDFS['label'],
+                                 'Accountant, Res Ed Central Operations'])
+                       .true?
+        expect(result).to be true
+      end
       # rubocop:enable RSpec/MultipleExpectations
     end
     describe 'update person' do
@@ -495,7 +592,31 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
       end
+      it 'updates the position' do
+        # Test 1 position
+        query = client.select(count: { pos: :p })
+                      .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                      .where([:pos, RDF.type, Rialto::Etl::Vocabs::VIVO['Position']])
+        expect(query.solutions.first[:p].to_i).to eq(1)
 
+        # Test position hrJobTitle
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
+                                 Rialto::Etl::Vocabs::VIVO['hrJobTitle'],
+                                 'Senior accountant'])
+                       .true?
+        expect(result).to be true
+
+        # Test label
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
+                                 Rialto::Etl::Vocabs::RDFS['label'],
+                                 'Senior accountant, Res Ed Central Operations'])
+                       .true?
+        expect(result).to be true
+      end
       # rubocop:enable RSpec/MultipleExpectations
     end
   end
