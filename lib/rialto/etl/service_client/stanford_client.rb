@@ -17,7 +17,7 @@ module Rialto
         # Hit an API endpoint and return the results
         def get(path)
           response = client.get(path)
-          raise "Unacceptable Response from API: Status #{request.status}, #{response.body}" if response.status != 200
+          raise "Unacceptable Response from API: Status #{response.status}, #{response.body}" if response.status != 200
           response.body
         end
 
