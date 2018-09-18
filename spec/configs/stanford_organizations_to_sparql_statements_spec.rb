@@ -148,16 +148,6 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
 
-        # Has valid date
-        result = client.ask
-                       .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
-                       .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
-                          'education-and-recreation/other-daper-administration'],
-                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
-                                 RDF::Literal::Date.new(Time.now.to_date)])
-                       .true?
-        expect(result).to be true
-
         # Test label/name
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)

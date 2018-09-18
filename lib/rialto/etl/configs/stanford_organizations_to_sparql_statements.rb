@@ -10,7 +10,7 @@ extend TrajectPlus::Macros::JSON
 extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
-def contextualized_organization_name(organization)
+def contextualized_org_name(organization)
   return organization['name'] if organization['parent'].nil? || organization['parent']['name'] == 'Stanford University'
   "#{organization['name']} (#{organization['parent']['name']})"
 end
@@ -24,11 +24,11 @@ end
 to_field '@graph', literal(STANFORD_ORGANIZATIONS_GRAPH.to_s), single: true
 
 # Subject
-to_field '@id', extract_json('$.alias'), single: true
-to_field '@id_ns', literal(RIALTO_ORGANIZATIONS.to_s), single: true
+to_field '@id', lambda { |json, accum|
+  accum << RIALTO_ORGANIZATIONS[json['alias']]
+}, single: true
 
 # Org types
-to_field '!type', literal(true), single: true
 to_field '@type', lambda { |json, accum|
   org_types = [FOAF.Agent, FOAF['Organization']]
   org_types << case JsonPath.on(json, '$.type').first
@@ -49,10 +49,14 @@ to_field '@type', lambda { |json, accum|
 }
 
 # Org label
-to_field '!label', literal(true)
-to_field '@label', lambda { |json, accum|
-  accum << contextualized_organization_name(json)
-}, single: true
+to_field '!' + SKOS['prefLabel'].to_s, literal(true)
+to_field SKOS['prefLabel'].to_s, lambda { |json, accum|
+  accum << contextualized_org_name(json)
+}
+to_field '!' + RDFS['label'].to_s, literal(true)
+to_field RDFS['label'].to_s, lambda { |json, accum|
+  accum << contextualized_org_name(json)
+}
 
 # Org codes
 to_field '!' + DCTERMS.identifier.to_s, literal(true)
@@ -64,5 +68,3 @@ to_field OBO['BFO_0000050'].to_s, lambda { |json, accum|
   parent = JsonPath.on(json, '$.parent.alias').first
   accum << RIALTO_ORGANIZATIONS[parent] if parent
 }
-
-# TODO: Children

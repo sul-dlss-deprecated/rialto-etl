@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require 'rialto/etl/namespaces'
-
 def extract_orgs(org)
   orgs = {}
-  org_uri = Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS[org['alias']]
-  org['orgCodes'].each { |org_code| orgs[org_code] = org_uri }
+  org['orgCodes'].each { |org_code| orgs[org_code] = org['alias'] }
   org['children'].each { |child_org| orgs.merge!(extract_orgs(child_org)) } if org.key?('children')
   orgs
 end
