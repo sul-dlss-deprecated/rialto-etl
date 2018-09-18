@@ -22,11 +22,22 @@ def fetch_addresses(json)
   addresses = Array.wrap(JsonPath.on(json, '$.static_data.fullrecord_metadata.addresses.address_name').first)
   addresses.each_with_object({}) do |addr_name, h|
     addr = addr_name['address_spec']
-    result = addr.slice('country')
-    org = addr.fetch('organizations').fetch('organization').find { |o| o['pref'] == 'Y' }
-    result['organization'] = org['content']
+    result = parse_address(addr)
     h[addr.fetch('addr_no')] = result
   end
+end
+
+def parse_address(addr)
+  result = addr.slice('country')
+  org = addr.fetch('organizations').fetch('organization')
+  label = case org
+          when String
+            org
+          when Array
+            org.find { |o| o['pref'] == 'Y' }['content']
+          end
+  result['organization'] = label
+  result
 end
 
 # @param addresses [Hash] a lookup between the addr_no and the data
