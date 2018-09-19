@@ -6,8 +6,8 @@ require 'traject/util'
 require 'traject/qualified_const_get'
 require 'traject/thread_pool'
 
-require 'faraday'
 require 'concurrent' # for atomic_fixnum
+require 'rialto/etl/service_client/connection_factory'
 
 module Rialto
   module Etl
@@ -124,15 +124,16 @@ module Rialto
         end
 
         def client
-          @client ||= begin
-            Faraday.new(url: sparql_update_url) do |faraday|
-              faraday.adapter(:net_http_persistent)
-            end
-          end
+          @client ||= ServiceClient::ConnectionFactory.build(uri: sparql_update_url, headers: connection_headers)
         end
 
         def sparql_update_url
           settings['sparql_writer.update_url']
+        end
+
+        def connection_headers
+          key = Settings.tokens.rialto
+          { 'X-Api-Key' => key }
         end
       end
     end
