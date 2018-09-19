@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '~> 5.2'
   spec.add_dependency 'config'
-  spec.add_dependency 'faraday'
+  spec.add_dependency 'faraday', '~> 0.15.0'
   spec.add_dependency 'faraday_middleware'
   spec.add_dependency 'httpclient'
   spec.add_dependency 'json-ld'
