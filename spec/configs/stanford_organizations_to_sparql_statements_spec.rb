@@ -176,7 +176,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
                                  Rialto::Etl::Vocabs::SKOS['prefLabel'],
-                                 'Physical Education and Recreation'])
+                                 'Physical Education and Recreation (Stanford University)'])
                        .true?
         expect(result).to be true
 
@@ -270,7 +270,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
                                  Rialto::Etl::Vocabs::SKOS['prefLabel'],
-                                 'Physical Education and Recreational Lounging'])
+                                 'Physical Education and Recreational Lounging (Amherst College)'])
                        .true?
         expect(result).to be true
 

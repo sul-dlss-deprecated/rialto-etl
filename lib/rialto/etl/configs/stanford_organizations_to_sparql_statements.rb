@@ -45,7 +45,9 @@ to_field '@type', lambda { |json, accum|
 
 # Org label
 to_field '!label', literal(true)
-to_field '@label', extract_json('$.name'), single: true
+to_field '@label', lambda { | json, accum|
+  accum << (json.key?('parent_name') ? "#{json['name']} (#{json['parent_name']})" : json['name'])
+}, single: true
 
 # Org codes
 to_field '!' + DCTERMS.identifier.to_s, literal(true)

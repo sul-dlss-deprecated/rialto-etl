@@ -18,13 +18,14 @@ module Rialto
 
         private
 
-        def yield_children(hash:, block:, parent: nil)
+        def yield_children(hash:, block:, parent: nil, parent_name: nil)
           hash['parent'] = parent if parent
+          hash['parent_name'] = parent_name if parent_name
           block.call(hash)
           children = children_path(hash)
           return if children.blank?
           children.each do |child|
-            yield_children(hash: child, block: block, parent: hash['alias'])
+            yield_children(hash: child, block: block, parent: hash['alias'], parent_name: hash['name'])
           end
         end
 
