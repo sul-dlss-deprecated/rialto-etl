@@ -96,14 +96,19 @@ module Rialto
           return if batch.empty?
           statements = +''
           batch.each { |b| statements << b.source_record }
-          begin
-            client.post do |req|
-              req.headers['Content-Type'] = 'application/sparql-update'
-              req.body = statements
-            end
-          rescue StandardError => exception
-            logger.error "Error in SPARQL update. #{exception}"
+          post(statements)
+        end
+
+        # Post the statements to the SPARQL endpoint
+        # @param [Array<String>] a list of statemets to send
+        def post(statements)
+          resp = client.post do |req|
+            req.headers['Content-Type'] = 'application/sparql-update'
+            req.body = statements
           end
+          logger.error "Error in SPARQL update: #{resp.status} #{resp.body}" unless resp.success?
+        rescue StandardError => exception
+          logger.error "Error in SPARQL update. #{exception}"
         end
 
         # Get the logger from the settings, or default to an effectively null logger
