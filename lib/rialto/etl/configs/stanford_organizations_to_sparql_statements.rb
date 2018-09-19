@@ -11,7 +11,7 @@ extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
 def contextualized_organization_name(organization)
-  return organization['name'] if organization['parent'].nil?
+  return organization['name'] if organization['parent'].nil? || organization['parent']['name'] == 'Stanford University'
   "#{organization['name']} (#{organization['parent']['name']})"
 end
 

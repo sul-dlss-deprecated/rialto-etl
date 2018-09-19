@@ -158,6 +158,16 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
 
+        # Test label/name
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
+                         'education-and-recreation/other-daper-administration'],
+                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 'Other DAPER Administration (Physical Education and Recreation)'])
+                       .true?
+        expect(result).to be true
+
         # Test parent
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
@@ -170,13 +180,13 @@ RSpec.describe Rialto::Etl::Transformer do
 
         # TODO: Test children
 
-        # Test label
+        # Test parent label/name
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
                                  Rialto::Etl::Vocabs::SKOS['prefLabel'],
-                                 'Physical Education and Recreation (Stanford University)'])
+                                 'Physical Education and Recreation'])
                        .true?
         expect(result).to be true
 
