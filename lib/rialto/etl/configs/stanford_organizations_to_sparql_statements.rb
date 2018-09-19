@@ -10,6 +10,11 @@ extend TrajectPlus::Macros::JSON
 extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
+def contextualized_organization_name(organization)
+  return organization['name'] if organization['parent'].nil?
+  "#{organization['name']} (#{organization['parent']['name']})"
+end
+
 settings do
   provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlStatementWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::StanfordOrganizationsJsonReader'
@@ -45,8 +50,8 @@ to_field '@type', lambda { |json, accum|
 
 # Org label
 to_field '!label', literal(true)
-to_field '@label', lambda { | json, accum|
-  accum << (json.key?('parent_name') ? "#{json['name']} (#{json['parent_name']})" : json['name'])
+to_field '@label', lambda { |json, accum|
+  accum << contextualized_organization_name(json)
 }, single: true
 
 # Org codes
@@ -56,7 +61,7 @@ to_field DCTERMS.identifier.to_s, extract_json('$.orgCodes'), single: true
 # Parent
 to_field '!' + OBO['BFO_0000050'].to_s, literal(true)
 to_field OBO['BFO_0000050'].to_s, lambda { |json, accum|
-  parent = JsonPath.on(json, '$.parent').first
+  parent = JsonPath.on(json, '$.parent.alias').first
   accum << RIALTO_ORGANIZATIONS[parent] if parent
 }
 
