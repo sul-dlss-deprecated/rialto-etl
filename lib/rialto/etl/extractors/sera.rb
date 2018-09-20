@@ -13,8 +13,11 @@ module Rialto
         end
 
         # Hit an API endpoint and return the results
-        def each(&block)
-          body.each(&block)
+        def each(&_block)
+          return to_enum(:each) unless block_given?
+          body.each do |record|
+            yield record.to_json
+          end
         rescue StandardError => exception
           warn "Error: #{exception.message}"
         end
@@ -46,8 +49,8 @@ module Rialto
           when 400..499, 500..599
             raise "There was a problem with the request to `#{url}` (#{response.status}): #{response.body}"
           else
-            json = JSON.parse(response.body)
-            json['SeRARecord']
+            hash = JSON.parse(response.body)
+            hash['SeRARecord']
           end
         end
 

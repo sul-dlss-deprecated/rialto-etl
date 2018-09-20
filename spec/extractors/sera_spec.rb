@@ -49,7 +49,7 @@ RSpec.describe Rialto::Etl::Extractors::Sera do
         extractor.each do |records|
           results << records
         end
-        expect(results[0]['spoNumber']).to eq '118753'
+        expect(JSON.parse(results[0])['spoNumber']).to eq '118753'
       end
     end
 
