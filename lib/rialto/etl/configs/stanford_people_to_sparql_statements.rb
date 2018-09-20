@@ -4,6 +4,7 @@ require 'traject_plus'
 require 'rialto/etl/readers/ndjson_reader'
 require 'rialto/etl/writers/sparql_statement_writer'
 require 'rialto/etl/namespaces'
+require 'rialto/etl/transformers/people'
 
 extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
@@ -179,24 +180,6 @@ to_field DCTERMS['identifier'].to_s, lambda { |json, accum|
 # Person positions
 to_field VIVO['relatedBy'].to_s, lambda { |json, accum|
   titles_json = JsonPath.on(json, '$.titles').first
-  positions = []
-  orgs_map = Traject::TranslationMap.new('stanford_org_codes_to_organizations')
-  titles_json.each do |title_json|
-    org_code = title_json['organization']['orgCode']
-    positions << {
-      '@id' => RIALTO_CONTEXT_POSITIONS["#{org_code}_#{json['profileId']}"],
-      '@type' => VIVO['Position'],
-      "!#{DCTERMS['valid']}" => true,
-      DCTERMS['valid'].to_s => Time.now.to_date,
-      VIVO['relates'].to_s => [RIALTO_PEOPLE[json['profileId']], {
-        '@id' => RIALTO_ORGANIZATIONS[orgs_map[org_code]],
-        VIVO['relatedBy'].to_s => RIALTO_CONTEXT_POSITIONS["#{org_code}_#{json['profileId']}"]
-      }],
-      "!#{VIVO['hrJobTitle']}" => true,
-      VIVO['hrJobTitle'].to_s => title_json['title'],
-      "!#{RDFS['label']}" => true,
-      RDFS['label'].to_s => title_json['label']['text']
-    }
-  end
+  positions = Rialto::Etl::Transformers::People.construct_positions(titles: titles_json, profile_id: json['profileId'])
   accum.concat(positions)
 }

@@ -131,7 +131,6 @@ RSpec.describe Rialto::Etl::Transformer do
       before do
         transform(STANFORD_ORGS_INSERT)
       end
-      # rubocop:disable RSpec/MultipleExpectations
       it 'is inserted with org triples' do
         # 3 organizations
         query = client.select(count: { org: :c })
@@ -211,8 +210,6 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
       end
-
-      # rubocop:enable RSpec/MultipleExpectations
     end
 
     describe 'add and delete orgs' do
@@ -236,7 +233,6 @@ RSpec.describe Rialto::Etl::Transformer do
         transform(STANFORD_ORGS_INSERT)
         transform(STANFORD_ORGS_UPDATE)
       end
-      # rubocop:disable RSpec/MultipleExpectations
       it 'updates the org' do
         # Changes org type
         result = client.ask
@@ -319,8 +315,6 @@ RSpec.describe Rialto::Etl::Transformer do
         expect(result).to be true
 
         # TODO: Test change children
-
-        # rubocop:enable RSpec/MultipleExpectations
       end
     end
   end
