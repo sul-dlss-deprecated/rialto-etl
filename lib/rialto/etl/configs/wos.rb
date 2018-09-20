@@ -13,9 +13,7 @@ extend TrajectPlus::Macros::JSON
 # @param [Hash] params the values to query for.
 # @return [String] the uri for the resource
 def resolve_entity(type, params)
-  conn = Faraday.new(url: settings['entity_resolver.url'])
-  resp = conn.get(type, params, 'X-Api-Key' => 'abc123')
-  return resp.body if resp.success?
+  Rialto::Etl::ServiceClient::EntityResolver.resolve(type, params)
 end
 
 # Find all of the addresses and index them by addr_no into a Hash.
@@ -59,7 +57,6 @@ end
 settings do
   provide 'writer_class_name', 'Traject::JsonWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
-  provide 'entity_resolver.url', ::Settings.entity_resolver.url
   # provide 'processing_thread_pool', 0 # Turns off multithreading, for debugging
 end
 

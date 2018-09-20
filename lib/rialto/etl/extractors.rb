@@ -8,6 +8,7 @@ require 'rialto/etl/extractors/web_of_science'
 require 'rialto/etl/service_client/connection_factory'
 require 'rialto/etl/service_client/stanford_client'
 require 'rialto/etl/service_client/web_of_science_client'
+require 'rialto/etl/service_client/entity_resolver'
 
 module Rialto
   module Etl
