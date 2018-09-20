@@ -100,7 +100,7 @@ module Rialto
         end
 
         # Post the statements to the SPARQL endpoint
-        # @param [Array<String>] a list of statemets to send
+        # @param [String] SPARQL statements to send
         def post(statements)
           resp = client.post do |req|
             req.headers['Content-Type'] = 'application/sparql-update'
