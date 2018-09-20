@@ -132,7 +132,7 @@ module Rialto
         end
 
         def connection_headers
-          key = Settings.tokens.rialto
+          key = Settings.sparql_writer.api_key
           { 'X-Api-Key' => key }
         end
       end

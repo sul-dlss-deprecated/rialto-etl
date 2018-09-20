@@ -33,7 +33,7 @@ Or install it yourself as:
 ```
 exe/extract call StanfordOrganizations > organizations.json
 exe/transform call StanfordOrganizations -i organizations.json > organizations.sparql
-SETTINGS__TOKENS__RIALTO=<Rialto API key> exe/load call Sparql -i organizations.sparql
+exe/load call Sparql -i organizations.sparql
 ```
 
 
@@ -70,19 +70,19 @@ exe/extract call Sera --sunetid ascor
 
 #### Authentication
 
-If you are using the `StanfordResearchers` or `StanfordOrganizations` extract methods, you will first need to obtain a token for the CAP API and set the `Settings.tokens.cap` value to this token. To set this value, either set an environment variable named `SETTINGS__TOKENS__CAP` or add the value for this to `config/settings.local.yml` (which is ignored under version control and should never be checked in), like so:
+If you are using the `StanfordResearchers` or `StanfordOrganizations` extract methods, you will first need to obtain a token for the CAP API and set the `Settings.cap.api_key` value to this token. To set this value, either set an environment variable named `SETTINGS__CAP__API_KEY` or add the value for this to `config/settings.local.yml` (which is ignored under version control and should never be checked in), like so:
 
 
 ```yaml
-tokens:
-  cap: 'foobar'
+cap:
+  api_key: 'foobar'
 ```
 
-Similarly, if you are using the SPARQL writer, then you need to set `SETTINGS__TOKENS__RIALTO` or:
+Similarly, if you are using the SPARQL writer, then you need to set `SETTINGS__SPARQL_WRITER__API_KEY` or:
 
 ```yaml
-tokens:
-  rialto: 'key' # SPARQL Proxy API key
+sparql_writer:
+  api_key: 'key' # SPARQL Proxy API key
 ```
 
 Tokens are stored in shared_configs.
