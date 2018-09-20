@@ -235,15 +235,6 @@ RSpec.describe Rialto::Etl::Transformer do
                       .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Agent']])
         expect(query.solutions.first[:c].to_i).to eq(3)
 
-        # Has valid date
-        result = client.ask
-                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
-                       .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
-                                 RDF::Literal::Date.new(Time.now.to_date)])
-                       .true?
-        expect(result).to be true
-
         # Test label
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
@@ -375,15 +366,15 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150'],
                                  RDF.type,
                                  Rialto::Etl::Vocabs::VIVO['AdvisingRelationship']])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150'],
-                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
-                                 RDF::Literal::Date.new(Time.now.to_date)])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
                                  Rialto::Etl::Vocabs::VIVO['relatedBy'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
                                  Rialto::Etl::Vocabs::VIVO['relatedBy'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150']])
+                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150'],
+                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
+                                 RDF::Literal::Date.new(Time.now.to_date)])
                        .true?
         expect(result).to be true
 

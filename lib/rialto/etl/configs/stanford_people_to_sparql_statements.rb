@@ -10,6 +10,13 @@ extend TrajectPlus::Macros::JSON
 extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
+def concat_name(json)
+  name_parts = [JsonPath.on(json, '$.names.preferred.firstName').first]
+  name_parts << JsonPath.on(json, '$.names.preferred.middleName').first
+  name_parts << JsonPath.on(json, '$.names.preferred.lastName').first
+  name_parts.compact.join(' ')
+end
+
 settings do
   provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlStatementWriter'
   # For development, may want to use following writer:
@@ -21,11 +28,11 @@ end
 to_field '@graph', literal(STANFORD_PEOPLE_GRAPH.to_s), single: true
 
 # Subject
-to_field '@id', extract_json('$.profileId'), single: true
-to_field '@id_ns', literal(RIALTO_PEOPLE.to_s), single: true
+to_field '@id', lambda { |json, accum|
+  accum << RIALTO_PEOPLE[json['profileId']]
+}, single: true
 
 # Person types
-to_field '!type', literal(true), single: true
 to_field '@type', lambda { |json, accum|
   person_types = [FOAF['Agent'], FOAF['Person']]
   person_types << VIVO['Student'] if JsonPath.on(json, '$.affiliations.capPhdStudent').first == true ||
@@ -41,69 +48,122 @@ to_field '@type', lambda { |json, accum|
 }
 
 # Person label
-to_field '!label', literal(true)
-to_field '@label', lambda { |json, accum|
-  name_parts = [JsonPath.on(json, '$.names.preferred.firstName').first]
-  name_parts << JsonPath.on(json, '$.names.preferred.middleName').first
-  name_parts << JsonPath.on(json, '$.names.preferred.lastName').first
-  accum << name_parts.compact.join(' ')
+to_field "!#{SKOS['prefLabel']}", literal(true)
+to_field SKOS['prefLabel'].to_s, lambda { |json, accum|
+  accum << concat_name(json)
+}, single: true
+to_field "!#{RDFS['label']}", literal(true)
+to_field RDFS['label'].to_s, lambda { |json, accum|
+  accum << concat_name(json)
 }, single: true
 
 # Person name (Vcard)
-to_field '!person_name', literal(true), single: true
-compose '@person_name', ->(json, acc, _context) { acc << json } do
-  require 'traject_plus'
-  extend TrajectPlus::Macros
-  extend TrajectPlus::Macros::JSON
-  to_field VCARD['given-name'].to_s, extract_json('$.names.preferred.firstName'), single: true
-  to_field VCARD['middle-name'].to_s, extract_json('$.names.preferred.middleName'), single: true
-  to_field VCARD['family-name'].to_s, extract_json('$.names.preferred.lastName'), single: true
-end
-# TODO: Is there a way to make this single?
+to_field "!#{VCARD['hasName']}", literal(true), single: true
+to_field VCARD['hasName'].to_s, lambda { |json, accum|
+  name_json = JsonPath.on(json, '$.names.preferred').first
+  if name_json
+    accum << {
+      '@id' => RIALTO_CONTEXT_NAMES[json['profileId']],
+      '@type' => VCARD['Name'],
+      "!#{VCARD['given-name']}" => true,
+      VCARD['given-name'].to_s => name_json['firstName'],
+      "!#{VCARD['middle-name']}" => true,
+      VCARD['middle-name'].to_s => name_json['middleName'],
+      "!#{VCARD['family-name']}" => true,
+      VCARD['family-name'].to_s => name_json['lastName']
+    }
+  end
+}, single: true
 
 # Bio
-to_field '!' + VIVO['overview'].to_s, literal(true)
+to_field "!#{VIVO['overview']}", literal(true), single: true
 to_field VIVO['overview'].to_s, extract_json('$.bio.text'), single: true
 
 # Person address
-to_field '!person_address', literal(true), single: true
-compose '@person_address',
-        ->(json, acc, _context) { acc << JsonPath.on(json, '$.contacts[?(@["type"] == "academic")]').first } do
-  require 'traject_plus'
-  extend TrajectPlus::Macros
-  extend TrajectPlus::Macros::JSON
-  to_field VCARD['street-address'].to_s, extract_json('$.address'), single: true
-  to_field VCARD['locality'].to_s, extract_json('$.city'), single: true
-  to_field VCARD['region'].to_s, extract_json('$.state'), single: true
-  to_field VCARD['postal-code'].to_s, extract_json('$.zip'), single: true
-  # Punting on looking up country based on postal code (http://www.geonames.org/export/web-services.html) and
-  # hardcoding to US (http://sws.geonames.org/6252001/)
-  to_field VCARD['country-name'].to_s, literal('United States'), single: true
-  to_field DCTERMS['spatial'].to_s, literal(RDF::URI.new('http://sws.geonames.org/6252001/')), single: true
-end
+to_field "!#{VCARD['hasAddress']}", literal(true), single: true
+to_field VCARD['hasAddress'].to_s, lambda { |json, accum|
+  address_json = JsonPath.on(json, '$.contacts[?(@["type"] == "academic")]').first
+  if address_json
+    accum << {
+      '@id' => RIALTO_CONTEXT_ADDRESSES[json['profileId']],
+      '@type' => VCARD['Address'],
+      "!#{VCARD['street-address']}" => true,
+      VCARD['street-address'].to_s => address_json['address'],
+      "!#{VCARD['locality']}" => true,
+      VCARD['locality'].to_s => address_json['city'],
+      "!#{VCARD['region']}" => true,
+      VCARD['region'].to_s => address_json['state'],
+      "!#{VCARD['postal-code']}" => true,
+      VCARD['postal-code'].to_s => address_json['zip'],
+      # Punting on looking up country based on postal code (http://www.geonames.org/export/web-services.html) and
+      # hardcoding to US (http://sws.geonames.org/6252001/)
+      "!#{VCARD['country-name']}" => true,
+      VCARD['country-name'].to_s => 'United States',
+      "!#{DCTERMS['spatial']}" => true,
+      DCTERMS['spatial'].to_s => RDF::URI.new('http://sws.geonames.org/6252001/')
+    }
+  end
+}, single: true
 
-# Advisees
-# Note that advisees are not deleted.
-to_field '@advisees', lambda { |json, accum|
-  advisees_json = JsonPath.on(json, '$.advisees')
-  unless advisees_json.empty?
-    advisees_json[0].each do |advisee_json|
-      advisee_hash = {}
-      advisee_hash['@id'] = JsonPath.on(advisee_json, '$.advisee.profileId').first
-      advisee_hash['@id_ns'] = RIALTO_PEOPLE.to_s
-      advisee_hash['@type'] = [FOAF['Agent'], FOAF['Person']]
-      advisee_hash['@label'] = [JsonPath.on(advisee_json, '$.advisee.firstName').first,
-                                JsonPath.on(advisee_json, '$.advisee.lastName').first].join(' ')
-      advisee_hash['!type'] = true
-      name_vcard_hash = {}
-      name_vcard_hash[VCARD['given-name'].to_s] = JsonPath.on(advisee_json, '$.advisee.firstName').first
-      name_vcard_hash[VCARD['family-name'].to_s] = JsonPath.on(advisee_json, '$.advisee.lastName').first
-      advisee_hash['@person_name'] = [name_vcard_hash]
-      advisee_hash['!person_name'] = true
-      accum << advisee_hash
-    end
+# Note: There is also relatedBy for positions.
+to_field VIVO['relatedBy'].to_s, lambda { |json, accum|
+  advisees_json = JsonPath.on(json, '$.advisees[*].advisee')
+  advisees = []
+  advisees_json.each do |advisee_json|
+    advisees << {
+      '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"],
+      '@type' => VIVO['AdvisingRelationship'],
+      DCTERMS['valid'].to_s => Time.now.to_date
+    }
+  end
+  accum.concat(advisees)
+}
+
+to_field OBO['RO_0000053'].to_s, lambda { |json, accum|
+  unless JsonPath.on(json, '$.advisees').empty?
+    accum << {
+      '@id' => RIALTO_CONTEXT_ROLES['AdvisorRole'],
+      '@type' => VIVO['AdvisorRole'],
+      # This points back at the advisor
+      OBO['RO_0000052'].to_s => RIALTO_PEOPLE[json['profileId']]
+    }
   end
 }
+
+# rubocop:disable Metrics/BlockLength
+to_field '#advisees', lambda { |json, accum|
+  advisees_json = JsonPath.on(json, '$.advisees[*].advisee')
+  advisees = []
+  advisees_json.each do |advisee_json|
+    full_name = "#{advisee_json['firstName']} #{advisee_json['lastName']}"
+    advisees << {
+      '@id' => RIALTO_PEOPLE[advisee_json['profileId']],
+      '@type' => [FOAF['Agent'], FOAF['Person']],
+      SKOS['prefLabel'].to_s => full_name,
+      RDFS['label'].to_s => full_name,
+      # Name VCard
+      VCARD['hasName'].to_s => {
+        '@id' => RIALTO_CONTEXT_NAMES[advisee_json['profileId']],
+        '@type' => VCARD['Name'],
+        "!#{VCARD['given-name']}" => true,
+        VCARD['given-name'].to_s => advisee_json['firstName'],
+        "!#{VCARD['family-name']}" => true,
+        VCARD['family-name'].to_s => advisee_json['lastName']
+      },
+      # Related by
+      VIVO['relatedBy'].to_s => RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"],
+      # Advisee role
+      OBO['RO_0000053'].to_s => {
+        '@id' => RIALTO_CONTEXT_ROLES['AdviseeRole'],
+        '@type' => VIVO['AdviseeRole'],
+        # This points back at the advisee
+        OBO['RO_0000052'].to_s => RIALTO_PEOPLE[advisee_json['profileId']]
+      }
+    }
+  end
+  accum << advisees unless advisees.empty?
+}, single: true
+# rubocop:enable Metrics/BlockLength
 
 # Email
 to_field '!' + VCARD['hasEmail'].to_s, literal(true)
@@ -117,17 +177,26 @@ to_field DCTERMS['identifier'].to_s, lambda { |json, accum|
 }, single: true
 
 # Person positions
-compose '@positions', ->(json, acc, _context) { acc.concat(JsonPath.on(json, '$.titles').first || []) } do
-  extend TrajectPlus::Macros
-  extend TrajectPlus::Macros::JSON
-
-  to_field '!label', literal(true), single: true
-  to_field '@label', extract_json('$.label.text'), single: true
-  to_field '!' + VIVO['hrJobTitle'], literal(true), single: true
-  to_field VIVO['hrJobTitle'].to_s, extract_json('$.title'), single: true
-  to_field '@org_code', extract_json('$.organization.orgCode'), single: true
-  to_field '@organization', extract_json('$.organization.orgCode'),
-           transform: transform(translation_map: 'stanford_org_codes_to_organizations'), single: true
-end
-
-# TODO: Keywords
+to_field VIVO['relatedBy'].to_s, lambda { |json, accum|
+  titles_json = JsonPath.on(json, '$.titles').first
+  positions = []
+  orgs_map = Traject::TranslationMap.new('stanford_org_codes_to_organizations')
+  titles_json.each do |title_json|
+    org_code = title_json['organization']['orgCode']
+    positions << {
+      '@id' => RIALTO_CONTEXT_POSITIONS["#{org_code}_#{json['profileId']}"],
+      '@type' => VIVO['Position'],
+      "!#{DCTERMS['valid']}" => true,
+      DCTERMS['valid'].to_s => Time.now.to_date,
+      VIVO['relates'].to_s => [RIALTO_PEOPLE[json['profileId']], {
+        '@id' => RIALTO_ORGANIZATIONS[orgs_map[org_code]],
+        VIVO['relatedBy'].to_s => RIALTO_CONTEXT_POSITIONS["#{org_code}_#{json['profileId']}"]
+      }],
+      "!#{VIVO['hrJobTitle']}" => true,
+      VIVO['hrJobTitle'].to_s => title_json['title'],
+      "!#{RDFS['label']}" => true,
+      RDFS['label'].to_s => title_json['label']['text']
+    }
+  end
+  accum.concat(positions)
+}
