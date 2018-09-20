@@ -53,15 +53,12 @@ RSpec.describe Rialto::Etl::Transformer do
       it 'has the right number of lines' do
         expect(csv.length).to eq(3)
       end
-
-      # rubocop:disable RSpec/MultipleExpectations
       it 'includes the correct Stanford people' do
         expect(csv[1][0]).to eq("#{Rialto::Etl::Vocabs::RIALTO_PEOPLE}400150")
         expect(csv[1][1]).to eq('Bill')
         expect(csv[1][2]).to eq('Chen')
         expect(csv[1][3]).to eq('billchen1')
       end
-      # rubocop:enable RSpec/MultipleExpectations
     end
   end
 end

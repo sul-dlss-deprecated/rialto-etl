@@ -44,8 +44,6 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
       expect(repository.size).to eq(0)
     end
   end
-
-  # rubocop:disable RSpec/MultipleExpectations
   describe '#values_to_delete_insert' do
     it 'produces insert data only when delete is false' do
       statements = writer.values_to_delete_insert(Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
@@ -90,7 +88,6 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
       expect(repository).to have_same_triples(graph)
     end
   end
-  # rubocop:enable RSpec/MultipleExpectations
 
   describe '#serialize' do
     it 'handles @ and non-@ fields' do

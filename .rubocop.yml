@@ -24,6 +24,10 @@ RSpec/DescribeClass:
   Exclude:
     - spec/transform/*.rb
 
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
 RSpec/NestedGroups:
   Max: 4
 
