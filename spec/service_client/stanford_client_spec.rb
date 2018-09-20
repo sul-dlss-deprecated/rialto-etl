@@ -87,7 +87,7 @@ RSpec.describe Rialto::Etl::ServiceClient::StanfordClient do
   describe '#auth_code' do
     subject(:code) { described_class.new.send(:auth_code) }
 
-    it { is_expected.to eq Settings.tokens.cap }
+    it { is_expected.to eq Settings.cap.api_key }
   end
 
   describe '#get' do

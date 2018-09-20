@@ -51,7 +51,7 @@ module Rialto
         end
 
         def connection_headers
-          key = Settings.tokens.wos
+          key = Settings.wos.api_key
           { 'X-ApiKey' => key }
         end
       end

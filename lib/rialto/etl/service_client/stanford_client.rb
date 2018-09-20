@@ -83,7 +83,7 @@ module Rialto
         end
 
         def auth_code
-          @auth_code ||= Settings.tokens.cap
+          @auth_code ||= Settings.cap.api_key
         end
       end
     end

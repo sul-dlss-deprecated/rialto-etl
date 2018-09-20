@@ -34,8 +34,8 @@ module Rialto
         end
 
         def token
-          client = OAuth2::Client.new(::Settings.tokens.sera.clientid,
-                                      ::Settings.tokens.sera.secret,
+          client = OAuth2::Client.new(::Settings.sera.clientid,
+                                      ::Settings.sera.secret,
                                       token_url: ::Settings.sera.token_url,
                                       auth_scheme: :request_body)
           client.client_credentials.get_token.token
