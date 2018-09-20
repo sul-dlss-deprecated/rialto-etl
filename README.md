@@ -42,11 +42,11 @@ exe/load call Sparql -i organizations.sparql
 Notes:
 * This takes about 20 min as it has to make ~796 requests to get the full
 1.6GB of data.
-* Depends on `organizations.json` from organizations pipeline.
+* The transform step depends on `organizations.json` from organizations pipeline.
 
 ```
 exe/extract call StanfordResearchers > researchers.ndj
-exe/transform call StanfordPeopleToSparqlStatements -i researchers.ndj > researchers.sparql
+exe/transform call StanfordPeople -i researchers.ndj > researchers.sparql
 exe/load call Sparql -i researchers.sparql
 ```
 
