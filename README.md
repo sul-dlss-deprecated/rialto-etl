@@ -40,9 +40,10 @@ exe/load call Sparql -i organizations.sparql
 ### Pipeline to harvest Researchers from Stanford
 
 Notes:
-* This takes about 20 min as it has to make ~796 requests to get the full
+* The extract step takes about 20 min as it has to make ~796 requests to get the full
 1.6GB of data.
 * The transform step depends on `organizations.json` from organizations pipeline.
+* The transform step takes about 13 minutes on a single thread
 
 ```
 exe/extract call StanfordResearchers > researchers.ndj
