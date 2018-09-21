@@ -44,7 +44,7 @@ Notes:
 1.6GB of data.
 * The transform step depends on `organizations.json` from organizations pipeline.
 * The transform step takes about 13 minutes on a single thread
-
+* The load step takes about 9 hours on a single thread
 ```
 exe/extract call StanfordResearchers > researchers.ndj
 exe/transform call StanfordPeople -i researchers.ndj > researchers.sparql
