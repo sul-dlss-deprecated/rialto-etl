@@ -3,11 +3,11 @@
   "static_data": {
     "summary": {
       "pub_info": {
-        "coverdate": "FEB 2018",
+        "coverdate": "FEB 2017",
         "vol": 243,
-        "pubyear": 2018,
+        "pubyear": 2017,
         "issue": 3,
-        "sortdate": "2018-02-01",
+        "sortdate": "2017-02-01",
         "has_abstract": "Y",
         "pubmonth": "FEB",
         "pubtype": "Journal",
@@ -35,13 +35,13 @@
         }, {
           "seq_no": 2,
           "role": "author",
-          "full_name": "Altman, Russ B.",
+          "full_name": "Littman, Justin C.",
           "addr_no": "1 2",
-          "last_name": "Altman",
-          "display_name": "Altman, Russ B.",
-          "wos_standard": "Altman, RB",
+          "last_name": "Littman",
+          "display_name": "Littman, Justin C.",
+          "wos_standard": "Littman, JC",
           "daisng_id": 12834,
-          "first_name": "Russ B."
+          "first_name": "Justin C."
         }]
       },
       "doctypes": {
@@ -55,9 +55,9 @@
             "name": {
               "seq_no": 1,
               "role": "publisher",
-              "full_name": "SAGE PUBLICATIONS LTD",
+              "full_name": "MONOPOLY PUBLICATIONS LTD",
               "addr_no": 1,
-              "display_name": "SAGE PUBLICATIONS LTD"
+              "display_name": "MONOPOLY PUBLICATIONS LTD"
             }
           },
           "address_spec": {
@@ -79,7 +79,7 @@
         "count": 6,
         "title": [{
           "type": "source",
-          "content": "EXPERIMENTAL BIOLOGY AND MEDICINE"
+          "content": "SPECULATIVE BIOLOGY AND MEDICINE"
         }, {
           "type": "source_abbrev",
           "content": "EXP BIOL MED"
@@ -94,7 +94,7 @@
           "content": "EXP BIOL MED"
         }, {
           "type": "item",
-          "content": "Biomarkers: Delivering on the expectation of molecularly driven, quantitative health"
+          "content": "Biomarkers: Delivering some day on the expectation of molecularly driven, quantitative health"
         }]
       }
     },
@@ -218,7 +218,7 @@
             "content": "Medicine, Research & Experimental"
           }, {
             "ascatype": "extended",
-            "content": "Research & Experimental Medicine"
+            "content": "Research & Speculative Medicine"
           }],
           "count": 2
         },
@@ -293,7 +293,7 @@
         "count": 1,
         "abstract": {
           "abstract_text": {
-            "p": "Biomarkers are the pillars of precision medicine and are delivering on expectations of molecular, quantitative health.",
+            "p": "Biomarkers are the pillars of precision medicine and may some day deliver on expectations of molecular, quantitative health.",
             "count": 1
           }
         }
@@ -352,14 +352,11 @@
     "cluster_related": {
       "identifiers": {
         "identifier": [{
-          "type": "issn",
-          "value": "1535-3702"
-        }, {
           "type": "eissn",
-          "value": "1535-3699"
+          "value": "1535-3670"
         }, {
           "type": "doi",
-          "value": "10.1177/1535370217744775"
+          "value": "10.1177/1535370217744774"
         }, {
           "type": "pmid",
           "value": "MEDLINE:29199461"

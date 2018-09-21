@@ -22,7 +22,14 @@ module Rialto
 
         def resolve(type, params)
           resp = conn.get(type, params)
-          return resp.body if resp.success?
+          case resp.status
+          when 200..299
+            RDF::URI.new(resp.body)
+          when 404
+            nil
+          else
+            raise "Entity resolver returned #{resp.status} for #{type} type and #{params} params."
+          end
         end
 
         def connection
