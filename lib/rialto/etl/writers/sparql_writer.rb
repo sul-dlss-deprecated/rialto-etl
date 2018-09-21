@@ -102,13 +102,29 @@ module Rialto
         # Post the statements to the SPARQL endpoint
         # @param [String] SPARQL statements to send
         def post(statements)
-          resp = client.post do |req|
+          on_fail = lambda { |resp, retries|
+            logger.error "Error in SPARQL update: #{resp.status} #{resp.body} (#{retries} retries remaining)"
+          }
+          with_retries(on_fail: on_fail) do |req|
             req.headers['Content-Type'] = 'application/sparql-update'
             req.body = statements
           end
-          logger.error "Error in SPARQL update: #{resp.status} #{resp.body}" unless resp.success?
         rescue StandardError => exception
           logger.error "Error in SPARQL update. #{exception}"
+        end
+
+        def with_retries(on_fail:, retries: 3)
+          while retries.positive?
+            resp = client.post do |req|
+              yield req
+            end
+            if resp.success?
+              retries = 0
+            else
+              retries -= 1
+              on_fail.call(resp, retries)
+            end
+          end
         end
 
         # Get the logger from the settings, or default to an effectively null logger
