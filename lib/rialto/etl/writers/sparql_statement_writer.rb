@@ -14,8 +14,6 @@ module Rialto
       # Write Sparql statement records
       class SparqlStatementWriter < Traject::LineWriter
         extend Rialto::Etl::Vocabs
-        # rubocop:disable Metrics/AbcSize
-        # rubocop:disable Metrics/MethodLength
         # Overrides the serialization routine from superclass
         #
         # @param context [Traject::Indexer::Context] a Traject context
@@ -26,49 +24,56 @@ module Rialto
           serialize_hash(context.output_hash).flatten.join(";\n") + ";\n"
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity
-        # rubocop:disable Metrics/PerceivedComplexity
+        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable Metrics/AbcSize
         def serialize_hash(hash, graph_name = nil)
           statements = []
           subject = RDF::URI.new(hash['@id'])
           graph_name ||= hash['@graph']
 
-          # Type
-          statements << values_to_delete_insert(subject, RDF.type, hash['@type'], graph_name, true) if hash.key?('@type')
+          # @type
+          statements << add_type_assertions(subject, hash['@type'], graph_name) if hash.key?('@type')
 
           hash.each do |field, value|
-            # Ignore any @fields or !fields or #fields
-            next if field.start_with?('@', '!', '#')
-            # If value is not an array, make an array.
-            values = Array.wrap(value)
+            # Ignore any @fields (because handled above) or !fields (because handled below)
+            next if field.start_with?('@', '!')
+
             graph = RDF::Graph.new
-            values.compact.each do |this_value|
+            # If value is not an array, make an array and filter out nils
+            values = Array.wrap(value).compact
+            values.each do |this_value|
+              # Skip to next iteration if #fields are handled. Do *not* run code
+              #   below on #fields.
+              next if handle_embedded_fields(field, statements, this_value, graph_name)
+
               graph << if this_value.is_a?(Hash)
                          statements << serialize_hash(this_value, graph_name)
                          [subject, RDF::URI.new(field), RDF::URI.new(this_value['@id'])]
                        else
                          [subject, RDF::URI.new(field), this_value]
                        end
-              # If !key, then delete.
-              statements << graph_to_delete([[subject, RDF::URI.new(field), nil]], graph_name) if hash.key?('!' + field)
-              statements << graph_to_insert(graph, graph_name) unless graph.empty?
-            end
-          end
-
-          # Embedded output_hash
-          hash.each do |field, value|
-            next unless field.start_with?('#')
-            values = Array.wrap(value)
-            values.compact.each do |this_value|
-              statements << serialize_hash(this_value, graph_name)
+              statements << handle_delete_fields(subject, field, graph_name, hash)
+              statements << graph_to_insert(graph, graph_name) if graph.any?
             end
           end
 
           statements
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
         # rubocop:enable Metrics/AbcSize
         # rubocop:enable Metrics/MethodLength
+
+        def handle_embedded_fields(field, statements, value, graph_name)
+          return unless field.start_with?('#')
+          statements << serialize_hash(value, graph_name)
+        end
+
+        def handle_delete_fields(subject, field, graph_name, hash)
+          # Do nothing if !key doesn't exist in hash, returning an
+          #   empty array which is flattened/removed in #serialize. This moves
+          #   some complexity from #serialize_hash into this smaller method.
+          return [] unless hash.key?("!#{field}")
+          graph_to_delete([[subject, RDF::URI.new(field), nil]], graph_name)
+        end
 
         def graph_to_insert(graph, graph_name)
           SPARQL::Client::Update::InsertData.new(graph, graph: graph_name).to_s.chomp
@@ -83,24 +88,16 @@ module Rialto
                                                    graph: graph_name).to_s.chomp
         end
 
-        # rubocop:disable Metrics/MethodLength
-        def values_to_delete_insert(subject, predicates, values, graph_name, delete = false)
+        def add_type_assertions(subject, types, graph_name)
           statements = []
-          Array(predicates).each do |predicate|
-            # Each delete needs to be a separate statement.
-            statements << graph_to_delete([[subject, predicate, nil]], graph_name) if delete
-          end
+          statements << graph_to_delete([[subject, RDF.type, nil]], graph_name)
           graph = RDF::Graph.new
-          Array(predicates).each do |predicate|
-            Array(values).each do |value|
-              graph << [subject, predicate, value]
-            end
+          Array(types).each do |type|
+            graph << [subject, RDF.type, type]
           end
           statements << graph_to_insert(graph, graph_name) unless graph.empty?
           statements
         end
-        # rubocop:enable Metrics/MethodLength
-        # rubocop:enable Metrics/PerceivedComplexity
       end
     end
   end
