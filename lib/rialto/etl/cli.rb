@@ -6,6 +6,7 @@ require 'rialto/etl/cli/extract'
 require 'rialto/etl/cli/transform'
 require 'rialto/etl/cli/load'
 require 'rialto/etl/cli/grants'
+require 'rialto/etl/cli/publications'
 
 module Rialto
   module Etl
