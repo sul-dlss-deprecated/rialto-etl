@@ -27,4 +27,16 @@ RSpec.describe Rialto::Etl::Transformer do
       expect(indexer).to have_received(:process).with(input_stream).once
     end
   end
+
+  describe '#transformer' do
+    let(:indexer) { instance_double(Traject::Indexer, process: nil) }
+
+    it 'returns an instance of Traject::Indexer with the specified config' do
+      allow(Traject::Indexer).to receive(:new).and_return(indexer)
+      allow(indexer).to receive(:load_config_file).with(config_file_path)
+      transformer.transform
+      expect(Traject::Indexer).to have_received(:new).once
+      expect(indexer).to have_received(:load_config_file).once
+    end
+  end
 end

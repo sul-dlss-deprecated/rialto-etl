@@ -8,6 +8,7 @@ RSpec.describe Rialto::Etl::CLI::Extract do
     let(:extractor_name) { 'FooBar' }
     let(:mock_extractor_class) { double(new: mock_extractor_instance) }
     let(:mock_extractor_instance) { double }
+    let(:result) { double }
 
     before do
       allow(Rialto::Etl::Extractors).to receive(:const_get).with(extractor_name).and_return(mock_extractor_class)
@@ -17,9 +18,11 @@ RSpec.describe Rialto::Etl::CLI::Extract do
       expect { extractor.call }.to raise_error(ArgumentError)
     end
     it 'calls an extractor' do
-      allow(mock_extractor_instance).to receive(:each)
+      allow(extractor).to receive(:say).with(result)
+      allow(mock_extractor_instance).to receive(:each).and_yield(result)
       extractor.call(extractor_name)
       expect(mock_extractor_instance).to have_received(:each).once
+      expect(extractor).to have_received(:say).once
     end
   end
   # rubocop:enable RSpec/VerifiedDoubles
