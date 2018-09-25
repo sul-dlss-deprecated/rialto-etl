@@ -9,6 +9,7 @@ require 'rialto/etl/namespaces'
 
 RSpec.describe Rialto::Etl::Transformer do
   let(:config_file_path) { 'lib/rialto/etl/configs/wos_to_sparql_statements.rb' }
+  let(:graph) { Rialto::Etl::NamedGraphs::WOS_GRAPH }
 
   describe 'wos_to_sparql_statements' do
     let(:repository) do
@@ -58,90 +59,97 @@ RSpec.describe Rialto::Etl::Transformer do
         transform('spec/fixtures/wos/000424386600014.json')
       end
 
-      it 'is inserted with publication triples' do
-        # 1 publication
-        query = client.select(count: { doc: :c })
-                      .from(Rialto::Etl::NamedGraphs::WOS_GRAPH)
-                      .where([:doc, RDF.type, Rialto::Etl::Vocabs::BIBO['Document']])
-        expect(query.solutions.first[:c].to_i).to eq(1)
+      let(:id) { Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'] }
+      let(:graph) { Rialto::Etl::NamedGraphs::WOS_GRAPH }
 
+      it 'is inserted with publication triples' do
+        # specific type
+        expect(repository).to have_quad([id,
+                                         RDF.type,
+                                         Rialto::Etl::Vocabs::BIBO['Article'],
+                                         graph])
+        # general type
+        expect(repository).to have_quad([id,
+                                         RDF.type,
+                                         Rialto::Etl::Vocabs::BIBO['Document'],
+                                         graph])
         # has Part
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['isPartOf'],
                                          'EXPERIMENTAL BIOLOGY AND MEDICINE',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
 
         # Created
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['created'],
                                          '2018-02-01',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
 
         # Subject
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['subject'],
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f9'],
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
 
         # Title
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['title'],
                                          'Biomarkers: Delivering on the expectation of molecularly driven, quantitative health',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
 
         # Abstract
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::BIBO['abstract'],
                                          'Biomarkers are the pillars of precision medicine and are delivering on '\
                                          'expectations of molecular, quantitative health.',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
         # DOI
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::BIBO['doi'],
                                          '10.1177/1535370217744775',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
         # Identifier
-        expect(repository).to has_quads([[Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to has_quads([[id,
                                           Rialto::Etl::Vocabs::BIBO['identifier'],
                                           '1535-3702',
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH],
-                                         [Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                          graph],
+                                         [id,
                                           Rialto::Etl::Vocabs::BIBO['identifier'],
                                           '1535-3699',
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH],
-                                         [Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                          graph],
+                                         [id,
                                           Rialto::Etl::Vocabs::BIBO['identifier'],
                                           '10.1177/1535370217744775',
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH],
-                                         [Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                          graph],
+                                         [id,
                                           Rialto::Etl::Vocabs::BIBO['identifier'],
                                           'MEDLINE:29199461',
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH]])
+                                          graph]])
 
         # Publisher
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::VIVO['publisher'],
                                          'SAGE PUBLICATIONS LTD',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
 
         # Authorships
         expect(repository).to has_quads(
-          [[Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+          [[id,
             Rialto::Etl::Vocabs::VIVO['relatedBy'],
             Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
-            Rialto::Etl::NamedGraphs::WOS_GRAPH],
+            graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
             RDF.type,
             Rialto::Etl::Vocabs::VIVO['Authorship'],
-            Rialto::Etl::NamedGraphs::WOS_GRAPH],
+            graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
             Rialto::Etl::Vocabs::VIVO['relates'],
             Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
-            Rialto::Etl::NamedGraphs::WOS_GRAPH],
+            graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_dc934b74-e554-409b-967b-0d555c44cc2c'],
             Rialto::Etl::Vocabs::VIVO['relates'],
             Rialto::Etl::Vocabs::RIALTO_PEOPLE['dc934b74-e554-409b-967b-0d555c44cc2c'],
-            Rialto::Etl::NamedGraphs::WOS_GRAPH]]
+            graph]]
         )
       end
     end
@@ -162,32 +170,34 @@ RSpec.describe Rialto::Etl::Transformer do
         transform('spec/fixtures/wos/000424386600014.json')
       end
 
+      let(:id) { Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'] }
+
       it 'is inserted with subject triples' do
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['subject'],
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
 
         expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
                                          RDF.type,
                                          Rialto::Etl::Vocabs::SKOS['Concept'],
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
 
         expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
                                          Rialto::Etl::Vocabs::DCTERMS['subject'],
                                          'Research & Experimental Medicine',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                         graph])
       end
 
       it 'is inserted with people triples' do
         expect(repository).to has_quads([[Rialto::Etl::Vocabs::RIALTO_PEOPLE['5054d6965532201e275067e4766c0ea0'],
                                           RDF.type,
                                           Rialto::Etl::Vocabs::FOAF['Person'],
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH],
+                                          graph],
                                          [Rialto::Etl::Vocabs::RIALTO_PEOPLE['5054d6965532201e275067e4766c0ea0'],
                                           RDF.type,
                                           Rialto::Etl::Vocabs::FOAF['Agent'],
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH]])
+                                          graph]])
       end
     end
 
@@ -217,116 +227,118 @@ RSpec.describe Rialto::Etl::Transformer do
         transform('spec/fixtures/wos/000424386600014-2.json')
       end
 
+      let(:id) { Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'] }
+
       it 'updates the publication' do
         # has Part
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['isPartOf'],
                                          'SPECULATIVE BIOLOGY AND MEDICINE',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                         graph])
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::DCTERMS['isPartOf'],
                                              'EXPERIMENTAL BIOLOGY AND MEDICINE',
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
 
         # Created
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['created'],
                                          '2017-02-01',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                         graph])
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::DCTERMS['created'],
                                              '2018-02-01',
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
 
         # Subject
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['subject'],
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f10'],
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                         graph])
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::DCTERMS['subject'],
                                              Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f9'],
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
 
         # Title
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::DCTERMS['title'],
                                          'Biomarkers: Delivering some day on the expectation of molecularly driven, '\
                                          'quantitative health',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                         graph])
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::DCTERMS['title'],
                                              'Biomarkers: Delivering on the expectation of molecularly driven, quantitative health',
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
 
         # Abstract
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::BIBO['abstract'],
                                          'Biomarkers are the pillars of precision medicine and may some day deliver on '\
                                          'expectations of molecular, quantitative health.',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                         graph])
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::BIBO['abstract'],
                                              'Biomarkers are the pillars of precision medicine and are delivering on '\
                                              'expectations of molecular, quantitative health.',
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
         # DOI
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::BIBO['doi'],
                                          '10.1177/1535370217744774',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                         graph])
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::BIBO['doi'],
                                              '10.1177/1535370217744775',
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
         # Identifier
-        expect(repository).to has_quads([[Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to has_quads([[id,
                                           Rialto::Etl::Vocabs::BIBO['identifier'],
                                           '1535-3670',
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH],
-                                         [Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                          graph],
+                                         [id,
                                           Rialto::Etl::Vocabs::BIBO['identifier'],
                                           '10.1177/1535370217744774',
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH],
-                                         [Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                          graph],
+                                         [id,
                                           Rialto::Etl::Vocabs::BIBO['identifier'],
                                           'MEDLINE:29199461',
-                                          Rialto::Etl::NamedGraphs::WOS_GRAPH]])
-        expect(repository).not_to has_quads([[Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                          graph]])
+        expect(repository).not_to has_quads([[id,
                                               Rialto::Etl::Vocabs::BIBO['identifier'],
                                               '1535-3702',
-                                              Rialto::Etl::NamedGraphs::WOS_GRAPH],
-                                             [Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                              graph],
+                                             [id,
                                               Rialto::Etl::Vocabs::BIBO['identifier'],
                                               '1535-3699']])
 
         # Publisher
-        expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::VIVO['publisher'],
                                          'MONOPOLY PUBLICATIONS LTD',
-                                         Rialto::Etl::NamedGraphs::WOS_GRAPH])
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+                                         graph])
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::VIVO['publisher'],
                                              'SAGE PUBLICATIONS LTD',
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
 
         # Authorships
         expect(repository).to has_quads(
           [[Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
             Rialto::Etl::Vocabs::VIVO['relates'],
             Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
-            Rialto::Etl::NamedGraphs::WOS_GRAPH],
+            graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_dc934b74-e554-409b-967b-0d555c44cc2d'],
             Rialto::Etl::Vocabs::VIVO['relates'],
             Rialto::Etl::Vocabs::RIALTO_PEOPLE['dc934b74-e554-409b-967b-0d555c44cc2d'],
-            Rialto::Etl::NamedGraphs::WOS_GRAPH]]
+            graph]]
         )
         # Don't get rid of Authorship; just get rid of relationship between authorship and publication
-        expect(repository).not_to have_quad([Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'],
+        expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::VIVO['relatedBy'],
                                              Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_'\
                                                'dc934b74-e554-409b-967b-0d555c44cc2c'],
-                                             Rialto::Etl::NamedGraphs::WOS_GRAPH])
+                                             graph])
       end
     end
   end
