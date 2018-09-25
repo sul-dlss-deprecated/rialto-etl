@@ -79,6 +79,8 @@ to_field '@type',
   accumulator.map! { |type| RDF::URI.new(type) }
 end
 
+to_field '@type', literal(BIBO['Document'])
+
 to_field "!#{BIBO['abstract']}", literal(true), single: true
 to_field BIBO['abstract'].to_s, lambda { |json, accumulator|
   abstracts = JsonPath.on(json, '$.static_data.fullrecord_metadata.abstracts.abstract.abstract_text.p')
