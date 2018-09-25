@@ -56,7 +56,7 @@ module Rialto
 
         # @return [String] the path for the API request for the given sunetid
         def url
-          "/mais/sera/v1/api?scope=sera.public&sunetId=#{sunetid}"
+          "/mais/sera/v1/api?scope=sera.stanford-only&sunetId=#{sunetid}"
         end
 
         # @return [Faraday::Response]
