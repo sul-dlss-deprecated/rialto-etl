@@ -14,7 +14,7 @@ RSpec.describe Rialto::Etl::Extractors::Sera do
       before do
         stub_request(:post, 'https://aswsuat.stanford.edu/api/oauth/token')
           .to_return(status: 200, headers: { 'Content-Type' => 'application/json' }, body: token_response)
-        stub_request(:get, 'https://aswsuat.stanford.edu/mais/sera/v1/api?scope=sera.public&sunetId=altman')
+        stub_request(:get, 'https://aswsuat.stanford.edu/mais/sera/v1/api?scope=sera.stanford-only&sunetId=altman')
           .to_return(status: 401, body: '', headers: {})
         # allow(extractor).to receive(:client).and_raise(error_message)
       end
@@ -39,7 +39,7 @@ RSpec.describe Rialto::Etl::Extractors::Sera do
           .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
                      body: token_response)
 
-        stub_request(:get, 'https://aswsuat.stanford.edu/mais/sera/v1/api?scope=sera.public&sunetId=altman')
+        stub_request(:get, 'https://aswsuat.stanford.edu/mais/sera/v1/api?scope=sera.stanford-only&sunetId=altman')
           .with(headers: { 'Authorization' => 'Bearer ABCD123' })
           .to_return(status: 200, body: body, headers: {})
         allow(extractor.send(:client)).to receive(:page_size).and_return(2)
@@ -59,7 +59,7 @@ RSpec.describe Rialto::Etl::Extractors::Sera do
           .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
                      body: token_response)
 
-        stub_request(:get, 'https://aswsuat.stanford.edu/mais/sera/v1/api?scope=sera.public&sunetId=altman')
+        stub_request(:get, 'https://aswsuat.stanford.edu/mais/sera/v1/api?scope=sera.stanford-only&sunetId=altman')
           .with(headers: { 'Authorization' => 'Bearer ABCD123' })
           .to_return(status: 404, body: '', headers: {})
         allow(extractor.send(:client)).to receive(:page_size).and_return(2)
