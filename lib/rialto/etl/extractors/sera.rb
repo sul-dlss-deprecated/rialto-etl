@@ -6,7 +6,7 @@ require 'oauth2'
 module Rialto
   module Etl
     module Extractors
-      # Documetation: https://asconfluence.stanford.edu/confluence/display/MaIS/SeRA+API+-+User+Documentation
+      # Documentation: https://asconfluence.stanford.edu/confluence/display/MaIS/SeRA+API+-+User+Documentation
       class Sera
         def initialize(options = {})
           @sunetid = options.fetch(:sunetid)
@@ -18,8 +18,6 @@ module Rialto
           body.each do |record|
             yield record.to_json
           end
-        rescue StandardError => exception
-          warn "Error: #{exception.message}"
         end
 
         private

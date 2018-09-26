@@ -19,8 +19,8 @@ RSpec.describe Rialto::Etl::Extractors::Sera do
         # allow(extractor).to receive(:client).and_raise(error_message)
       end
 
-      it 'prints out the exception' do
-        expect { extractor.each {} }.to output(/Error: There was a problem with the request/).to_stderr
+      it 'raises the exception' do
+        expect { extractor.each {} }.to raise_error(StandardError, /There was a problem with the request/)
       end
     end
 

@@ -1,4 +1,4 @@
-# Rialto::Etl
+# RIALTO-ETL
 
 [![Gem](https://img.shields.io/gem/v/rialto-etl.svg)](https://rubygems.org/gems/rialto-etl)
 [![Travis](https://img.shields.io/travis/sul-dlss-labs/rialto-etl.svg)](https://travis-ci.org/sul-dlss-labs/rialto-etl)
@@ -8,7 +8,7 @@
 [![API](http://img.shields.io/badge/API-docs-blue.svg)](http://rubydoc.info/gems/rialto-etl)
 [![Apache 2.0 License](http://img.shields.io/badge/APACHE2-license-blue.svg)](./LICENSE)
 
-Rialto::Etl is a set of ETL tools for RIALTO, Stanford University Libraries' research intelligence project
+RIALTO-ETL is a set of ETL tools for RIALTO, Stanford Libraries' research intelligence project
 
 ## Installation
 
@@ -28,7 +28,7 @@ Or install it yourself as:
 
 ## Usage
 
-### Pipeline to ingest organizations into Rialto
+### Pipeline to ingest organizations into RIALTO Core
 
 ```
 exe/extract call StanfordOrganizations > organizations.json
@@ -36,8 +36,7 @@ exe/transform call StanfordOrganizations -i organizations.json > organizations.s
 exe/load call Sparql -i organizations.sparql
 ```
 
-
-### Pipeline to harvest Researchers from Stanford
+### Pipeline to harvest Researchers from Stanford Profiles API
 
 Notes:
 * The extract step takes about 20 min as it has to make ~796 requests to get the full
@@ -45,28 +44,30 @@ Notes:
 * The transform step depends on `organizations.json` from organizations pipeline.
 * The transform step takes about 13 minutes on a single thread
 * The load step takes about 9 hours on a single thread
+
 ```
 exe/extract call StanfordResearchers > researchers.ndj
 exe/transform call StanfordPeople -i researchers.ndj > researchers.sparql
 exe/load call Sparql -i researchers.sparql
 ```
 
-
-### Pipeline to harvest Publications
+### Pipeline to harvest Publications from Web of Science
 
 ```
 exe/extract call WebOfScience --firstname Russ --lastname Altman > publications.ndj
-exe/transform call WebOfScience -i publications.ndj > publications.jsonld
-exe/load call Sparql -i publications.jsonld
+exe/transform call WebOfScience -i publications.ndj > publications.sparql
+exe/load call Sparql -i publications.sparql
 ```
 
-_TODO_ We need to transform this ndj file to RDF and then load it.
+### Pipeline to harvest Grants from Stanford SeRA API
 
-
-### Pipeline to harvest Grants
+Notes:
+* The extract step depends on `researchers.ndj` from the researcher pipeline
 
 ```
-exe/extract call Sera --sunetid ascor
+exe/transform call StanfordPeopleIds -i researchers.ndj > sunetids.txt
+exe/grants load -i sunetids.txt
+# TODO: the rest
 ```
 
 #### Authentication
@@ -89,6 +90,7 @@ sparql_writer:
 Tokens are stored in shared_configs.
 
 ### Run the extract process
+
 Run `exe/extract` to run a named extractor and print output to STDOUT:
 
     $ exe/extract call StanfordResearchers
@@ -97,7 +99,6 @@ Run `exe/extract` to run a named extractor and print output to STDOUT:
 ### List registered extract processes
 
 Run `exe/extract list` to print out the list of callable extractors.
-
 
 ### Transform
 
@@ -110,11 +111,14 @@ Run `exe/transform list` to print out the list of callable transformers.
 
 ### Load
 
-TBD
+Run `exe/load` to run a named extractor and print output to STDOUT:
+
+    $ exe/load call Sparql -i whatever.sparql
+    ...
 
 ## Configuration
 
-Rialto::Etl uses the [config gem](https://github.com/railsconfig/config) to manage configuration, allowing for flexible variation of configs between environments and hosts. By default, the gem assumes it is running in the `'production'` environment and will look for its configurations per the [config gem documentation](https://github.com/railsconfig/config#accessing-the-settings-object). To explicitly set the environment to `test` or `development`, set an environment variable named `ENV`.
+RIALTO-ETL uses the [config gem](https://github.com/railsconfig/config) to manage configuration, allowing for flexible variation of configs between environments and hosts. By default, the gem assumes it is running in the `'production'` environment and will look for its configurations per the [config gem documentation](https://github.com/railsconfig/config#accessing-the-settings-object). To explicitly set the environment to `test` or `development`, set an environment variable named `ENV`.
 
 ## Help
 
@@ -129,6 +133,12 @@ Rialto::Etl uses the [config gem](https://github.com/railsconfig/config) to mana
       transform call NAME       # Call named transformer (`transform list` to see available names)
       transform help [COMMAND]  # Describe subcommands or one specific subcommand
       transform list            # List callable transformers
+
+    $ exe/load help
+    Commands:
+      load call NAME -i, --input-file=FILENAME  # Call named loader (` list` to see available names)
+      load help [COMMAND]                       # Describe available commands or one specific command
+      load list                                 # List callable loaders
 
 ## Documentation
 
