@@ -85,24 +85,12 @@ to_field "!#{VCARD['hasAddress']}", literal(true), single: true
 to_field VCARD['hasAddress'].to_s, lambda { |json, accum|
   address_json = JsonPath.on(json, '$.contacts[?(@["type"] == "academic")]').first
   if address_json
-    accum << {
-      '@id' => RIALTO_CONTEXT_ADDRESSES[json['profileId']],
-      '@type' => VCARD['Address'],
-      "!#{VCARD['street-address']}" => true,
-      VCARD['street-address'].to_s => address_json['address'],
-      "!#{VCARD['locality']}" => true,
-      VCARD['locality'].to_s => address_json['city'],
-      "!#{VCARD['region']}" => true,
-      VCARD['region'].to_s => address_json['state'],
-      "!#{VCARD['postal-code']}" => true,
-      VCARD['postal-code'].to_s => address_json['zip'],
-      # Punting on looking up country based on postal code (http://www.geonames.org/export/web-services.html) and
-      # hardcoding to US (http://sws.geonames.org/6252001/)
-      "!#{VCARD['country-name']}" => true,
-      VCARD['country-name'].to_s => 'United States',
-      "!#{DCTERMS['spatial']}" => true,
-      DCTERMS['spatial'].to_s => RDF::URI.new('http://sws.geonames.org/6252001/')
-    }
+    accum << Rialto::Etl::Transformers::People.construct_address(json['profileId'],
+                                                                 street_address: address_json['address'],
+                                                                 locality: address_json['city'],
+                                                                 region: address_json['state'],
+                                                                 postal_code: address_json['zip'],
+                                                                 country: 'United States')
   end
 }, single: true
 

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/transformers/people'
+require 'rialto/etl/namespaces'
 
 RSpec.describe Rialto::Etl::Transformers::People do
   describe '.construct_positions' do
@@ -37,6 +38,74 @@ RSpec.describe Rialto::Etl::Transformers::People do
 
       it 'returns positions' do
         expect(positions).to eq []
+      end
+    end
+  end
+  describe '.construct_address' do
+    subject(:vcard) do
+      described_class.construct_address(id, street_address: address,
+                                            locality: city,
+                                            region: state,
+                                            postal_code: zip,
+                                            country: country)
+    end
+
+    let(:id) { '123' }
+
+    context 'when address is provided' do
+      let(:address) { '557 Escondido Mall' }
+
+      let(:city) { 'Stanford' }
+
+      let(:state) { 'CA' }
+
+      let(:zip) { '94305' }
+
+      let(:country) { 'USA' }
+
+      it 'returns address vcard hash' do
+        expect(vcard).to eq(
+          '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['123'],
+          '@type' => Rialto::Etl::Vocabs::VCARD['Address'],
+          "!#{Rialto::Etl::Vocabs::VCARD['street-address']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['locality']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['region']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['country-name']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['postal-code']}" => true,
+          "!#{Rialto::Etl::Vocabs::DCTERMS['spatial']}" => true,
+          Rialto::Etl::Vocabs::VCARD['street-address'].to_s => '557 Escondido Mall',
+          Rialto::Etl::Vocabs::VCARD['locality'].to_s => 'Stanford',
+          Rialto::Etl::Vocabs::VCARD['region'].to_s => 'CA',
+          Rialto::Etl::Vocabs::VCARD['postal-code'].to_s => '94305',
+          Rialto::Etl::Vocabs::VCARD['country-name'].to_s => 'USA',
+          Rialto::Etl::Vocabs::DCTERMS['spatial'].to_s => Rialto::Etl::Vocabs::GEONAMES['6252001/']
+        )
+      end
+      context 'when country only is provided' do
+        let(:address) { nil }
+
+        let(:city) { nil }
+
+        let(:state) { nil }
+
+        let(:zip) { nil }
+
+        let(:country) { 'Wales' }
+
+        it 'returns address vcard hash' do
+          expect(vcard).to eq(
+            '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['123'],
+            '@type' => Rialto::Etl::Vocabs::VCARD['Address'],
+            "!#{Rialto::Etl::Vocabs::VCARD['street-address']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['locality']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['region']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['country-name']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['postal-code']}" => true,
+            "!#{Rialto::Etl::Vocabs::DCTERMS['spatial']}" => true,
+            Rialto::Etl::Vocabs::VCARD['country-name'].to_s => 'Wales',
+            Rialto::Etl::Vocabs::DCTERMS['spatial'].to_s => Rialto::Etl::Vocabs::GEONAMES['2635167/']
+          )
+        end
       end
     end
   end

@@ -16,9 +16,14 @@ module Rialto
         end
 
         def initialize
+          initialize_connection
+        end
+
+        attr_reader :conn
+
+        def initialize_connection
           @conn = connection
         end
-        attr_reader :conn
 
         def resolve(type, params)
           resp = conn.get(type, params)

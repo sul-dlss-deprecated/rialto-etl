@@ -36,7 +36,7 @@
           "seq_no": 2,
           "role": "author",
           "full_name": "Altman, Russ B.",
-          "addr_no": "1 2",
+          "addr_no": "2 1",
           "last_name": "Altman",
           "display_name": "Altman, Russ B.",
           "wos_standard": "Altman, RB",
@@ -150,7 +150,7 @@
               "location": "AP",
               "content": 94305
             },
-            "country": "USA",
+            "country": "Peoples R China",
             "city": "Stanford",
             "addr_no": 1,
             "organizations": {
