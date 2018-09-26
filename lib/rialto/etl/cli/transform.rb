@@ -37,6 +37,7 @@ module Rialto
           {
             'StanfordPeople' => 'lib/rialto/etl/configs/stanford_people_to_sparql_statements.rb',
             'StanfordPeopleList' => 'lib/rialto/etl/configs/stanford_people_to_list.rb',
+            'StanfordPeopleIds' => 'lib/rialto/etl/configs/stanford_people_to_ids.rb',
             'StanfordOrganizations' => 'lib/rialto/etl/configs/stanford_organizations_to_sparql_statements.rb',
             'WebOfScience' => 'lib/rialto/etl/configs/wos_to_sparql_statements.rb'
           }

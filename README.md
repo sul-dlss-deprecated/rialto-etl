@@ -36,7 +36,7 @@ exe/transform call StanfordOrganizations -i organizations.json > organizations.s
 exe/load call Sparql -i organizations.sparql
 ```
 
-### Pipeline to harvest Researchers from Stanford
+### Pipeline to harvest Researchers from Stanford Profiles API
 
 Notes:
 * The extract step takes about 20 min as it has to make ~796 requests to get the full
@@ -59,10 +59,14 @@ exe/transform call WebOfScience -i publications.ndj > publications.sparql
 exe/load call Sparql -i publications.sparql
 ```
 
-### Pipeline to harvest Grants
+### Pipeline to harvest Grants from Stanford SeRA API
+
+Notes:
+* The extract step depends on `researchers.ndj` from the researcher pipeline
 
 ```
-exe/extract call Sera --sunetid ascor
+exe/transform call StanfordPeopleIds -i researchers.ndj > sunetids.txt
+exe/grants load -i sunetids.txt
 # TODO: the rest
 ```
 
