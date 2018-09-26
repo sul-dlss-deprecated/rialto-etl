@@ -10,6 +10,10 @@
 
 RIALTO-ETL is a set of ETL tools for RIALTO, Stanford Libraries' research intelligence project
 
+## Dependencies
+
+- Ruby >= 2.5.0
+
 ## Installation
 
 Add this line to your application's Gemfile:
