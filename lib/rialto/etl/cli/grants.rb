@@ -69,9 +69,11 @@ module Rialto
           File.open(output_file, 'w') do |f|
             f.write(results.join("\n"))
           end
-        rescue StandardError => exception
-          say "retrying request for #{id}, failed: #{exception.message}"
+        rescue RuntimeError, SocketError, Errno::ECONNRESET => exception
+          say "retrying #{id}, failed with #{exception.class}: #{exception.message}"
           retry
+        rescue StandardError => exception
+          say "aborting #{id}, failed with #{exception.class}: #{exception.message}"
         end
       end
       # rubocop:enable Metrics/MethodLength
