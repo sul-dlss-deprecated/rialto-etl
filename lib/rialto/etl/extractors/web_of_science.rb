@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/array/wrap'
+
 module Rialto
   module Etl
     module Extractors
@@ -54,7 +56,7 @@ module Rialto
           return [] if found.zero?
 
           self.page = page + 1 if more
-          json.fetch('Data').fetch('Records').fetch('records').fetch('REC')
+          Array.wrap(json.fetch('Data').fetch('Records').fetch('records').fetch('REC'))
         end
       end
     end
