@@ -44,5 +44,22 @@ RSpec.describe Rialto::Etl::Extractors::WebOfScience do
         # rubocop:enable Lint/PercentStringArray
       end
     end
+
+    context 'when there is only one result' do
+      before do
+        stub_request(:get, 'https://api.clarivate.com/api/wos?count=2&databaseId=WOS&firstRecord=1&usrQuery=AU=,%20AND%20OG=Stanford%20University')
+          .to_return(status: 200, body: '{"Data":{"Records": { "records": {"REC": "one"}}},'\
+            '"QueryResult": {"RecordsFound": 1}}')
+
+        allow(extractor.send(:client)).to receive(:page_size).and_return(2)
+      end
+      it 'calls the block on single result' do
+        results = []
+        extractor.each do |records|
+          results << records
+        end
+        expect(results).to eq ['"one"']
+      end
+    end
   end
 end
