@@ -11,11 +11,12 @@ RSpec.describe Rialto::Etl::CLI::Grants do
     }
   end
   let(:extractor) { double }
-  let(:results) do
-    [
-      '{"spoNumber": "12345","piSunetId":"mjgiarlo"}',
-      '{"spoNumber": "67890","piSunetId":"mjgiarlo"}'
-    ]
+  let(:results) { [result1, result2] }
+  let(:result1) { '{"sunetid":"mjgiarlo"}' }
+  let(:result2) { '{"sunetid":"justinlittman"}' }
+
+  def id_from(json)
+    JSON.parse(json)['sunetid']
   end
 
   describe '#load' do
@@ -23,7 +24,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
 
     before do
       allow(File).to receive(:open).and_yield(json)
-      allow(Parallel).to receive(:map).and_yield(results)
+      allow(Parallel).to receive(:map).and_yield(id_from(result1)).and_yield(id_from(result2))
       allow(loader).to receive(:extract_and_write).and_return(results)
     end
 
@@ -31,7 +32,21 @@ RSpec.describe Rialto::Etl::CLI::Grants do
       loader.invoke_command(command)
       expect(File).to have_received(:open).with('sunetids.json', 'r')
       expect(Parallel).to have_received(:map).once
-      expect(loader).to have_received(:extract_and_write).once
+      expect(loader).to have_received(:extract_and_write).twice
+    end
+
+    context 'with files that already exist' do
+      before do
+        allow(File).to receive(:exist?).and_return(true)
+      end
+
+      it 'skips the files and prints a warning' do
+        expect { loader.invoke_command(command) }.to output(
+          "file data/mjgiarlo.json already exists, skipping. use -f to force overwrite\n" \
+            "file data/justinlittman.json already exists, skipping. use -f to force overwrite\n"
+        ).to_stdout
+        expect(loader).not_to have_received(:extract_and_write)
+      end
     end
   end
 
@@ -40,6 +55,9 @@ RSpec.describe Rialto::Etl::CLI::Grants do
     let(:output_file) { 'data/mjgiarlo.json' }
     let(:id) { 'mjgiarlo' }
     let(:writer) { double }
+    let(:results) { [result1, result2] }
+    let(:result1) { '{"spoNumber": "12345","piSunetId":"mjgiarlo"}' }
+    let(:result2) { '{"spoNumber": "67890","piSunetId":"mjgiarlo"' }
 
     before do
       allow(client).to receive(:each).and_yield(results)
@@ -67,6 +85,16 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         loader.send(:extract_and_write, id, output_file)
         expect(File).not_to have_received(:open)
         expect(writer).not_to have_received(:write)
+      end
+    end
+
+    context 'with an unexpected exception' do
+      before do
+        allow(Rialto::Etl::Extractors::Sera).to receive(:new).once.and_raise(StandardError)
+      end
+
+      it 'prints a warning' do
+        expect { loader.send(:extract_and_write, id, output_file) }.to output(/aborting/).to_stdout
       end
     end
   end

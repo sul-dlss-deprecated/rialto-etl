@@ -25,5 +25,15 @@ RSpec.describe Rialto::Etl::ServiceClient::EntityResolver do
         expect(resolve).to be_nil
       end
     end
+
+    context 'when resolver behaves unexpectedly' do
+      before do
+        stub_request(:get, 'http://127.0.0.1:3001/person?full_name=Wilson,%20Jennifer%20L.&orcid_id=0000-0002-2328-2018')
+          .to_return(status: 500, body: '')
+      end
+      it 'gets the URI' do
+        expect { resolve }.to raise_error(RuntimeError, /Entity resolver returned 500 for person type and/)
+      end
+    end
   end
 end
