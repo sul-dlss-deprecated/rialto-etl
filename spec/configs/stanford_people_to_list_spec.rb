@@ -47,17 +47,18 @@ RSpec.describe Rialto::Etl::Transformer do
       end
 
       it 'has the correct header' do
-        expect(csv[0]).to match_array(%w[uri first_name last_name sunetid])
+        expect(csv[0]).to match_array(%w[uri first_name last_name profileid sunetid])
       end
 
       it 'has the right number of lines' do
         expect(csv.length).to eq(3)
       end
       it 'includes the correct Stanford people' do
-        expect(csv[1][0]).to eq("#{Rialto::Etl::Vocabs::RIALTO_PEOPLE}400150")
+        expect(csv[1][0]).to eq(Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'].to_s)
         expect(csv[1][1]).to eq('Bill')
         expect(csv[1][2]).to eq('Chen')
-        expect(csv[1][3]).to eq('billchen1')
+        expect(csv[1][3]).to eq('400150')
+        expect(csv[1][4]).to eq('billchen1')
       end
     end
   end

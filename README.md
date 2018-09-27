@@ -55,18 +55,20 @@ exe/transform call StanfordPeople -i researchers.ndj > researchers.sparql
 exe/load call Sparql -i researchers.sparql
 ```
 
+
 ### Pipeline to harvest Publications from Web of Science
+Notes:
+* The transform step depends on `researchers.ndj` from researcher pipeline.
 
 ```
-exe/extract call WebOfScience --firstname Russ --lastname Altman > publications.ndj
-exe/transform call WebOfScience -i publications.ndj > publications.sparql
-exe/load call Sparql -i publications.sparql
+exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
+exe/publications load -i researchers.csv
 ```
 
 ### Pipeline to harvest Grants from Stanford SeRA API
 
 Notes:
-* The extract step depends on `researchers.ndj` from the researcher pipeline
+* The transform step depends on `researchers.ndj` from the researcher pipeline
 
 ```
 exe/transform call StanfordPeopleIds -i researchers.ndj > sunetids.txt

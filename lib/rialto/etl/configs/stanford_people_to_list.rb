@@ -12,7 +12,7 @@ extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
 settings do
-  provide 'delimited_writer.fields', 'uri,first_name,last_name,sunetid'
+  provide 'delimited_writer.fields', 'uri,first_name,last_name,profileid,sunetid'
   provide 'writer_class_name', 'Traject::CSVWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
 end
@@ -25,6 +25,9 @@ end
 # Names
 to_field 'first_name', extract_json('$.names.preferred.firstName'), single: true
 to_field 'last_name', extract_json('$.names.preferred.lastName'), single: true
+
+# Profile Id
+to_field 'profileid', extract_json('$.profileId'), single: true
 
 # SUNet Id
 to_field 'sunetid', extract_json('$.uid'), single: true
