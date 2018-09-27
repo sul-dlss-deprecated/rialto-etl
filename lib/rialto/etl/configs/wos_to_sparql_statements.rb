@@ -4,6 +4,7 @@ require 'digest'
 require 'traject_plus'
 require 'rialto/etl/readers/ndjson_reader'
 require 'rialto/etl/writers/sparql_statement_writer'
+require 'rialto/etl/transformers/people'
 require 'active_support/core_ext/array/wrap'
 require 'rialto/etl/namespaces'
 
@@ -95,6 +96,7 @@ to_field BIBO['doi'].to_s, lambda { |json, accumulator|
 }, single: true
 
 to_field "!#{VIVO['relatedBy']}", literal(true), single: true
+# rubocop:disable Metrics/BlockLength
 to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
   addresses = fetch_addresses(json)
   # Lookup all the contributors in the entity resolution service to find their URIs.
@@ -103,23 +105,39 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
     address = lookup_address(addresses, c['addr_no'])
     person_params = c.slice('orcid_id', 'first_name', 'last_name', 'full_name')
     person_params.merge!(address) if address
-    resolved_person = resolve_entity('person', person_params)
-    new_person = {
-      '@id' => RIALTO_PEOPLE[Digest::MD5.hexdigest("#{c['first_name']} #{c['last_name']}".downcase)],
-      '@type' => [FOAF['Agent'], FOAF['Person']]
-      # TODO: labels and name vcard
-    }
+
+    person = if (resolved_person = resolve_entity('person', person_params))
+               {
+                 '@id' => resolved_person
+               }
+             else
+               {
+                 '@id' => RIALTO_PEOPLE[Digest::MD5.hexdigest("#{c['first_name']} #{c['last_name']}".downcase)],
+                 '@type' => [FOAF['Agent'], FOAF['Person']]
+                 # TODO: labels and name vcard
+               }
+             end
+    person_id = person['@id'].to_s.delete_prefix(RIALTO_PEOPLE.to_s)
+    # For now, adding a country for all people.
+    # Some people may already have address vcards.
+    # The URI of the vcard is tied to this publication, so users will end up with many address vcards.
+    if address && address.key?('country')
+      address_vcard = Rialto::Etl::Transformers::People.construct_address("#{person_id}_#{json['UID']}",
+                                                                          country: address['country'])
+      person[VCARD['hasAddress'].to_s] = address_vcard
+    end
+
     {
-      '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{(resolved_person ||
-          new_person['@id']).to_s.delete_prefix(RIALTO_PEOPLE.to_s)}"],
+      '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{person_id}"],
       '@type' => VIVO['Authorship'],
       "!{VIVO['relates'}" => true,
-      VIVO['relates'].to_s => resolved_person || new_person
-
+      VIVO['relates'].to_s => person['@id'],
+      '#person' => person
     }
   end
   accumulator << authorships
 }, single: true
+# rubocop:enable Metrics/BlockLength
 
 to_field "!#{DCTERMS['subject']}", literal(true), single: true
 to_field DCTERMS['subject'].to_s, lambda { |json, accumulator|

@@ -11,6 +11,13 @@ RSpec.describe Rialto::Etl::Transformer do
   let(:config_file_path) { 'lib/rialto/etl/configs/wos_to_sparql_statements.rb' }
   let(:graph) { Rialto::Etl::NamedGraphs::WOS_GRAPH }
 
+  before do
+    Settings.entity_resolver.api_key = 'abc123'
+    Settings.entity_resolver.url = 'http://127.0.0.1:3001'
+    # Makes sure Entity Resolver is using above settings.
+    Rialto::Etl::ServiceClient::EntityResolver.instance.initialize_connection
+  end
+
   describe 'wos_to_sparql_statements' do
     let(:repository) do
       RDF::Repository.new.tap do |repo|
@@ -44,7 +51,7 @@ RSpec.describe Rialto::Etl::Transformer do
 
     describe 'insert' do
       before do
-        stub_request(:get, 'http://127.0.0.1:3001/person?country=USA&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
+        stub_request(:get, 'http://127.0.0.1:3001/person?country=Peoples%20R%20China&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/15bf29be-470a-442e-9389-f66aac440a7b')
 
@@ -152,10 +159,50 @@ RSpec.describe Rialto::Etl::Transformer do
             graph]]
         )
       end
+      it 'is inserted with author triples' do
+        # Authors
+        expect(repository).to has_quads(
+          [[Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
+            Rialto::Etl::Vocabs::VCARD['hasAddress'],
+            Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
+            RDF.type,
+            Rialto::Etl::Vocabs::VCARD['Address'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
+            Rialto::Etl::Vocabs::VCARD['country-name'],
+            'Peoples R China',
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
+            Rialto::Etl::Vocabs::DCTERMS['spatial'],
+            Rialto::Etl::Vocabs::GEONAMES['1814991/'],
+            graph]]
+        )
+
+        expect(repository).to has_quads(
+          [[Rialto::Etl::Vocabs::RIALTO_PEOPLE['dc934b74-e554-409b-967b-0d555c44cc2c'],
+            Rialto::Etl::Vocabs::VCARD['hasAddress'],
+            Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
+            RDF.type,
+            Rialto::Etl::Vocabs::VCARD['Address'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
+            Rialto::Etl::Vocabs::VCARD['country-name'],
+            'USA',
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
+            Rialto::Etl::Vocabs::DCTERMS['spatial'],
+            Rialto::Etl::Vocabs::GEONAMES['6252001/'],
+            graph]]
+        )
+      end
     end
     describe 'create subjects and people' do
       before do
-        stub_request(:get, 'http://127.0.0.1:3001/person?country=USA&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
+        stub_request(:get, 'http://127.0.0.1:3001/person?country=Peoples%20R%20China&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 404)
 
@@ -203,7 +250,7 @@ RSpec.describe Rialto::Etl::Transformer do
 
     describe 'update publication' do
       before do
-        stub_request(:get, 'http://127.0.0.1:3001/person?country=USA&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
+        stub_request(:get, 'http://127.0.0.1:3001/person?country=Peoples%20R%20China&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/15bf29be-470a-442e-9389-f66aac440a7b')
 

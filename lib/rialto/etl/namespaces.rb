@@ -25,6 +25,7 @@ module Rialto
       OBO = RDF::Vocabulary.new('http://purl.obolibrary.org/obo/')
       RDFS = RDF::Vocabulary.new('http://www.w3.org/2000/01/rdf-schema#')
       BIBO = RDF::Vocabulary.new('http://purl.org/ontology/bibo/')
+      GEONAMES = RDF::Vocabulary.new('http://sws.geonames.org/')
     end
     # Holds graph names
     module NamedGraphs
