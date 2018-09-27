@@ -8,6 +8,9 @@ module Rialto
     module Extractors
       # Documentation: https://asconfluence.stanford.edu/confluence/display/MaIS/SeRA+API+-+User+Documentation
       class Sera
+        # Instead of a bare `raise`, raise a custom error so it can be caught reliably
+        class ConnectionError < StandardError; end
+
         def initialize(options = {})
           @sunetid = options.fetch(:sunetid)
         end
@@ -45,7 +48,7 @@ module Rialto
           when 404
             []
           when 400..499, 500..599
-            raise "There was a problem with the request to `#{url}` (#{response.status}): #{response.body}"
+            raise ConnectionError, "There was a problem with the request to `#{url}` (#{response.status}): #{response.body}"
           else
             hash = JSON.parse(response.body)
             hash['SeRARecord']
