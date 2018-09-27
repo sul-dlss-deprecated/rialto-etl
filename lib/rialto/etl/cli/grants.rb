@@ -69,7 +69,10 @@ module Rialto
           File.open(output_file, 'w') do |f|
             f.write(results.join("\n"))
           end
-        rescue RuntimeError, SocketError, Errno::ECONNRESET => exception
+        rescue Rialto::Etl::Extractors::Sera::ConnectionError,
+               SocketError,
+               Faraday::TimeoutError,
+               Faraday::ConnectionFailed => exception
           say "retrying #{id}, failed with #{exception.class}: #{exception.message}"
           retry
         rescue StandardError => exception
