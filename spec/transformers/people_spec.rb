@@ -41,13 +41,13 @@ RSpec.describe Rialto::Etl::Transformers::People do
       end
     end
   end
-  describe '.construct_address' do
+  describe '.construct_address_vcard' do
     subject(:vcard) do
-      described_class.construct_address(id, street_address: address,
-                                            locality: city,
-                                            region: state,
-                                            postal_code: zip,
-                                            country: country)
+      described_class.construct_address_vcard(id, street_address: address,
+                                                  locality: city,
+                                                  region: state,
+                                                  postal_code: zip,
+                                                  country: country)
     end
 
     let(:id) { '123' }
@@ -107,6 +107,111 @@ RSpec.describe Rialto::Etl::Transformers::People do
           )
         end
       end
+    end
+  end
+  describe '.construct_name_vcard' do
+    subject(:vcard) do
+      described_class.construct_name_vcard(id: id, given_name: given_name, middle_name: middle_name, family_name: family_name)
+    end
+
+    let(:given_name) { 'Justin' }
+
+    let(:family_name) { 'Littman' }
+
+    context 'when middle name and id provided' do
+      let(:middle_name) { 'Cunningham' }
+
+      let(:id) { '123' }
+
+      it 'returns the correct fullname' do
+        expect(vcard).to eq(
+          '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['123'],
+          '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
+          "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
+          Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
+          Rialto::Etl::Vocabs::VCARD['middle-name'].to_s => 'Cunningham',
+          Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+        )
+      end
+      context 'when middle name and id not provided' do
+        let(:middle_name) { nil }
+
+        let(:id) { nil }
+
+        it 'returns the correct fullname' do
+          expect(vcard).to eq(
+            '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['ed1aa059391f675499eda6172ddc29f4'],
+            '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
+            "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
+            Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
+            Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+          )
+        end
+      end
+    end
+  end
+
+  describe '.fullname_from_names' do
+    subject(:fullname) do
+      described_class.fullname_from_names(given_name: given_name, middle_name: middle_name, family_name: family_name)
+    end
+
+    let(:given_name) { 'Justin' }
+
+    let(:family_name) { 'Littman' }
+
+    context 'when middle name is provided' do
+      let(:middle_name) { 'Cunningham' }
+
+      it 'returns the correct fullname' do
+        expect(fullname).to eq('Justin Cunningham Littman')
+      end
+    end
+
+    context 'when middle name is not provided' do
+      let(:middle_name) { nil }
+
+      it 'returns the correct fullname' do
+        expect(fullname).to eq('Justin Littman')
+      end
+    end
+  end
+
+  describe '.construct_person' do
+    subject(:person) do
+      described_class.construct_person(id: id, given_name: given_name, middle_name: middle_name, family_name: family_name)
+    end
+
+    let(:given_name) { 'Justin' }
+
+    let(:family_name) { 'Littman' }
+
+    let(:id) { '123' }
+
+    let(:middle_name) { 'Cunningham' }
+
+    it 'returns the person' do
+      expect(person).to eq(
+        '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
+        '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Person']],
+        Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Justin Cunningham Littman',
+        Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Justin Cunningham Littman',
+        Rialto::Etl::Vocabs::VCARD['hasName'].to_s => {
+          '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['123'],
+          '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
+          "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
+          "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
+          Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
+          Rialto::Etl::Vocabs::VCARD['middle-name'].to_s => 'Cunningham',
+          Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+
+        }
+      )
     end
   end
 end

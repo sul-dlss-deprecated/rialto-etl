@@ -11,11 +11,10 @@ extend TrajectPlus::Macros::JSON
 extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
-def concat_name(json)
-  name_parts = [JsonPath.on(json, '$.names.preferred.firstName').first]
-  name_parts << JsonPath.on(json, '$.names.preferred.middleName').first
-  name_parts << JsonPath.on(json, '$.names.preferred.lastName').first
-  name_parts.compact.join(' ')
+def full_name(json)
+  Rialto::Etl::Transformers::People.fullname_from_names(given_name: JsonPath.on(json, '$.names.preferred.firstName').first,
+                                                        middle_name: JsonPath.on(json, '$.names.preferred.middleName').first,
+                                                        family_name: JsonPath.on(json, '$.names.preferred.lastName').first)
 end
 
 settings do
@@ -51,11 +50,11 @@ to_field '@type', lambda { |json, accum|
 # Person label
 to_field "!#{SKOS['prefLabel']}", literal(true)
 to_field SKOS['prefLabel'].to_s, lambda { |json, accum|
-  accum << concat_name(json)
+  accum << full_name(json)
 }, single: true
 to_field "!#{RDFS['label']}", literal(true)
 to_field RDFS['label'].to_s, lambda { |json, accum|
-  accum << concat_name(json)
+  accum << full_name(json)
 }, single: true
 
 # Person name (Vcard)
@@ -63,16 +62,10 @@ to_field "!#{VCARD['hasName']}", literal(true), single: true
 to_field VCARD['hasName'].to_s, lambda { |json, accum|
   name_json = JsonPath.on(json, '$.names.preferred').first
   if name_json
-    accum << {
-      '@id' => RIALTO_CONTEXT_NAMES[json['profileId']],
-      '@type' => VCARD['Name'],
-      "!#{VCARD['given-name']}" => true,
-      VCARD['given-name'].to_s => name_json['firstName'],
-      "!#{VCARD['middle-name']}" => true,
-      VCARD['middle-name'].to_s => name_json['middleName'],
-      "!#{VCARD['family-name']}" => true,
-      VCARD['family-name'].to_s => name_json['lastName']
-    }
+    accum << Rialto::Etl::Transformers::People.construct_name_vcard(id: json['profileId'],
+                                                                    given_name: name_json['firstName'],
+                                                                    middle_name: name_json['middleName'],
+                                                                    family_name: name_json['lastName'])
   end
 }, single: true
 
@@ -85,12 +78,12 @@ to_field "!#{VCARD['hasAddress']}", literal(true), single: true
 to_field VCARD['hasAddress'].to_s, lambda { |json, accum|
   address_json = JsonPath.on(json, '$.contacts[?(@["type"] == "academic")]').first
   if address_json
-    accum << Rialto::Etl::Transformers::People.construct_address(json['profileId'],
-                                                                 street_address: address_json['address'],
-                                                                 locality: address_json['city'],
-                                                                 region: address_json['state'],
-                                                                 postal_code: address_json['zip'],
-                                                                 country: 'United States')
+    accum << Rialto::Etl::Transformers::People.construct_address_vcard(json['profileId'],
+                                                                       street_address: address_json['address'],
+                                                                       locality: address_json['city'],
+                                                                       region: address_json['state'],
+                                                                       postal_code: address_json['zip'],
+                                                                       country: 'United States')
   end
 }, single: true
 
@@ -119,40 +112,26 @@ to_field OBO['RO_0000053'].to_s, lambda { |json, accum|
   end
 }
 
-# rubocop:disable Metrics/BlockLength
 to_field '#advisees', lambda { |json, accum|
   advisees_json = JsonPath.on(json, '$.advisees[*].advisee')
   advisees = []
   advisees_json.each do |advisee_json|
-    full_name = "#{advisee_json['firstName']} #{advisee_json['lastName']}"
-    advisees << {
-      '@id' => RIALTO_PEOPLE[advisee_json['profileId']],
-      '@type' => [FOAF['Agent'], FOAF['Person']],
-      SKOS['prefLabel'].to_s => full_name,
-      RDFS['label'].to_s => full_name,
-      # Name VCard
-      VCARD['hasName'].to_s => {
-        '@id' => RIALTO_CONTEXT_NAMES[advisee_json['profileId']],
-        '@type' => VCARD['Name'],
-        "!#{VCARD['given-name']}" => true,
-        VCARD['given-name'].to_s => advisee_json['firstName'],
-        "!#{VCARD['family-name']}" => true,
-        VCARD['family-name'].to_s => advisee_json['lastName']
-      },
-      # Related by
-      VIVO['relatedBy'].to_s => RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"],
-      # Advisee role
-      OBO['RO_0000053'].to_s => {
-        '@id' => RIALTO_CONTEXT_ROLES['AdviseeRole'],
-        '@type' => VIVO['AdviseeRole'],
-        # This points back at the advisee
-        OBO['RO_0000052'].to_s => RIALTO_PEOPLE[advisee_json['profileId']]
-      }
+    advisee_hash = Rialto::Etl::Transformers::People.construct_person(id: advisee_json['profileId'],
+                                                                      given_name: advisee_json['firstName'],
+                                                                      family_name: advisee_json['lastName'])
+    # Related by
+    advisee_hash[VIVO['relatedBy'].to_s] = RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"]
+    # Advisee role
+    advisee_hash[OBO['RO_0000053'].to_s] = {
+      '@id' => RIALTO_CONTEXT_ROLES['AdviseeRole'],
+      '@type' => VIVO['AdviseeRole'],
+      # This points back at the advisee
+      OBO['RO_0000052'].to_s => RIALTO_PEOPLE[advisee_json['profileId']]
     }
+    advisees << advisee_hash
   end
   accum << advisees unless advisees.empty?
 }, single: true
-# rubocop:enable Metrics/BlockLength
 
 # Email
 to_field '!' + VCARD['hasEmail'].to_s, literal(true)

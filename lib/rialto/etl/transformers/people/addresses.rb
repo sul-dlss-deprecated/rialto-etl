@@ -19,7 +19,7 @@ module Rialto
           # @param country [String] country
           # @return [Hash] a hash representing the Vcard
           # rubocop:disable Metrics/ParameterLists, Metrics/CyclomaticComplexity, Metrics/MethodLength
-          def construct_address(id, street_address:, locality:, region:, postal_code:, country:)
+          def construct_address_vcard(id, street_address:, locality:, region:, postal_code:, country:)
             vcard = default_hash
             vcard['@id'] = RIALTO_CONTEXT_ADDRESSES[id]
             vcard[VCARD['street-address'].to_s] = street_address if street_address

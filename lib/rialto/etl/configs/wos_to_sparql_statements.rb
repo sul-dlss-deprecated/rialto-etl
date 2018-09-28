@@ -111,19 +111,15 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
                  '@id' => resolved_person
                }
              else
-               {
-                 '@id' => RIALTO_PEOPLE[Digest::MD5.hexdigest("#{c['first_name']} #{c['last_name']}".downcase)],
-                 '@type' => [FOAF['Agent'], FOAF['Person']]
-                 # TODO: labels and name vcard
-               }
+               Rialto::Etl::Transformers::People.construct_person(given_name: c['first_name'], family_name: c['last_name'])
              end
     person_id = person['@id'].to_s.delete_prefix(RIALTO_PEOPLE.to_s)
     # For now, adding a country for all people.
     # Some people may already have address vcards.
     # The URI of the vcard is tied to this publication, so users will end up with many address vcards.
     if address && address.key?('country')
-      address_vcard = Rialto::Etl::Transformers::People.construct_address("#{person_id}_#{json['UID']}",
-                                                                          country: address['country'])
+      address_vcard = Rialto::Etl::Transformers::People.construct_address_vcard("#{person_id}_#{json['UID']}",
+                                                                                country: address['country'])
       person[VCARD['hasAddress'].to_s] = address_vcard
     end
 
