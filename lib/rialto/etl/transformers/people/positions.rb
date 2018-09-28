@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/namespaces'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
@@ -9,32 +10,39 @@ module Rialto
         # Position transformer for the CAP Person API
         class Positions
           include Rialto::Etl::Vocabs
+          include Rialto::Etl::Logging
 
           # Transform titles from the CAP people api response to positions in the IR
           # @param titles [Array] a list of titles the person has
           # @param profile_id [String] the identifier for the person profile
           # @return [Array<Hash>] a list of vivo positions described in our IR
           def construct_positions(titles:, profile_id:)
-            Array(titles).map do |title_json|
+            positions = Array(titles).map do |title_json|
               org_code = title_json['organization']['orgCode']
               position_for(org_code: org_code,
                            hr_title: title_json['title'],
                            label: title_json['label']['text'],
                            profile_id: profile_id)
             end
+            positions.compact
           end
 
           private
 
           # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
           def position_for(org_code:, hr_title:, label:, profile_id:)
+            org_id = orgs_map[org_code]
+            if org_id.nil?
+              logger.warn("Unmapped organization: #{org_code}")
+              return nil
+            end
             {
               '@id' => RIALTO_CONTEXT_POSITIONS["#{org_code}_#{profile_id}"],
               '@type' => VIVO['Position'],
               "!#{DCTERMS['valid']}" => true,
               DCTERMS['valid'].to_s => Time.now.to_date,
               VIVO['relates'].to_s => [RIALTO_PEOPLE[profile_id], {
-                '@id' => RIALTO_ORGANIZATIONS[orgs_map[org_code]],
+                '@id' => RIALTO_ORGANIZATIONS[org_id],
                 VIVO['relatedBy'].to_s => RIALTO_CONTEXT_POSITIONS["#{org_code}_#{profile_id}"]
               }],
               "!#{VIVO['hrJobTitle']}" => true,

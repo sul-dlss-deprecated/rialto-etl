@@ -148,5 +148,5 @@ to_field DCTERMS['identifier'].to_s, lambda { |json, accum|
 to_field VIVO['relatedBy'].to_s, lambda { |json, accum|
   titles_json = JsonPath.on(json, '$.titles').first
   positions = Rialto::Etl::Transformers::People.construct_positions(titles: titles_json, profile_id: json['profileId'])
-  accum.concat(positions)
+  accum.concat(positions) if positions.any?
 }

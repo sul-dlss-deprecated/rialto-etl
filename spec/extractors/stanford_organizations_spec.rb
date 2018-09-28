@@ -32,7 +32,7 @@ RSpec.describe Rialto::Etl::Extractors::StanfordOrganizations do
       end
 
       it 'prints out the exception' do
-        expect { extractor.each {} }.to output("Error: #{error_message}\n").to_stderr
+        expect { extractor.each {} }.to output(/Uh oh!/).to_stderr
       end
     end
   end
