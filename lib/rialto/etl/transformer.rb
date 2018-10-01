@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 require 'traject'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
     # Transformer turning Stanford org info into Vivo format
     class Transformer
+      include Rialto::Etl::Logging
+
       attr_reader :input_stream, :config_file_path
 
       # Initialize a new instance of the transformer
@@ -26,6 +29,7 @@ module Rialto
       def transformer
         @transformer ||= Traject::Indexer.new.tap do |indexer|
           indexer.load_config_file(config_file_path)
+          indexer.logger = logger
         end
       end
     end

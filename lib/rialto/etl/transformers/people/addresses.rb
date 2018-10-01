@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/namespaces'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
@@ -9,6 +10,7 @@ module Rialto
         # Address transformer
         class Addresses
           include Rialto::Etl::Vocabs
+          include Rialto::Etl::Logging
 
           # Transform addresses into the hash for an address Vcard
           # @param id [String] an id to use to construct the Vcard URI
@@ -51,8 +53,9 @@ module Rialto
           end
 
           def geocode_id_for(country)
-            # TODO: Log if no country match
-            countries_map[country.downcase]
+            geocode_id = countries_map[country.downcase]
+            logger.warn("Unmapped country: #{country}") unless geocode_id
+            geocode_id
           end
 
           def countries_map

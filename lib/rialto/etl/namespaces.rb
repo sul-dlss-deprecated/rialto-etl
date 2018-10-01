@@ -2,6 +2,15 @@
 
 require 'rdf'
 
+module RDF
+  # Adds method to Vocabulary extracting id from URI for this vocabulary
+  class Vocabulary
+    def remove_from_uri(uri)
+      uri.to_s.delete_prefix(to_s)
+    end
+  end
+end
+
 module Rialto
   module Etl
     # Holds vocabs
