@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
+require 'rialto/etl/logging'
+
 module Rialto
   module Etl
     module Extractors
       # Stanford CAP API for orgs
       class StanfordOrganizations
+        include Rialto::Etl::Logging
+
         def initialize(client: ServiceClient::StanfordClient.new)
           @client = client
         end
@@ -14,7 +18,7 @@ module Rialto
           return to_enum(:each) unless block_given?
           yield client.get('/cap/v1/orgs/stanford?p=1&ps=10')
         rescue StandardError => exception
-          warn "Error: #{exception.message}"
+          logger.error("Error extracting Stanford organizations: #{exception.message}")
         end
 
         private

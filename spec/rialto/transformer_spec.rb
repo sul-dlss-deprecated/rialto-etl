@@ -34,6 +34,7 @@ RSpec.describe Rialto::Etl::Transformer do
     it 'returns an instance of Traject::Indexer with the specified config' do
       allow(Traject::Indexer).to receive(:new).and_return(indexer)
       allow(indexer).to receive(:load_config_file).with(config_file_path)
+      allow(indexer).to receive(:logger=)
       transformer.transform
       expect(Traject::Indexer).to have_received(:new).once
       expect(indexer).to have_received(:load_config_file).once
