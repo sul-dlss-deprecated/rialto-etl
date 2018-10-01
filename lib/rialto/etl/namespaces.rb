@@ -6,6 +6,10 @@ module Rialto
   module Etl
     # Holds vocabs
     module Vocabs
+      # Remove a vocab URI from a URI
+      def remove_vocab_from_uri(vocab, uri)
+        uri.to_s.delete_prefix(vocab.to_s)
+      end
       rialto_base = 'http://sul.stanford.edu/rialto/'
       RIALTO_ORGANIZATIONS = RDF::Vocabulary.new(rialto_base + 'agents/orgs/')
       RIALTO_PEOPLE = RDF::Vocabulary.new(rialto_base + 'agents/people/')
