@@ -4,8 +4,8 @@ require 'rialto/etl/transformers/people'
 require 'rialto/etl/namespaces'
 
 RSpec.describe Rialto::Etl::Transformers::People do
-  describe '.construct_positions' do
-    subject(:positions) { described_class.construct_positions(titles: titles, profile_id: id) }
+  describe '.construct_stanford_positions' do
+    subject(:positions) { described_class.construct_stanford_positions(titles: titles, profile_id: id) }
 
     let(:id) { '123' }
 
@@ -29,7 +29,7 @@ RSpec.describe Rialto::Etl::Transformers::People do
         expect(position['http://vivoweb.org/ontology/core#relates'][0])
           .to eq RDF::URI('http://sul.stanford.edu/rialto/agents/people/123')
         expect(position['http://vivoweb.org/ontology/core#relates'][1])
-          .to include('@id' => RDF::URI('http://sul.stanford.edu/rialto/agents/orgs/school-of-medicine/deans-office/information-resources-and-technology-irt/it-services'))
+          .to eq RDF::URI('http://sul.stanford.edu/rialto/agents/orgs/school-of-medicine/deans-office/information-resources-and-technology-irt/it-services')
       end
     end
 
@@ -41,6 +41,72 @@ RSpec.describe Rialto::Etl::Transformers::People do
       end
     end
   end
+  describe '.construct_position' do
+    subject(:position) { described_class.construct_position(org_name: org_name, person_id: person_id) }
+
+    let(:person_id) { '123' }
+
+    let(:org_name) { 'Stanford University' }
+
+    context 'when organization resolved' do
+      before do
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=Stanford%20University')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/stanford')
+      end
+      it 'returns position with resolved organization' do
+        expect(position).to eq(
+          '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123'],
+          '@type' => Rialto::Etl::Vocabs::VIVO['Position'],
+          Rialto::Etl::Vocabs::VIVO['relates'].to_s => [Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
+                                                        Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']],
+          '#position_person_relatedby' => {
+            '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
+            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123']
+
+          },
+          '#position_org_relatedby' => {
+            '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford'],
+            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123']
+          }
+        )
+      end
+    end
+    context 'when organization not resolved' do
+      before do
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=Stanford%20University')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 404)
+      end
+      it 'returns position with new organization' do
+        expect(position).to eq(
+          '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcdd2c0220c7cde1d23c989_123'],
+          '@type' => Rialto::Etl::Vocabs::VIVO['Position'],
+          Rialto::Etl::Vocabs::VIVO['relates'].to_s => [Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
+                                                        Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220'\
+                                                          'c7cde1d23c989']],
+          '#position_person_relatedby' => {
+            '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
+            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcd'\
+                                                          'd2c0220c7cde1d23c989_123']
+
+          },
+          '#position_org_relatedby' => {
+            '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
+            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcd'\
+                                                          'd2c0220c7cde1d23c989_123']
+          },
+          '#organization' => {
+            '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
+            '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Organization']],
+            Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Stanford University',
+            Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Stanford University'
+          }
+        )
+      end
+    end
+  end
+
   describe '.construct_address_vcard' do
     subject(:vcard) do
       described_class.construct_address_vcard(id, street_address: address,
@@ -212,6 +278,72 @@ RSpec.describe Rialto::Etl::Transformers::People do
 
         }
       )
+    end
+  end
+  describe '.resolve_or_construct_person' do
+    subject(:person) do
+      described_class.resolve_or_construct_person(given_name: given_name,
+                                                  family_name: family_name,
+                                                  addl_params: addl_params)
+    end
+
+    let(:given_name) { 'Justin' }
+
+    let(:family_name) { 'Littman' }
+
+    context 'when organization resolved' do
+      let(:addl_params) { nil }
+
+      before do
+        stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Justin&last_name=Littman')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/123')
+      end
+      it 'returns resolved person' do
+        expect(person).to eq(
+          '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123']
+        )
+      end
+    end
+    context 'when person resolved' do
+      let(:addl_params) { nil }
+
+      before do
+        stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Justin&last_name=Littman')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 404)
+      end
+      it 'returns unresolved person' do
+        expect(person).to eq(
+          '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['ed1aa059391f675499eda6172ddc29f4'],
+          '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Person']],
+          Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Justin Littman',
+          Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Justin Littman',
+          Rialto::Etl::Vocabs::VCARD['hasName'].to_s => {
+            '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['ed1aa059391f675499eda6172ddc29f4'],
+            '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
+            "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
+            "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
+            Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
+            Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+          }
+        )
+      end
+    end
+    context 'when additional parameters provided' do
+      let(:addl_params) { { 'orcid_id' => '0000-0003-1527-0030' } }
+
+      before do
+        stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Justin&last_name=Littman&orcid_id=0000-0003-1527-0030')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/123')
+      end
+      it 'returns resolved person' do
+        expect(person).to eq(
+          '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123']
+        )
+      end
     end
   end
 end

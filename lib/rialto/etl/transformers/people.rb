@@ -14,8 +14,16 @@ module Rialto
         # @param titles [Array] a list of titles the person has
         # @param profile_id [String] the identifier for the person profile
         # @return [Array<Hash>] a list of vivo positions described in our IR
-        def self.construct_positions(titles:, profile_id:)
-          Positions.new.construct_positions(titles: titles, profile_id: profile_id)
+        def self.construct_stanford_positions(titles:, profile_id:)
+          Positions.new.construct_stanford_positions(titles: titles, profile_id: profile_id)
+        end
+
+        # Create a position associating a person and organization.
+        # @param org_name [String] name of the organization, which will be resolved or created.
+        # @param person_id [String] id of the person holding the position
+        # @return [Hash] a hash representing the position
+        def self.construct_position(org_name:, person_id:)
+          Positions.new.construct_position(org_name: org_name, person_id: person_id)
         end
 
         # Transform addresses into the hash for an address Vcard
@@ -79,6 +87,28 @@ module Rialto
                                                                                                  middle_name: middle_name,
                                                                                                  family_name: family_name)
           }
+        end
+        # rubocop:enable Metrics/MethodLength
+
+        # Resolve a person, otherwise construct a hash for a person.
+        # @param given_name [String] first name
+        # @param family_name [String] last name
+        # @param addl_params [Hash] additional parameters for resolving a person.
+        # @return [Hash] a hash representing the person
+        # rubocop:disable Metrics/MethodLength
+        def self.resolve_or_construct_person(given_name:, family_name:, addl_params: nil)
+          params = {
+            'first_name' => given_name,
+            'last_name' => family_name
+          }
+          params.merge!(addl_params) if addl_params
+          if (resolved_person = Rialto::Etl::ServiceClient::EntityResolver.resolve('person', params))
+            {
+              '@id' => resolved_person
+            }
+          else
+            construct_person(given_name: given_name, family_name: family_name)
+          end
         end
         # rubocop:enable Metrics/MethodLength
       end
