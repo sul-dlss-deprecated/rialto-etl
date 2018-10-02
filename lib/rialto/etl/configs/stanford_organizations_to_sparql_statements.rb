@@ -30,7 +30,7 @@ to_field '@id', lambda { |json, accum|
 
 # Org types
 to_field '@type', lambda { |json, accum|
-  org_types = [FOAF.Agent, FOAF['Organization']]
+  org_types = [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization]
   org_types << case JsonPath.on(json, '$.type').first
                when 'DEPARTMENT'
                  VIVO['Department']
@@ -49,22 +49,22 @@ to_field '@type', lambda { |json, accum|
 }
 
 # Org label
-to_field '!' + SKOS['prefLabel'].to_s, literal(true)
-to_field SKOS['prefLabel'].to_s, lambda { |json, accum|
+to_field '!' + RDF::Vocab::SKOS.prefLabel.to_s, literal(true)
+to_field RDF::Vocab::SKOS.prefLabel.to_s, lambda { |json, accum|
   accum << contextualized_org_name(json)
 }
-to_field '!' + RDFS['label'].to_s, literal(true)
-to_field RDFS['label'].to_s, lambda { |json, accum|
+to_field "!#{RDF::Vocab::RDFS.label}", literal(true)
+to_field RDF::Vocab::RDFS.label.to_s, lambda { |json, accum|
   accum << contextualized_org_name(json)
 }
 
 # Org codes
-to_field '!' + DCTERMS.identifier.to_s, literal(true)
-to_field DCTERMS.identifier.to_s, extract_json('$.orgCodes'), single: true
+to_field '!' + RDF::Vocab::DC.identifier.to_s, literal(true)
+to_field RDF::Vocab::DC.identifier.to_s, extract_json('$.orgCodes'), single: true
 
 # Parent
-to_field '!' + OBO['BFO_0000050'].to_s, literal(true)
-to_field OBO['BFO_0000050'].to_s, lambda { |json, accum|
+to_field "!#{OBO.BFO_0000050}", literal(true)
+to_field OBO.BFO_0000050.to_s, lambda { |json, accum|
   parent = JsonPath.on(json, '$.parent.alias').first
   accum << RIALTO_ORGANIZATIONS[parent] if parent
 }

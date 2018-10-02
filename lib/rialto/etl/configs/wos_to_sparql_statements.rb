@@ -80,16 +80,16 @@ to_field '@type',
   accumulator.map! { |type| RDF::URI.new(type) }
 end
 
-to_field '@type', literal(BIBO['Document'])
+to_field '@type', literal(RDF::Vocab::BIBO.Document)
 
-to_field "!#{BIBO['abstract']}", literal(true), single: true
-to_field BIBO['abstract'].to_s, lambda { |json, accumulator|
+to_field "!#{RDF::Vocab::BIBO.abstract}", literal(true), single: true
+to_field RDF::Vocab::BIBO.abstract.to_s, lambda { |json, accumulator|
   abstracts = JsonPath.on(json, '$.static_data.fullrecord_metadata.abstracts.abstract.abstract_text.p')
   accumulator << abstracts.flatten.join(' ') unless abstracts.empty?
 }, single: true
 
-to_field "!#{BIBO['doi']}", literal(true), single: true
-to_field BIBO['doi'].to_s, lambda { |json, accumulator|
+to_field "!#{RDF::Vocab::BIBO.doi}", literal(true), single: true
+to_field RDF::Vocab::BIBO.doi.to_s, lambda { |json, accumulator|
   doi = JsonPath.on(json, '$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=="doi")].value').first ||
         JsonPath.on(json, '$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=="xref_doi")].value').first
   accumulator << doi if doi
@@ -116,7 +116,7 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
     if address && address.key?('country')
       address_vcard = Rialto::Etl::Transformers::People.construct_address_vcard("#{person_id}_#{json['UID']}",
                                                                                 country: address['country'])
-      person[VCARD['hasAddress'].to_s] = address_vcard
+      person[RDF::Vocab::VCARD.hasAddress.to_s] = address_vcard
     end
 
     # If there is an organization, add a position for the person
@@ -138,22 +138,23 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
 }, single: true
 # rubocop:enable Metrics/BlockLength
 
-to_field "!#{DCTERMS['subject']}", literal(true), single: true
-to_field DCTERMS['subject'].to_s, lambda { |json, accumulator|
+to_field "!#{RDF::Vocab::DC.subject}", literal(true), single: true
+to_field RDF::Vocab::DC.subject.to_s, lambda { |json, accumulator|
   subjects = JsonPath.on(json, '$.static_data.fullrecord_metadata.category_info.subjects.' \
      "subject[?(@.ascatype=='extended')].content")
   accumulator << subjects.map do |subject|
     resolve_entity('topic', name: subject) || { '@id' => RIALTO_CONCEPTS[Digest::MD5.hexdigest(subject.downcase)],
-                                                '@type' => SKOS['Concept'], DCTERMS['subject'].to_s => subject }
+                                                '@type' => RDF::Vocab::SKOS.Concept,
+                                                RDF::Vocab::DC.subject.to_s => subject }
   end
 }, single: true
 
-to_field "!#{BIBO['identifier']}", literal(true), single: true
-to_field BIBO['identifier'].to_s,
+to_field "!#{RDF::Vocab::BIBO.identifier}", literal(true), single: true
+to_field RDF::Vocab::BIBO.identifier.to_s,
          extract_json('$.dynamic_data.cluster_related.identifiers.identifier[*].value')
 
-to_field "!#{DCTERMS['isPartOf']}", literal(true), single: true
-to_field DCTERMS['isPartOf'].to_s,
+to_field "!#{RDF::Vocab::DC.isPartOf}", literal(true), single: true
+to_field RDF::Vocab::DC.isPartOf.to_s,
          extract_json("$.static_data.summary.titles.title[?(@.type=='source')].content"),
          single: true
 
@@ -162,12 +163,12 @@ to_field VIVO['publisher'].to_s,
          extract_json('$.static_data.summary.publishers.publisher.names.name.display_name'),
          single: true
 
-to_field "!#{DCTERMS['title']}", literal(true), single: true
-to_field DCTERMS['title'].to_s,
+to_field "!#{RDF::Vocab::DC.title}", literal(true), single: true
+to_field RDF::Vocab::DC.title.to_s,
          extract_json("$.static_data.summary.titles.title[?(@.type=='item')].content"),
          single: true
 
-to_field "!#{DCTERMS['created']}", literal(true), single: true
-to_field DCTERMS['created'].to_s,
+to_field "!#{RDF::Vocab::DC.created}", literal(true), single: true
+to_field RDF::Vocab::DC.created.to_s,
          extract_json('$.static_data.summary.pub_info.sortdate'),
          single: true

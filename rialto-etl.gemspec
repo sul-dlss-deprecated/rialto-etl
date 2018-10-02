@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'oauth2', '~> 1.4'
   spec.add_dependency 'parallel'
   spec.add_dependency 'rdf'
+  spec.add_dependency 'rdf-vocab'
   spec.add_dependency 'ruby-progressbar'
   spec.add_dependency 'sparql'
   spec.add_dependency 'sparql-client', '~> 3.0'

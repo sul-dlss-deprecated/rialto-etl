@@ -78,14 +78,14 @@ module Rialto
                                                             family_name: family_name)
           {
             '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE[id],
-            '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Person']],
-            Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => full_name,
-            Rialto::Etl::Vocabs::RDFS['label'].to_s => full_name,
+            '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person],
+            RDF::Vocab::SKOS.prefLabel.to_s => full_name,
+            RDF::Vocab::RDFS.label.to_s => full_name,
             # Name VCard
-            Rialto::Etl::Vocabs::VCARD['hasName'].to_s => names_constructor.construct_name_vcard(id: id,
-                                                                                                 given_name: given_name,
-                                                                                                 middle_name: middle_name,
-                                                                                                 family_name: family_name)
+            RDF::Vocab::VCARD.hasName.to_s => names_constructor.construct_name_vcard(id: id,
+                                                                                     given_name: given_name,
+                                                                                     middle_name: middle_name,
+                                                                                     family_name: family_name)
           }
         end
         # rubocop:enable Metrics/MethodLength

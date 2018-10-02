@@ -14,9 +14,9 @@ RSpec.describe Rialto::Etl::Transformers::Organizations do
     it 'returns the organization' do
       expect(org).to eq(
         '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
-        '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Organization']],
-        Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Stanford University',
-        Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Stanford University'
+        '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization],
+        RDF::Vocab::SKOS.prefLabel.to_s => 'Stanford University',
+        RDF::RDFS.label.to_s => 'Stanford University'
       )
     end
   end
@@ -46,9 +46,9 @@ RSpec.describe Rialto::Etl::Transformers::Organizations do
       it 'returns unresolved organization' do
         expect(org).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
-          '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Organization']],
-          Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Stanford University',
-          Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Stanford University'
+          '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization],
+          RDF::Vocab::SKOS.prefLabel.to_s => 'Stanford University',
+          RDF::RDFS.label.to_s => 'Stanford University'
         )
       end
     end

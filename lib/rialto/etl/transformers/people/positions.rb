@@ -73,16 +73,16 @@ module Rialto
 
             }
             if valid
-              position["!#{DCTERMS['valid']}"] = true
-              position[DCTERMS['valid'].to_s] = Time.now.to_date
+              position["!#{RDF::Vocab::DC.valid}"] = true
+              position[RDF::Vocab::DC.valid.to_s] = Time.now.to_date
             end
             if hr_title
               position["!#{VIVO['hrJobTitle']}"] = true
               position[VIVO['hrJobTitle'].to_s] = hr_title
             end
             if label
-              position["!#{RDFS['label']}"] = true
-              position[RDFS['label'].to_s] = label
+              position["!#{RDF::RDFS.label}"] = true
+              position[RDF::RDFS.label.to_s] = label
             end
 
             position
