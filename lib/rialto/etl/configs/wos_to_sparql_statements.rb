@@ -125,7 +125,7 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
 
     {
       '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{person_id}"],
-      '@type' => VIVO['Authorship'],
+      '@type' => c['role'] == 'book_editor' ? VIVO['Editorship'] : VIVO['Authorship'],
       "!{VIVO['relates'}" => true,
       VIVO['relates'].to_s => person['@id'],
       '#person' => person

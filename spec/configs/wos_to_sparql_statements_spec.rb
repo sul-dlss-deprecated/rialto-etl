@@ -152,6 +152,18 @@ RSpec.describe Rialto::Etl::Transformer do
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
             Rialto::Etl::Vocabs::VIVO['relates'],
             Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
+            graph]]
+        )
+
+        # Editorships
+        expect(repository).to has_quads(
+          [[id,
+            Rialto::Etl::Vocabs::VIVO['relatedBy'],
+            Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_dc934b74-e554-409b-967b-0d555c44cc2c'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_dc934b74-e554-409b-967b-0d555c44cc2c'],
+            RDF.type,
+            Rialto::Etl::Vocabs::VIVO['Editorship'],
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_dc934b74-e554-409b-967b-0d555c44cc2c'],
             Rialto::Etl::Vocabs::VIVO['relates'],
