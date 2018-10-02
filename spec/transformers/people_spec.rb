@@ -40,6 +40,28 @@ RSpec.describe Rialto::Etl::Transformers::People do
         expect(positions).to eq []
       end
     end
+
+    context 'when org code is invalid' do
+      let(:titles) do
+        [{
+          'label' => {
+            'text' => 'UX Designer, SoM - Information Resources & Technology'
+          },
+          'organization' => {
+            'orgCode' => 'XXXX'
+          },
+          'title' => 'UX Designer'
+        }]
+      end
+
+      it 'returns positions' do
+        expect(positions).to eq []
+      end
+
+      it 'logs a warning' do
+        expect { positions.each {} }.to output(/Unmapped organization/).to_stderr
+      end
+    end
   end
   describe '.construct_address_vcard' do
     subject(:vcard) do
