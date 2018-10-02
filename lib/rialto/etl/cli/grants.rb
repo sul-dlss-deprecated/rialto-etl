@@ -60,7 +60,7 @@ module Rialto
         private
 
         def extract_and_write(id, output_file)
-          say "extracting SeRA records for #{id}"
+          say "#{Time.now} extracting SeRA records for #{id}"
           results = []
           Rialto::Etl::Extractors::Sera.new(sunetid: id).each do |result|
             results << result
