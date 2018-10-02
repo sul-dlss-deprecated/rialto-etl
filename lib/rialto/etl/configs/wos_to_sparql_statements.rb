@@ -106,14 +106,10 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
     person_params = c.slice('orcid_id', 'first_name', 'last_name', 'full_name')
     person_params.merge!(address) if address
 
-    person = if (resolved_person = resolve_entity('person', person_params))
-               {
-                 '@id' => resolved_person
-               }
-             else
-               Rialto::Etl::Transformers::People.construct_person(given_name: c['first_name'], family_name: c['last_name'])
-             end
-    person_id = person['@id'].to_s.delete_prefix(RIALTO_PEOPLE.to_s)
+    person = Rialto::Etl::Transformers::People.resolve_or_construct_person(given_name: c['first_name'],
+                                                                           family_name: c['last_name'],
+                                                                           addl_params: person_params)
+    person_id = remove_vocab_from_uri(RIALTO_PEOPLE, person['@id'])
     # For now, adding a country for all people.
     # Some people may already have address vcards.
     # The URI of the vcard is tied to this publication, so users will end up with many address vcards.
@@ -123,11 +119,18 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
       person[VCARD['hasAddress'].to_s] = address_vcard
     end
 
+    # If there is an organization, add a position for the person
+    if address && address.key?('organization')
+      person['#organization'] = Rialto::Etl::Transformers::People.construct_position(org_name: address['organization'],
+                                                                                     person_id: person_id)
+    end
+
     {
       '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{person_id}"],
       '@type' => c['role'] == 'book_editor' ? VIVO['Editorship'] : VIVO['Authorship'],
       "!{VIVO['relates'}" => true,
       VIVO['relates'].to_s => person['@id'],
+      # Always add with # since always adding country for all people.
       '#person' => person
     }
   end

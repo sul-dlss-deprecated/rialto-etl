@@ -63,6 +63,10 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/concepts/d700824f-ae47-4244-885c-7cfc55b240f9')
 
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=Stanford%20University')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/stanford')
+
         transform('spec/fixtures/wos/000424386600014.json')
       end
 
@@ -210,9 +214,33 @@ RSpec.describe Rialto::Etl::Transformer do
             Rialto::Etl::Vocabs::GEONAMES['6252001/'],
             graph]]
         )
+
+        # Authors are affiliated with orgs via positions
+        expect(repository).to has_quads(
+          [[Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_15bf29be-470a-442e-9389-f66aac440a7b'],
+            RDF.type,
+            Rialto::Etl::Vocabs::VIVO['Position'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_15bf29be-470a-442e-9389-f66aac440a7b'],
+            Rialto::Etl::Vocabs::VIVO['relates'],
+            Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_15bf29be-470a-442e-9389-f66aac440a7b'],
+            Rialto::Etl::Vocabs::VIVO['relates'],
+            Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
+            Rialto::Etl::Vocabs::VIVO['relatedBy'],
+            Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_15bf29be-470a-442e-9389-f66aac440a7b'],
+            graph],
+           [Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford'],
+            Rialto::Etl::Vocabs::VIVO['relatedBy'],
+            Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_15bf29be-470a-442e-9389-f66aac440a7b'],
+            graph]]
+        )
       end
     end
-    describe 'create subjects and people' do
+    describe 'create subjects, people, and organizations' do
       before do
         stub_request(:get, 'http://127.0.0.1:3001/person?country=Peoples%20R%20China&first_name=Jennifer%20L.&full_name=Wilson,%20Jennifer%20L.&last_name=Wilson&orcid_id=0000-0002-2328-2018&organization=Stanford%20University')
           .with(headers: { 'X-Api-Key' => 'abc123' })
@@ -223,6 +251,10 @@ RSpec.describe Rialto::Etl::Transformer do
           .to_return(status: 404)
 
         stub_request(:get, 'http://127.0.0.1:3001/topic?name=Research%20%26%20Experimental%20Medicine')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 404)
+
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=Stanford%20University')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 404)
 
@@ -258,6 +290,17 @@ RSpec.describe Rialto::Etl::Transformer do
                                           Rialto::Etl::Vocabs::FOAF['Agent'],
                                           graph]])
       end
+
+      it 'is inserted with org triples' do
+        expect(repository).to has_quads([[Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
+                                          RDF.type,
+                                          Rialto::Etl::Vocabs::FOAF['Organization'],
+                                          graph],
+                                         [Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
+                                          RDF.type,
+                                          Rialto::Etl::Vocabs::FOAF['Agent'],
+                                          graph]])
+      end
     end
 
     describe 'update publication' do
@@ -277,6 +320,10 @@ RSpec.describe Rialto::Etl::Transformer do
         stub_request(:get, 'http://127.0.0.1:3001/topic?name=Research%20%26%20Experimental%20Medicine')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/concepts/d700824f-ae47-4244-885c-7cfc55b240f9')
+
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=Stanford%20University')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/stanford')
 
         stub_request(:get, 'http://127.0.0.1:3001/topic?name=Research%20%26%20Speculative%20Medicine')
           .with(headers: { 'X-Api-Key' => 'abc123' })
