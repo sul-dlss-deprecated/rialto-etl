@@ -40,6 +40,7 @@ module Rialto
         term :University
 
         property :hrJobTitle
+        property :informationResourceSupportedBy
         property :overview
         property :publisher
         property :relates
