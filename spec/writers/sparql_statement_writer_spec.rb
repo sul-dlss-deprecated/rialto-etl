@@ -20,7 +20,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
 
   describe 'simple inserts and deletes' do
     before do
-      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], Rialto::Etl::Vocabs::SKOS['prefLabel'], 'Justin']
+      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF::Vocab::SKOS.prefLabel, 'Justin']
       execute_sparql!(writer.graph_to_insert(graph, Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH))
     end
 
@@ -41,8 +41,8 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
     let(:first_statements) do
       writer.add_type_assertions(Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
                                  [
-                                   Rialto::Etl::Vocabs::FOAF['Agent'],
-                                   Rialto::Etl::Vocabs::FOAF['Organization']
+                                   RDF::Vocab::FOAF.Agent,
+                                   RDF::Vocab::FOAF.Organization
                                  ],
                                  Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
     end
@@ -50,15 +50,15 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
     let(:second_statements) do
       writer.add_type_assertions(Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
                                  [
-                                   Rialto::Etl::Vocabs::FOAF['Agent'],
-                                   Rialto::Etl::Vocabs::FOAF['Person']
+                                   RDF::Vocab::FOAF.Agent,
+                                   RDF::Vocab::FOAF.Person
                                  ],
                                  Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
     end
 
     before do
-      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, Rialto::Etl::Vocabs::FOAF['Agent']]
-      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, Rialto::Etl::Vocabs::FOAF['Person']]
+      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, RDF::Vocab::FOAF.Agent]
+      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, RDF::Vocab::FOAF.Person]
       execute_sparql!(first_statements)
       execute_sparql!(second_statements)
     end
@@ -71,14 +71,14 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
       {
         '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'].to_s,
         '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
-        '@type' => [Rialto::Etl::Vocabs::FOAF['person'], Rialto::Etl::Vocabs::VIVO['Librarian']],
+        '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::VIVO['Librarian']],
         Rialto::Etl::Vocabs::VIVO['overview'].to_s => 'Justin Littman is a software developer and librarian.',
-        Rialto::Etl::Vocabs::VCARD['hasEmail'].to_s => 'jlittypo@example.org',
+        RDF::Vocab::VCARD['hasEmail'].to_s => 'jlittypo@example.org',
         '#advisee' => {
           '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'].to_s,
           '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
-          '@type' => [Rialto::Etl::Vocabs::FOAF['Person']],
-          Rialto::Etl::Vocabs::VCARD['hasName'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']
+          '@type' => [RDF::Vocab::FOAF.Person],
+          RDF::Vocab::VCARD['hasName'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']
         }
       }
     end
@@ -87,9 +87,9 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
       {
         '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'].to_s,
         '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
-        '@type' => [Rialto::Etl::Vocabs::FOAF['person'], Rialto::Etl::Vocabs::VIVO['Librarian']],
-        "!#{Rialto::Etl::Vocabs::VCARD['hasEmail']}" => true,
-        Rialto::Etl::Vocabs::VCARD['hasEmail'].to_s => 'jlit@example.org'
+        '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::VIVO['Librarian']],
+        "!#{RDF::Vocab::VCARD['hasEmail']}" => true,
+        RDF::Vocab::VCARD['hasEmail'].to_s => 'jlit@example.org'
       }
     end
 
@@ -98,17 +98,17 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
     let(:second_statements) { writer.serialize_hash(second_hash) }
 
     before do
-      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, Rialto::Etl::Vocabs::FOAF['person']]
+      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, RDF::Vocab::FOAF.Person]
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, Rialto::Etl::Vocabs::VIVO['Librarian']]
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
                 Rialto::Etl::Vocabs::VIVO['overview'],
                 'Justin Littman is a software developer and librarian.']
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
-                Rialto::Etl::Vocabs::VCARD['hasEmail'],
+                RDF::Vocab::VCARD['hasEmail'],
                 'jlit@example.org']
-      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'], RDF.type, Rialto::Etl::Vocabs::FOAF['Person']]
+      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'], RDF.type, RDF::Vocab::FOAF.Person]
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
-                Rialto::Etl::Vocabs::VCARD['hasName'],
+                RDF::Vocab::VCARD['hasName'],
                 Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']]
 
       execute_sparql!(first_statements)

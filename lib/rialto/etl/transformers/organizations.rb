@@ -13,9 +13,9 @@ module Rialto
         def self.construct_org(org_name:)
           {
             '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS[Digest::MD5.hexdigest(org_name.downcase)],
-            '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Organization']],
-            Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => org_name,
-            Rialto::Etl::Vocabs::RDFS['label'].to_s => org_name
+            '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization],
+            RDF::Vocab::SKOS.prefLabel.to_s => org_name,
+            RDF::RDFS.label.to_s => org_name
           }
         end
 

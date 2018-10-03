@@ -34,7 +34,7 @@ to_field '@id', lambda { |json, accum|
 
 # Person types
 to_field '@type', lambda { |json, accum|
-  person_types = [FOAF['Agent'], FOAF['Person']]
+  person_types = [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person]
   person_types << VIVO['Student'] if JsonPath.on(json, '$.affiliations.capPhdStudent').first == true ||
                                      JsonPath.on(json, '$.affiliations.capMsStudent').first == true ||
                                      JsonPath.on(json, '$.affiliations.capMdStudent').first == true
@@ -48,18 +48,18 @@ to_field '@type', lambda { |json, accum|
 }
 
 # Person label
-to_field "!#{SKOS['prefLabel']}", literal(true)
-to_field SKOS['prefLabel'].to_s, lambda { |json, accum|
+to_field "!#{RDF::Vocab::SKOS.prefLabel}", literal(true)
+to_field RDF::Vocab::SKOS.prefLabel.to_s, lambda { |json, accum|
   accum << full_name(json)
 }, single: true
-to_field "!#{RDFS['label']}", literal(true)
-to_field RDFS['label'].to_s, lambda { |json, accum|
+to_field "!#{RDF::Vocab::RDFS.label}", literal(true)
+to_field RDF::Vocab::RDFS.label.to_s, lambda { |json, accum|
   accum << full_name(json)
 }, single: true
 
 # Person name (Vcard)
-to_field "!#{VCARD['hasName']}", literal(true), single: true
-to_field VCARD['hasName'].to_s, lambda { |json, accum|
+to_field "!#{RDF::Vocab::VCARD.hasName}", literal(true), single: true
+to_field RDF::Vocab::VCARD.hasName.to_s, lambda { |json, accum|
   name_json = JsonPath.on(json, '$.names.preferred').first
   if name_json
     accum << Rialto::Etl::Transformers::People.construct_name_vcard(id: json['profileId'],
@@ -74,8 +74,8 @@ to_field "!#{VIVO['overview']}", literal(true), single: true
 to_field VIVO['overview'].to_s, extract_json('$.bio.text'), single: true
 
 # Person address
-to_field "!#{VCARD['hasAddress']}", literal(true), single: true
-to_field VCARD['hasAddress'].to_s, lambda { |json, accum|
+to_field "!#{RDF::Vocab::VCARD.hasAddress}", literal(true), single: true
+to_field RDF::Vocab::VCARD.hasAddress.to_s, lambda { |json, accum|
   address_json = JsonPath.on(json, '$.contacts[?(@["type"] == "academic")]').first
   if address_json
     accum << Rialto::Etl::Transformers::People.construct_address_vcard(json['profileId'],
@@ -95,7 +95,7 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accum|
     advisees << {
       '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"],
       '@type' => VIVO['AdvisingRelationship'],
-      DCTERMS['valid'].to_s => Time.now.to_date
+      RDF::Vocab::DC.valid.to_s => Time.now.to_date
     }
   end
   accum.concat(advisees)
@@ -105,7 +105,7 @@ to_field OBO['RO_0000053'].to_s, lambda { |json, accum|
   unless JsonPath.on(json, '$.advisees').empty?
     accum << {
       '@id' => RIALTO_CONTEXT_ROLES['AdvisorRole'],
-      '@type' => VIVO['AdvisorRole'],
+      '@type' => VIVO.AdvisorRole,
       # This points back at the advisor
       OBO['RO_0000052'].to_s => RIALTO_PEOPLE[json['profileId']]
     }
@@ -120,11 +120,11 @@ to_field '#advisees', lambda { |json, accum|
                                                                       given_name: advisee_json['firstName'],
                                                                       family_name: advisee_json['lastName'])
     # Related by
-    advisee_hash[VIVO['relatedBy'].to_s] = RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"]
+    advisee_hash[VIVO.relatedBy.to_s] = RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"]
     # Advisee role
     advisee_hash[OBO['RO_0000053'].to_s] = {
       '@id' => RIALTO_CONTEXT_ROLES['AdviseeRole'],
-      '@type' => VIVO['AdviseeRole'],
+      '@type' => VIVO.AdviseeRole,
       # This points back at the advisee
       OBO['RO_0000052'].to_s => RIALTO_PEOPLE[advisee_json['profileId']]
     }
@@ -134,18 +134,18 @@ to_field '#advisees', lambda { |json, accum|
 }, single: true
 
 # Email
-to_field '!' + VCARD['hasEmail'].to_s, literal(true)
-to_field VCARD['hasEmail'].to_s, extract_json('$.primaryContact.email'), single: true
+to_field "!#{RDF::Vocab::VCARD.hasEmail}", literal(true)
+to_field RDF::Vocab::VCARD.hasEmail.to_s, extract_json('$.primaryContact.email'), single: true
 
 # SUNet Id
-to_field DCTERMS['identifier'].to_s, lambda { |json, accum|
+to_field RDF::Vocab::DC.identifier.to_s, lambda { |json, accum|
   if (sunet_id = JsonPath.on(json, '$.uid').first)
     accum << RDF::Literal.new(sunet_id, datatype: RIALTO_CONTEXT_IDENTIFIERS['Sunetid'])
   end
 }, single: true
 
 # Person positions
-to_field VIVO['relatedBy'].to_s, lambda { |json, accum|
+to_field VIVO.relatedBy.to_s, lambda { |json, accum|
   titles_json = JsonPath.on(json, '$.titles').first
   positions = Rialto::Etl::Transformers::People.construct_stanford_positions(titles: titles_json, profile_id: json['profileId'])
   accum.concat(positions) if positions.any?

@@ -77,84 +77,84 @@ RSpec.describe Rialto::Etl::Transformer do
         # specific type
         expect(repository).to have_quad([id,
                                          RDF.type,
-                                         Rialto::Etl::Vocabs::BIBO['Article'],
+                                         RDF::Vocab::BIBO.Article,
                                          graph])
         # general type
         expect(repository).to have_quad([id,
                                          RDF.type,
-                                         Rialto::Etl::Vocabs::BIBO['Document'],
+                                         RDF::Vocab::BIBO.Document,
                                          graph])
         # has Part
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['isPartOf'],
+                                         RDF::Vocab::DC['isPartOf'],
                                          'EXPERIMENTAL BIOLOGY AND MEDICINE',
                                          graph])
 
         # Created
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['created'],
+                                         RDF::Vocab::DC['created'],
                                          '2018-02-01',
                                          graph])
 
         # Subject
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['subject'],
+                                         RDF::Vocab::DC['subject'],
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f9'],
                                          graph])
 
         # Title
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['title'],
+                                         RDF::Vocab::DC['title'],
                                          'Biomarkers: Delivering on the expectation of molecularly driven, quantitative health',
                                          graph])
 
         # Abstract
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::BIBO['abstract'],
+                                         RDF::Vocab::BIBO.abstract,
                                          'Biomarkers are the pillars of precision medicine and are delivering on '\
                                          'expectations of molecular, quantitative health.',
                                          graph])
         # DOI
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::BIBO['doi'],
+                                         RDF::Vocab::BIBO.doi,
                                          '10.1177/1535370217744775',
                                          graph])
         # Identifier
         expect(repository).to has_quads([[id,
-                                          Rialto::Etl::Vocabs::BIBO['identifier'],
+                                          RDF::Vocab::BIBO.identifier,
                                           '1535-3702',
                                           graph],
                                          [id,
-                                          Rialto::Etl::Vocabs::BIBO['identifier'],
+                                          RDF::Vocab::BIBO.identifier,
                                           '1535-3699',
                                           graph],
                                          [id,
-                                          Rialto::Etl::Vocabs::BIBO['identifier'],
+                                          RDF::Vocab::BIBO.identifier,
                                           '10.1177/1535370217744775',
                                           graph],
                                          [id,
-                                          Rialto::Etl::Vocabs::BIBO['identifier'],
+                                          RDF::Vocab::BIBO.identifier,
                                           'MEDLINE:29199461',
                                           graph]])
 
         # Publisher
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::VIVO['publisher'],
+                                         Rialto::Etl::Vocabs::VIVO.publisher,
                                          'SAGE PUBLICATIONS LTD',
                                          graph])
 
         # Authorships
         expect(repository).to has_quads(
           [[id,
-            Rialto::Etl::Vocabs::VIVO['relatedBy'],
+            Rialto::Etl::Vocabs::VIVO.relatedBy,
             Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
             RDF.type,
-            Rialto::Etl::Vocabs::VIVO['Authorship'],
+            Rialto::Etl::Vocabs::VIVO.Authorship,
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['WOS:000424386600014_15bf29be-470a-442e-9389-f66aac440a7b'],
-            Rialto::Etl::Vocabs::VIVO['relates'],
+            Rialto::Etl::Vocabs::VIVO.relates,
             Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
             graph]]
         )
@@ -179,39 +179,39 @@ RSpec.describe Rialto::Etl::Transformer do
         # Authors
         expect(repository).to has_quads(
           [[Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
-            Rialto::Etl::Vocabs::VCARD['hasAddress'],
+            RDF::Vocab::VCARD['hasAddress'],
             Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
             RDF.type,
-            Rialto::Etl::Vocabs::VCARD['Address'],
+            RDF::Vocab::VCARD['Address'],
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
-            Rialto::Etl::Vocabs::VCARD['country-name'],
+            RDF::Vocab::VCARD['country-name'],
             'Peoples R China',
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
-            Rialto::Etl::Vocabs::DCTERMS['spatial'],
-            Rialto::Etl::Vocabs::GEONAMES['1814991/'],
+            RDF::Vocab::DC.spatial,
+            Rialto::Etl::Vocabs::SWS_GEONAMES['1814991/'],
             graph]]
         )
 
         expect(repository).to has_quads(
           [[Rialto::Etl::Vocabs::RIALTO_PEOPLE['dc934b74-e554-409b-967b-0d555c44cc2c'],
-            Rialto::Etl::Vocabs::VCARD['hasAddress'],
+            RDF::Vocab::VCARD['hasAddress'],
             Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
             RDF.type,
-            Rialto::Etl::Vocabs::VCARD['Address'],
+            RDF::Vocab::VCARD['Address'],
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
-            Rialto::Etl::Vocabs::VCARD['country-name'],
+            RDF::Vocab::VCARD['country-name'],
             'USA',
             graph],
            [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
-            Rialto::Etl::Vocabs::DCTERMS['spatial'],
-            Rialto::Etl::Vocabs::GEONAMES['6252001/'],
+            RDF::Vocab::DC.spatial,
+            Rialto::Etl::Vocabs::SWS_GEONAMES['6252001/'],
             graph]]
         )
 
@@ -265,17 +265,17 @@ RSpec.describe Rialto::Etl::Transformer do
 
       it 'is inserted with subject triples' do
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['subject'],
+                                         RDF::Vocab::DC['subject'],
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
                                          graph])
 
         expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
                                          RDF.type,
-                                         Rialto::Etl::Vocabs::SKOS['Concept'],
+                                         RDF::Vocab::SKOS['Concept'],
                                          graph])
 
         expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
-                                         Rialto::Etl::Vocabs::DCTERMS['subject'],
+                                         RDF::Vocab::DC['subject'],
                                          'Research & Experimental Medicine',
                                          graph])
       end
@@ -283,22 +283,22 @@ RSpec.describe Rialto::Etl::Transformer do
       it 'is inserted with people triples' do
         expect(repository).to has_quads([[Rialto::Etl::Vocabs::RIALTO_PEOPLE['5054d6965532201e275067e4766c0ea0'],
                                           RDF.type,
-                                          Rialto::Etl::Vocabs::FOAF['Person'],
+                                          RDF::Vocab::FOAF.Person,
                                           graph],
                                          [Rialto::Etl::Vocabs::RIALTO_PEOPLE['5054d6965532201e275067e4766c0ea0'],
                                           RDF.type,
-                                          Rialto::Etl::Vocabs::FOAF['Agent'],
+                                          RDF::Vocab::FOAF.Agent,
                                           graph]])
       end
 
       it 'is inserted with org triples' do
         expect(repository).to has_quads([[Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
                                           RDF.type,
-                                          Rialto::Etl::Vocabs::FOAF['Organization'],
+                                          RDF::Vocab::FOAF.Organization,
                                           graph],
                                          [Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
                                           RDF.type,
-                                          Rialto::Etl::Vocabs::FOAF['Agent'],
+                                          RDF::Vocab::FOAF.Agent,
                                           graph]])
       end
     end
@@ -338,84 +338,84 @@ RSpec.describe Rialto::Etl::Transformer do
       it 'updates the publication' do
         # has Part
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['isPartOf'],
+                                         RDF::Vocab::DC['isPartOf'],
                                          'SPECULATIVE BIOLOGY AND MEDICINE',
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             Rialto::Etl::Vocabs::DCTERMS['isPartOf'],
+                                             RDF::Vocab::DC['isPartOf'],
                                              'EXPERIMENTAL BIOLOGY AND MEDICINE',
                                              graph])
 
         # Created
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['created'],
+                                         RDF::Vocab::DC['created'],
                                          '2017-02-01',
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             Rialto::Etl::Vocabs::DCTERMS['created'],
+                                             RDF::Vocab::DC['created'],
                                              '2018-02-01',
                                              graph])
 
         # Subject
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['subject'],
+                                         RDF::Vocab::DC['subject'],
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f10'],
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             Rialto::Etl::Vocabs::DCTERMS['subject'],
+                                             RDF::Vocab::DC['subject'],
                                              Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f9'],
                                              graph])
 
         # Title
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::DCTERMS['title'],
+                                         RDF::Vocab::DC['title'],
                                          'Biomarkers: Delivering some day on the expectation of molecularly driven, '\
                                          'quantitative health',
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             Rialto::Etl::Vocabs::DCTERMS['title'],
+                                             RDF::Vocab::DC['title'],
                                              'Biomarkers: Delivering on the expectation of molecularly driven, quantitative health',
                                              graph])
 
         # Abstract
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::BIBO['abstract'],
+                                         RDF::Vocab::BIBO.abstract,
                                          'Biomarkers are the pillars of precision medicine and may some day deliver on '\
                                          'expectations of molecular, quantitative health.',
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             Rialto::Etl::Vocabs::BIBO['abstract'],
+                                             RDF::Vocab::BIBO.abstract,
                                              'Biomarkers are the pillars of precision medicine and are delivering on '\
                                              'expectations of molecular, quantitative health.',
                                              graph])
         # DOI
         expect(repository).to have_quad([id,
-                                         Rialto::Etl::Vocabs::BIBO['doi'],
+                                         RDF::Vocab::BIBO.doi,
                                          '10.1177/1535370217744774',
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             Rialto::Etl::Vocabs::BIBO['doi'],
+                                             RDF::Vocab::BIBO.doi,
                                              '10.1177/1535370217744775',
                                              graph])
         # Identifier
         expect(repository).to has_quads([[id,
-                                          Rialto::Etl::Vocabs::BIBO['identifier'],
+                                          RDF::Vocab::BIBO.identifier,
                                           '1535-3670',
                                           graph],
                                          [id,
-                                          Rialto::Etl::Vocabs::BIBO['identifier'],
+                                          RDF::Vocab::BIBO.identifier,
                                           '10.1177/1535370217744774',
                                           graph],
                                          [id,
-                                          Rialto::Etl::Vocabs::BIBO['identifier'],
+                                          RDF::Vocab::BIBO.identifier,
                                           'MEDLINE:29199461',
                                           graph]])
         expect(repository).not_to has_quads([[id,
-                                              Rialto::Etl::Vocabs::BIBO['identifier'],
+                                              RDF::Vocab::BIBO.identifier,
                                               '1535-3702',
                                               graph],
                                              [id,
-                                              Rialto::Etl::Vocabs::BIBO['identifier'],
+                                              RDF::Vocab::BIBO.identifier,
                                               '1535-3699']])
 
         # Publisher

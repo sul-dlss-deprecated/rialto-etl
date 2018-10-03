@@ -135,8 +135,8 @@ RSpec.describe Rialto::Etl::Transformer do
         # 3 organizations
         query = client.select(count: { org: :c })
                       .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Organization']])
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Agent']])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Organization])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Agent])
         expect(query.solutions.first[:c].to_i).to eq(3)
 
         # Org URI correct
@@ -152,7 +152,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                          'education-and-recreation/other-daper-administration'],
-                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 RDF::Vocab::SKOS.prefLabel,
                                  'Other DAPER Administration (Physical Education and Recreation)'])
                        .true?
         expect(result).to be true
@@ -162,7 +162,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::OBO['BFO_0000050'],
+                                 Rialto::Etl::Vocabs::OBO.BFO_0000050,
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']])
                        .true?
         expect(result).to be true
@@ -174,7 +174,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 RDF::Vocab::SKOS.prefLabel,
                                  'Physical Education and Recreation'])
                        .true?
         expect(result).to be true
@@ -184,11 +184,11 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::DCTERMS.identifier,
+                                 RDF::Vocab::DC.identifier,
                                  'LVTK'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::DCTERMS.identifier,
+                                 RDF::Vocab::DC.identifier,
                                  'LVRC'])
                        .true?
         expect(result).to be true
@@ -222,8 +222,8 @@ RSpec.describe Rialto::Etl::Transformer do
         # 4 organizations
         query = client.select(count: { org: :c })
                       .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Organization']])
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Agent']])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Organization])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Agent])
         expect(query.solutions.first[:c].to_i).to eq(4)
       end
     end
@@ -257,7 +257,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 RDF::Vocab::SKOS.prefLabel,
                                  'Physical Education and Recreation'])
                        .true?
         expect(result).to be false
@@ -265,7 +265,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 RDF::Vocab::SKOS.prefLabel,
                                  'Physical Education and Recreational Lounging (Amherst College)'])
                        .true?
         expect(result).to be true
@@ -275,11 +275,11 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-education'\
                           '-and-recreation'],
-                                 Rialto::Etl::Vocabs::DCTERMS.identifier,
+                                 RDF::Vocab::DC.identifier,
                                  'LVTK'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::DCTERMS.identifier,
+                                 RDF::Vocab::DC.identifier,
                                  'LVRC'])
                        .true?
         expect(result).to be false
@@ -287,11 +287,11 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::DCTERMS.identifier,
+                                 RDF::Vocab::DC.identifier,
                                  'LVTK'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::DCTERMS.identifier,
+                                 RDF::Vocab::DC.identifier,
                                  'LVRX'])
                        .true?
         expect(result).to be true
@@ -301,7 +301,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::OBO['BFO_0000050'],
+                                 Rialto::Etl::Vocabs::OBO.BFO_0000050,
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']])
                        .true?
         expect(result).to be false
@@ -309,7 +309,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
-                                 Rialto::Etl::Vocabs::OBO['BFO_0000050'],
+                                 Rialto::Etl::Vocabs::OBO.BFO_0000050,
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['amherst']])
                        .true?
         expect(result).to be true

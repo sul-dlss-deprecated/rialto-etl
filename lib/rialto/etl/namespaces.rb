@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rdf'
+require 'rdf/vocab'
 
 module Rialto
   module Etl
@@ -21,15 +22,38 @@ module Rialto
       RIALTO_CONTEXT_ROLES = RDF::Vocabulary.new(rialto_base + 'context/roles/')
       RIALTO_CONTEXT_IDENTIFIERS = RDF::Vocabulary.new(rialto_base + 'context/identifiers/')
       RIALTO_CONTEXT_POSITIONS = RDF::Vocabulary.new(rialto_base + 'context/positions/')
-      SKOS = RDF::Vocabulary.new('http://www.w3.org/2004/02/skos/core#')
-      VCARD = RDF::Vocabulary.new('http://www.w3.org/2006/vcard/ns#')
-      FOAF = RDF::Vocabulary.new('http://xmlns.com/foaf/0.1/')
-      VIVO = RDF::Vocabulary.new('http://vivoweb.org/ontology/core#')
-      DCTERMS = RDF::Vocabulary.new('http://purl.org/dc/terms/')
-      OBO = RDF::Vocabulary.new('http://purl.obolibrary.org/obo/')
-      RDFS = RDF::Vocabulary.new('http://www.w3.org/2000/01/rdf-schema#')
-      BIBO = RDF::Vocabulary.new('http://purl.org/ontology/bibo/')
-      GEONAMES = RDF::Vocabulary.new('http://sws.geonames.org/')
+
+      # The VIVO ontology
+      class VIVO < RDF::StrictVocabulary('http://vivoweb.org/ontology/core#')
+        term :AdviseeRole
+        term :AdvisingRelationship
+        term :AdvisorRole
+        term :Authorship
+        term :Department
+        term :Division
+        term :Editorship
+        term :FacultyMember
+        term :Librarian
+        term :NonAcademic
+        term :Position
+        term :Student
+        term :University
+
+        property :hrJobTitle
+        property :overview
+        property :publisher
+        property :relates
+        property :relatedBy
+      end
+
+      # Basic Formal Ontology designed for use in supporting information retrieval,
+      # analysis and integration in scientific and other domains
+      class OBO < RDF::StrictVocabulary('http://purl.obolibrary.org/obo/')
+        property :BFO_0000050
+        property :RO_0000052
+        property :RO_0000053
+      end
+      SWS_GEONAMES = RDF::Vocabulary.new('http://sws.geonames.org/')
     end
     # Holds graph names
     module NamedGraphs

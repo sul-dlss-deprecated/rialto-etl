@@ -24,14 +24,14 @@ module Rialto
           def construct_address_vcard(id, street_address:, locality:, region:, postal_code:, country:)
             vcard = default_hash
             vcard['@id'] = RIALTO_CONTEXT_ADDRESSES[id]
-            vcard[VCARD['street-address'].to_s] = street_address if street_address
-            vcard[VCARD['locality'].to_s] = locality if locality
-            vcard[VCARD['region'].to_s] = region if region
-            vcard[VCARD['postal-code'].to_s] = postal_code if postal_code
+            vcard[RDF::Vocab::VCARD['street-address'].to_s] = street_address if street_address
+            vcard[RDF::Vocab::VCARD.locality.to_s] = locality if locality
+            vcard[RDF::Vocab::VCARD.region.to_s] = region if region
+            vcard[RDF::Vocab::VCARD['postal-code'].to_s] = postal_code if postal_code
             if country
-              vcard[VCARD['country-name'].to_s] = country
+              vcard[RDF::Vocab::VCARD['country-name'].to_s] = country
               if (geocode_id = geocode_id_for(country))
-                vcard[DCTERMS['spatial'].to_s] = GEONAMES["#{geocode_id}/"]
+                vcard[RDF::Vocab::DC.spatial.to_s] = SWS_GEONAMES["#{geocode_id}/"]
               end
             end
             vcard
@@ -42,13 +42,13 @@ module Rialto
 
           def default_hash
             {
-              '@type' => VCARD['Address'],
-              "!#{VCARD['street-address']}" => true,
-              "!#{VCARD['locality']}" => true,
-              "!#{VCARD['region']}" => true,
-              "!#{VCARD['country-name']}" => true,
-              "!#{VCARD['postal-code']}" => true,
-              "!#{DCTERMS['spatial']}" => true
+              '@type' => RDF::Vocab::VCARD.Address,
+              "!#{RDF::Vocab::VCARD['street-address']}" => true,
+              "!#{RDF::Vocab::VCARD.locality}" => true,
+              "!#{RDF::Vocab::VCARD.region}" => true,
+              "!#{RDF::Vocab::VCARD['country-name']}" => true,
+              "!#{RDF::Vocab::VCARD['postal-code']}" => true,
+              "!#{RDF::Vocab::DC.spatial}" => true
             }
           end
 

@@ -120,9 +120,9 @@ RSpec.describe Rialto::Etl::Transformers::People do
           },
           '#organization' => {
             '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
-            '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Organization']],
-            Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Stanford University',
-            Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Stanford University'
+            '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization],
+            RDF::Vocab::SKOS.prefLabel.to_s => 'Stanford University',
+            RDF::RDFS.label.to_s => 'Stanford University'
           }
         )
       end
@@ -154,19 +154,19 @@ RSpec.describe Rialto::Etl::Transformers::People do
       it 'returns address vcard hash' do
         expect(vcard).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['123'],
-          '@type' => Rialto::Etl::Vocabs::VCARD['Address'],
-          "!#{Rialto::Etl::Vocabs::VCARD['street-address']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['locality']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['region']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['country-name']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['postal-code']}" => true,
-          "!#{Rialto::Etl::Vocabs::DCTERMS['spatial']}" => true,
-          Rialto::Etl::Vocabs::VCARD['street-address'].to_s => '557 Escondido Mall',
-          Rialto::Etl::Vocabs::VCARD['locality'].to_s => 'Stanford',
-          Rialto::Etl::Vocabs::VCARD['region'].to_s => 'CA',
-          Rialto::Etl::Vocabs::VCARD['postal-code'].to_s => '94305',
-          Rialto::Etl::Vocabs::VCARD['country-name'].to_s => 'USA',
-          Rialto::Etl::Vocabs::DCTERMS['spatial'].to_s => Rialto::Etl::Vocabs::GEONAMES['6252001/']
+          '@type' => RDF::Vocab::VCARD['Address'],
+          "!#{RDF::Vocab::VCARD['street-address']}" => true,
+          "!#{RDF::Vocab::VCARD['locality']}" => true,
+          "!#{RDF::Vocab::VCARD['region']}" => true,
+          "!#{RDF::Vocab::VCARD['country-name']}" => true,
+          "!#{RDF::Vocab::VCARD['postal-code']}" => true,
+          "!#{RDF::Vocab::DC.spatial}" => true,
+          RDF::Vocab::VCARD['street-address'].to_s => '557 Escondido Mall',
+          RDF::Vocab::VCARD['locality'].to_s => 'Stanford',
+          RDF::Vocab::VCARD['region'].to_s => 'CA',
+          RDF::Vocab::VCARD['postal-code'].to_s => '94305',
+          RDF::Vocab::VCARD['country-name'].to_s => 'USA',
+          RDF::Vocab::DC.spatial.to_s => Rialto::Etl::Vocabs::SWS_GEONAMES['6252001/']
         )
       end
       context 'when country only is provided' do
@@ -183,15 +183,15 @@ RSpec.describe Rialto::Etl::Transformers::People do
         it 'returns address vcard hash' do
           expect(vcard).to eq(
             '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['123'],
-            '@type' => Rialto::Etl::Vocabs::VCARD['Address'],
-            "!#{Rialto::Etl::Vocabs::VCARD['street-address']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['locality']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['region']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['country-name']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['postal-code']}" => true,
-            "!#{Rialto::Etl::Vocabs::DCTERMS['spatial']}" => true,
-            Rialto::Etl::Vocabs::VCARD['country-name'].to_s => 'Wales',
-            Rialto::Etl::Vocabs::DCTERMS['spatial'].to_s => Rialto::Etl::Vocabs::GEONAMES['2635167/']
+            '@type' => RDF::Vocab::VCARD['Address'],
+            "!#{RDF::Vocab::VCARD['street-address']}" => true,
+            "!#{RDF::Vocab::VCARD['locality']}" => true,
+            "!#{RDF::Vocab::VCARD['region']}" => true,
+            "!#{RDF::Vocab::VCARD['country-name']}" => true,
+            "!#{RDF::Vocab::VCARD['postal-code']}" => true,
+            "!#{RDF::Vocab::DC.spatial}" => true,
+            RDF::Vocab::VCARD['country-name'].to_s => 'Wales',
+            RDF::Vocab::DC.spatial.to_s => Rialto::Etl::Vocabs::SWS_GEONAMES['2635167/']
           )
         end
       end
@@ -214,13 +214,13 @@ RSpec.describe Rialto::Etl::Transformers::People do
       it 'returns the correct fullname' do
         expect(vcard).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['123'],
-          '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
-          "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
-          Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
-          Rialto::Etl::Vocabs::VCARD['middle-name'].to_s => 'Cunningham',
-          Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+          '@type' => RDF::Vocab::VCARD['Name'],
+          "!#{RDF::Vocab::VCARD['given-name']}" => true,
+          "!#{RDF::Vocab::VCARD['additional-name']}" => true,
+          "!#{RDF::Vocab::VCARD['family-name']}" => true,
+          RDF::Vocab::VCARD['given-name'].to_s => 'Justin',
+          RDF::Vocab::VCARD['additional-name'].to_s => 'Cunningham',
+          RDF::Vocab::VCARD['family-name'].to_s => 'Littman'
         )
       end
       context 'when middle name and id not provided' do
@@ -231,12 +231,12 @@ RSpec.describe Rialto::Etl::Transformers::People do
         it 'returns the correct fullname' do
           expect(vcard).to eq(
             '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['ed1aa059391f675499eda6172ddc29f4'],
-            '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
-            "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
-            Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
-            Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+            '@type' => RDF::Vocab::VCARD['Name'],
+            "!#{RDF::Vocab::VCARD['given-name']}" => true,
+            "!#{RDF::Vocab::VCARD['additional-name']}" => true,
+            "!#{RDF::Vocab::VCARD['family-name']}" => true,
+            RDF::Vocab::VCARD['given-name'].to_s => 'Justin',
+            RDF::Vocab::VCARD['family-name'].to_s => 'Littman'
           )
         end
       end
@@ -285,18 +285,18 @@ RSpec.describe Rialto::Etl::Transformers::People do
     it 'returns the person' do
       expect(person).to eq(
         '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
-        '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Person']],
-        Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Justin Cunningham Littman',
-        Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Justin Cunningham Littman',
-        Rialto::Etl::Vocabs::VCARD['hasName'].to_s => {
+        '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person],
+        RDF::Vocab::SKOS.prefLabel.to_s => 'Justin Cunningham Littman',
+        RDF::Vocab::RDFS.label.to_s => 'Justin Cunningham Littman',
+        RDF::Vocab::VCARD['hasName'].to_s => {
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['123'],
-          '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
-          "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
-          "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
-          Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
-          Rialto::Etl::Vocabs::VCARD['middle-name'].to_s => 'Cunningham',
-          Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+          '@type' => RDF::Vocab::VCARD['Name'],
+          "!#{RDF::Vocab::VCARD['given-name']}" => true,
+          "!#{RDF::Vocab::VCARD['additional-name']}" => true,
+          "!#{RDF::Vocab::VCARD['family-name']}" => true,
+          RDF::Vocab::VCARD['given-name'].to_s => 'Justin',
+          RDF::Vocab::VCARD['additional-name'].to_s => 'Cunningham',
+          RDF::Vocab::VCARD['family-name'].to_s => 'Littman'
 
         }
       )
@@ -338,17 +338,17 @@ RSpec.describe Rialto::Etl::Transformers::People do
       it 'returns unresolved person' do
         expect(person).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['ed1aa059391f675499eda6172ddc29f4'],
-          '@type' => [Rialto::Etl::Vocabs::FOAF['Agent'], Rialto::Etl::Vocabs::FOAF['Person']],
-          Rialto::Etl::Vocabs::SKOS['prefLabel'].to_s => 'Justin Littman',
-          Rialto::Etl::Vocabs::RDFS['label'].to_s => 'Justin Littman',
-          Rialto::Etl::Vocabs::VCARD['hasName'].to_s => {
+          '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person],
+          RDF::Vocab::SKOS.prefLabel.to_s => 'Justin Littman',
+          RDF::RDFS.label.to_s => 'Justin Littman',
+          RDF::Vocab::VCARD.hasName.to_s => {
             '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['ed1aa059391f675499eda6172ddc29f4'],
-            '@type' => Rialto::Etl::Vocabs::VCARD['Name'],
-            "!#{Rialto::Etl::Vocabs::VCARD['given-name']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['middle-name']}" => true,
-            "!#{Rialto::Etl::Vocabs::VCARD['family-name']}" => true,
-            Rialto::Etl::Vocabs::VCARD['given-name'].to_s => 'Justin',
-            Rialto::Etl::Vocabs::VCARD['family-name'].to_s => 'Littman'
+            '@type' => RDF::Vocab::VCARD.Name,
+            "!#{RDF::Vocab::VCARD['given-name']}" => true,
+            "!#{RDF::Vocab::VCARD['additional-name']}" => true,
+            "!#{RDF::Vocab::VCARD['family-name']}" => true,
+            RDF::Vocab::VCARD['given-name'].to_s => 'Justin',
+            RDF::Vocab::VCARD['family-name'].to_s => 'Littman'
           }
         )
       end

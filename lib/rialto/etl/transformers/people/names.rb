@@ -9,8 +9,6 @@ module Rialto
       module People
         # Name transformer
         class Names
-          include Rialto::Etl::Vocabs
-
           # Transform names into the hash for an address Vcard
           # @param id [String] an id to use to construct the Vcard URI. If omitted, one will be constructed.
           # @param given_name [String] first name
@@ -19,15 +17,15 @@ module Rialto
           # @return [Hash] a hash representing the Vcard
           def construct_name_vcard(id:, given_name:, middle_name: nil, family_name:)
             vcard = {
-              '@id' => RIALTO_CONTEXT_NAMES[id || id_from_names(given_name, family_name)],
-              '@type' => VCARD['Name'],
-              "!#{VCARD['given-name']}" => true,
-              VCARD['given-name'].to_s => given_name,
-              "!#{VCARD['middle-name']}" => true,
-              "!#{VCARD['family-name']}" => true,
-              VCARD['family-name'].to_s => family_name
+              '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES[id || id_from_names(given_name, family_name)],
+              '@type' => RDF::Vocab::VCARD.Name,
+              "!#{RDF::Vocab::VCARD['given-name']}" => true,
+              RDF::Vocab::VCARD['given-name'].to_s => given_name,
+              "!#{RDF::Vocab::VCARD['additional-name']}" => true,
+              "!#{RDF::Vocab::VCARD['family-name']}" => true,
+              RDF::Vocab::VCARD['family-name'].to_s => family_name
             }
-            vcard[VCARD['middle-name'].to_s] = middle_name if middle_name
+            vcard[RDF::Vocab::VCARD['additional-name'].to_s] = middle_name if middle_name
             vcard
           end
 

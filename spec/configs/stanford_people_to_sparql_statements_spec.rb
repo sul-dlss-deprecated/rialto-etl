@@ -230,15 +230,15 @@ RSpec.describe Rialto::Etl::Transformer do
         # Test 3 people
         query = client.select(count: { org: :c })
                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Person']])
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Agent']])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Person])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Agent])
         expect(query.solutions.first[:c].to_i).to eq(3)
 
         # Test label
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 RDF::Vocab::SKOS.prefLabel,
                                  'Bill Chen'])
                        .true?
         expect(result).to be true
@@ -247,24 +247,24 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['hasName'],
+                                 RDF::Vocab::VCARD['hasName'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150']])
                        .true?
         expect(result).to be true
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['given-name'],
+                                 RDF::Vocab::VCARD['given-name'],
                                  'Bill'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['family-name'],
+                                 RDF::Vocab::VCARD['family-name'],
                                  'Chen'])
                        .true?
         expect(result).to be true
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['middle-name'],
+                                 RDF::Vocab::VCARD['additional-name'],
                                  :o])
                        .true?
         expect(result).to be false
@@ -299,7 +299,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['hasAddress'],
+                                 RDF::Vocab::VCARD['hasAddress'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150']])
                        .true?
         expect(result).to be true
@@ -307,27 +307,26 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VCARD['Address']])
+                                 RDF::Vocab::VCARD.Address])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['street-address'],
+                                 RDF::Vocab::VCARD['street-address'],
                                  'Tresidder Memorial Union,, 2nd Floor, Suite 4, 459 Lagunita Drive'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['locality'],
+                                 RDF::Vocab::VCARD['locality'],
                                  'Stanford'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['region'],
+                                 RDF::Vocab::VCARD['region'],
                                  'California'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['postal-code'],
+                                 RDF::Vocab::VCARD['postal-code'],
                                  '94305-3073'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['country-name'],
+                                 RDF::Vocab::VCARD['country-name'],
                                  'United States'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::DCTERMS['spatial'],
+                                 RDF::Vocab::DC.spatial,
                                  RDF::URI.new('http://sws.geonames.org/6252001/')])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
       end
 
       it 'is inserted with advisee triples' do
@@ -335,29 +334,26 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
-                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 RDF::Vocab::SKOS.prefLabel,
                                  'Lyuqin Cao'])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
 
         # Test advisee name vcard
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
-                                 Rialto::Etl::Vocabs::VCARD['hasName'],
+                                 RDF::Vocab::VCARD['hasName'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882'],
-                                 Rialto::Etl::Vocabs::VCARD['given-name'],
+                                 RDF::Vocab::VCARD['given-name'],
                                  'Lyuqin'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882'],
-                                 Rialto::Etl::Vocabs::VCARD['family-name'],
+                                 RDF::Vocab::VCARD['family-name'],
                                  'Cao'])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
 
         # Test advising relationship
         result = client.ask
@@ -372,10 +368,9 @@ RSpec.describe Rialto::Etl::Transformer do
                                  Rialto::Etl::Vocabs::VIVO['relatedBy'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150'],
-                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
+                                 RDF::Vocab::DC.valid,
                                  RDF::Literal::Date.new(Time.now.to_date)])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
 
         # Test advising role
         result = client.ask
@@ -389,8 +384,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdvisorRole'],
                                  Rialto::Etl::Vocabs::OBO['RO_0000052'],
                                  Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150']])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
 
         # Test advisee role
         result = client.ask
@@ -404,28 +398,26 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdviseeRole'],
                                  Rialto::Etl::Vocabs::OBO['RO_0000052'],
                                  Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882']])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
 
         # Test person email
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['hasEmail'],
+                                 RDF::Vocab::VCARD.hasEmail,
                                  'billchen1@stanford.edu'])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
 
         # Test sunetid
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::DCTERMS['identifier'],
+                                 RDF::Vocab::DC.identifier,
                                  RDF::Literal.new('billchen1',
                                                   datatype: Rialto::Etl::Vocabs::RIALTO_CONTEXT_IDENTIFIERS['Sunetid'])])
-                       .true?
-        expect(result).to be true
+        expect(result).to be_true
       end
+
       it 'is inserted with position triples' do
         # Test 1 position
         query = client.select(count: { pos: :p })
@@ -457,7 +449,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
-                                 Rialto::Etl::Vocabs::DCTERMS['valid'],
+                                 RDF::Vocab::DC.valid,
                                  RDF::Literal::Date.new(Time.now.to_date)])
                        .true?
         expect(result).to be true
@@ -475,7 +467,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
-                                 Rialto::Etl::Vocabs::RDFS['label'],
+                                 RDF::Vocab::RDFS.label,
                                  'Accountant, Res Ed Central Operations'])
                        .true?
         expect(result).to be true
@@ -490,15 +482,15 @@ RSpec.describe Rialto::Etl::Transformer do
         # Test 4 people (removed 2 advisees and added one)
         query = client.select(count: { org: :c })
                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Person']])
-                      .where([:org, RDF.type, Rialto::Etl::Vocabs::FOAF['Agent']])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Person])
+                      .where([:org, RDF.type, RDF::Vocab::FOAF.Agent])
         expect(query.solutions.first[:c].to_i).to eq(4)
 
         # Test label
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::SKOS['prefLabel'],
+                                 RDF::Vocab::SKOS.prefLabel,
                                  'Billy Edward Chen'])
                        .true?
         expect(result).to be true
@@ -507,13 +499,13 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['given-name'],
+                                 RDF::Vocab::VCARD['given-name'],
                                  'Billy'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['middle-name'],
+                                 RDF::Vocab::VCARD['additional-name'],
                                  'Edward'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['family-name'],
+                                 RDF::Vocab::VCARD['family-name'],
                                  'Chen'])
                        .true?
         expect(result).to be true
@@ -549,24 +541,24 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VCARD['Address']])
+                                 RDF::Vocab::VCARD.Address])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['street-address'],
+                                 RDF::Vocab::VCARD['street-address'],
                                  'Tresidder Memorial Union, 3rd Floor, Suite 4, 459 Lagunita Drive'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['locality'],
+                                 RDF::Vocab::VCARD.locality,
                                  'Stanford'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['region'],
+                                 RDF::Vocab::VCARD.region,
                                  'California'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['postal-code'],
+                                 RDF::Vocab::VCARD['postal-code'],
                                  '94305-3073'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['country-name'],
+                                 RDF::Vocab::VCARD['country-name'],
                                  'United States'])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 Rialto::Etl::Vocabs::DCTERMS['spatial'],
+                                 RDF::Vocab::DC.spatial,
                                  RDF::URI.new('http://sws.geonames.org/6252001/')])
                        .true?
         expect(result).to be true
@@ -575,7 +567,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VCARD['hasEmail'],
+                                 RDF::Vocab::VCARD.hasEmail,
                                  'billychen1@stanford.edu'])
                        .true?
         expect(result).to be true
@@ -600,7 +592,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
-                                 Rialto::Etl::Vocabs::RDFS['label'],
+                                 RDF::Vocab::RDFS.label,
                                  'Senior accountant, Res Ed Central Operations'])
                        .true?
         expect(result).to be true
