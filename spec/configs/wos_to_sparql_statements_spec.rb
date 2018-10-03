@@ -67,6 +67,10 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/stanford')
 
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=NIH')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/national_institutes_of_health')
+
         transform('spec/fixtures/wos/000424386600014.json')
       end
 
@@ -174,6 +178,14 @@ RSpec.describe Rialto::Etl::Transformer do
             Rialto::Etl::Vocabs::RIALTO_PEOPLE['dc934b74-e554-409b-967b-0d555c44cc2c'],
             graph]]
         )
+
+        # Supported by granting orgs
+        expect(repository).to has_quads(
+          [[id,
+            Rialto::Etl::Vocabs::VIVO['informationResourceSupportedBy'],
+            Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['national_institutes_of_health'],
+            graph]]
+        )
       end
       it 'is inserted with author triples' do
         # Authors
@@ -258,6 +270,10 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 404)
 
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=NIH')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/national_institutes_of_health')
+
         transform('spec/fixtures/wos/000424386600014.json')
       end
 
@@ -328,6 +344,10 @@ RSpec.describe Rialto::Etl::Transformer do
         stub_request(:get, 'http://127.0.0.1:3001/topic?name=Research%20%26%20Speculative%20Medicine')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/concepts/d700824f-ae47-4244-885c-7cfc55b240f10')
+
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=NIH')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/national_institutes_of_health')
 
         transform('spec/fixtures/wos/000424386600014.json')
         transform('spec/fixtures/wos/000424386600014-2.json')
@@ -527,6 +547,85 @@ RSpec.describe Rialto::Etl::Transformer do
       end
 
       it { is_expected.to eq(1 => { 'country' => 'USA', 'organization' => 'Stanford University' }) }
+    end
+  end
+  describe '#fetch_grant_agencies' do
+    subject { indexer.fetch_grant_agencies(json) }
+
+    let(:indexer) do
+      Traject::Indexer.new.tap do |indexer|
+        indexer.load_config_file(config_file_path)
+      end
+    end
+
+    context 'with an array of grants' do
+      let(:json) do
+        <<~JSON
+          {
+          	"UID": "WOS:000359895400001",
+          	"static_data": {
+          		"fullrecord_metadata": {
+                "fund_ack": {
+                  "grants": {
+                    "count": 3,
+                    "grant": [{
+                      "grant_ids": {
+                        "grant_id": ["U01DK073983", "U01DK073975", "U01DK073985", "U01DK074007", "U01DK073974", "U01DK074008"],
+                        "count": 6
+                      },
+                      "grant_agency": "National Institute of Diabetes and Digestive and Kidney Diseases"
+                    }, {
+                      "grant_ids": {
+                        "grant_id": "DK57061",
+                        "count": 1
+                      },
+                      "grant_agency": "National Institutes of Health"
+                    }, {
+                      "grant_ids": {
+                        "grant_id": "PO1 DK68055",
+                        "count": 1
+                      },
+                      "grant_agency": ""
+                    }]
+                  }
+                }
+          		}
+          	}
+          }
+        JSON
+      end
+
+      it {
+        is_expected.to eq(['National Institute of Diabetes and Digestive and Kidney Diseases',
+                           'National Institutes of Health'])
+      }
+    end
+    context 'with an grant obj' do
+      let(:json) do
+        <<~JSON
+          {
+          	"UID": "WOS:000359895400001",
+          	"static_data": {
+          		"fullrecord_metadata": {
+                "fund_ack": {
+                  "grants": {
+                    "count": 3,
+                    "grant": {
+                      "grant_ids": {
+                        "grant_id": ["U01DK073983", "U01DK073975", "U01DK073985", "U01DK074007", "U01DK073974", "U01DK074008"],
+                        "count": 6
+                      },
+                      "grant_agency": "National Institute of Diabetes and Digestive and Kidney Diseases"
+                    }
+                  }
+                }
+          		}
+          	}
+          }
+        JSON
+      end
+
+      it { is_expected.to eq(['National Institute of Diabetes and Digestive and Kidney Diseases']) }
     end
   end
 end

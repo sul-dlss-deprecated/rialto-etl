@@ -44,6 +44,15 @@ def parse_address(addr)
   result
 end
 
+# Find the grants
+def fetch_grant_agencies(json)
+  agencies = Array.wrap(JsonPath.on(json, '$.static_data.fullrecord_metadata.fund_ack.grants.grant').first).map do |grant|
+    next if grant['grant_agency'].empty?
+    grant['grant_agency']
+  end
+  agencies.compact
+end
+
 # @param addresses [Hash] a lookup between the addr_no and the data
 # @param addr_id [Integer,String,NilClass] the address identifier to lookup
 # @return [Hash,NilClass] the address for the provided identifier
@@ -172,3 +181,10 @@ to_field "!#{RDF::Vocab::DC.created}", literal(true), single: true
 to_field RDF::Vocab::DC.created.to_s,
          extract_json('$.static_data.summary.pub_info.sortdate'),
          single: true
+
+to_field VIVO['informationResourceSupportedBy'].to_s, lambda { |json, accumulator|
+  grant_agencies = fetch_grant_agencies(json)
+  accumulator << grant_agencies.map do |agency|
+    Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: agency)
+  end
+}, single: true
