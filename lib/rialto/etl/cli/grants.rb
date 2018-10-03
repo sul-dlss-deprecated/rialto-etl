@@ -44,13 +44,19 @@ module Rialto
           File.open(options[:input_file], 'r') do |f|
             f.each_line.lazy.each_slice(options[:batch_size].to_i) do |lines|
               batch_ids = lines.map { |line| JSON.parse(line)['sunetid'] }
-              Parallel.map(batch_ids, in_processes: options[:batch_size].to_i) do |id|
-                output_file = File.join(options[:dir], "#{id}.json")
-                if File.exist?(output_file) && !options[:force]
-                  say "file #{output_file} already exists, skipping. use -f to force overwrite"
-                  next
+              begin
+                Parallel.map(batch_ids, in_processes: options[:batch_size].to_i) do |id|
+                  output_file = File.join(options[:dir], "#{id}.json")
+                  if File.exist?(output_file) && !options[:force]
+                    say "file #{output_file} already exists, skipping. use -f to force overwrite"
+                    next
+                  end
+                  extract_and_write(id, output_file)
                 end
-                extract_and_write(id, output_file)
+              rescue TypeError => exception
+                sleep(90)
+                say "Unable to write to pipe, retrying after 90 seconds: #{exception.message}"
+                retry
               end
             end
           end
