@@ -35,6 +35,7 @@ module Rialto
         term :FacultyMember
         term :Librarian
         term :NonAcademic
+        term :NonFacultyAcademic
         term :Position
         term :School
         term :Student
