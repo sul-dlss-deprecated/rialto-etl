@@ -58,6 +58,7 @@ def fetch_publishers(json)
   JsonPath.on(json, '$.static_data.summary.publishers.publisher.names.name.display_name')
 end
 
+# Lookup the address from this document by the internal (to the document) addr_id
 # @param addresses [Hash] a lookup between the addr_no and the data
 # @param addr_id [Integer,String,NilClass] the address identifier to lookup
 # @return [Hash,NilClass] the address for the provided identifier
