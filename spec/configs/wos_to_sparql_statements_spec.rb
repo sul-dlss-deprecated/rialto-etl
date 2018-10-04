@@ -71,6 +71,10 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/national_institutes_of_health')
 
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=SAGE%20PUBLICATIONS%20LTD')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/sage_publications')
+
         transform('spec/fixtures/wos/000424386600014.json')
       end
 
@@ -144,7 +148,7 @@ RSpec.describe Rialto::Etl::Transformer do
         # Publisher
         expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::VIVO.publisher,
-                                         'SAGE PUBLICATIONS LTD',
+                                         Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['sage_publications'],
                                          graph])
 
         # Authorships
@@ -274,6 +278,10 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/national_institutes_of_health')
 
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=SAGE%20PUBLICATIONS%20LTD')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/sage_publications')
+
         transform('spec/fixtures/wos/000424386600014.json')
       end
 
@@ -348,6 +356,14 @@ RSpec.describe Rialto::Etl::Transformer do
         stub_request(:get, 'http://127.0.0.1:3001/organization?name=NIH')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/national_institutes_of_health')
+
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=MONOPOLY%20PUBLICATIONS%20LTD')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/monopoly_publications')
+
+        stub_request(:get, 'http://127.0.0.1:3001/organization?name=SAGE%20PUBLICATIONS%20LTD')
+          .with(headers: { 'X-Api-Key' => 'abc123' })
+          .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/sage_publications')
 
         transform('spec/fixtures/wos/000424386600014.json')
         transform('spec/fixtures/wos/000424386600014-2.json')
@@ -441,11 +457,11 @@ RSpec.describe Rialto::Etl::Transformer do
         # Publisher
         expect(repository).to have_quad([id,
                                          Rialto::Etl::Vocabs::VIVO['publisher'],
-                                         'MONOPOLY PUBLICATIONS LTD',
+                                         Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['monopoly_publications'],
                                          graph])
         expect(repository).not_to have_quad([id,
                                              Rialto::Etl::Vocabs::VIVO['publisher'],
-                                             'SAGE PUBLICATIONS LTD',
+                                             Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['sage_publications'],
                                              graph])
 
         # Authorships

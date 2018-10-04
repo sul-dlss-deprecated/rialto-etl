@@ -53,6 +53,11 @@ def fetch_grant_agencies(json)
   agencies.compact
 end
 
+# Return the names of the publishers
+def fetch_publishers(json)
+  JsonPath.on(json, '$.static_data.summary.publishers.publisher.names.name.display_name')
+end
+
 # @param addresses [Hash] a lookup between the addr_no and the data
 # @param addr_id [Integer,String,NilClass] the address identifier to lookup
 # @return [Hash,NilClass] the address for the provided identifier
@@ -168,9 +173,11 @@ to_field RDF::Vocab::DC.isPartOf.to_s,
          single: true
 
 to_field "!#{VIVO['publisher']}", literal(true), single: true
-to_field VIVO['publisher'].to_s,
-         extract_json('$.static_data.summary.publishers.publisher.names.name.display_name'),
-         single: true
+to_field VIVO['publisher'].to_s, lambda { |json, accumulator|
+  accumulator << fetch_publishers(json).map do |name|
+    Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: name)
+  end
+}, single: true
 
 to_field "!#{RDF::Vocab::DC.title}", literal(true), single: true
 to_field RDF::Vocab::DC.title.to_s,
