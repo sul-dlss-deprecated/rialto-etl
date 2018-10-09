@@ -33,6 +33,13 @@ module Rialto
                desc: 'Number of records to offset',
                aliases: '-o'
 
+        option :sns,
+               default: false,
+               type: :boolean,
+               required: false,
+               desc: 'Also load SNS',
+               aliases: '-s'
+
         desc 'load', 'Load all publications for all researchers in the file'
         def load
           FileUtils.mkdir_p(options[:dir])
@@ -42,13 +49,13 @@ module Rialto
           CSV.foreach(csv_path, headers: true, header_converters: :symbol) do |row|
             count += 1
             next if offset > count
-            load_row(row, count)
+            load_row(row, count, options[:sns])
           end
         end
 
         private
 
-        def load_row(row, count)
+        def load_row(row, count, sns)
           profile_id = row[:profileid]
           puts "Retrieving publications for: #{profile_id} (row: #{count})"
 
@@ -60,6 +67,10 @@ module Rialto
 
           puts "Loading sparql for #{profile_id}: #{row[:uri]}"
           system("exe/load call Sparql -i #{sparql_file}")
+
+          return unless sns
+          puts "Loading sns for #{profile_id}: #{row[:uri]}"
+          system("exe/load call Sns -i #{sparql_file}")
         end
 
         def transform_publications(wos_file, profile_id)

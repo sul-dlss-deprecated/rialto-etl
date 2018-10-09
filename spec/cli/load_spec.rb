@@ -30,7 +30,7 @@ RSpec.describe Rialto::Etl::CLI::Load do
     it 'prints out callable loaders' do
       allow(loader).to receive(:say)
       loader.list
-      expect(loader).to have_received(:say).with('Loaders supported: Sparql')
+      expect(loader).to have_received(:say).with('Loaders supported: Sns, Sparql')
     end
   end
 end
