@@ -4,6 +4,13 @@ require 'rialto/etl/transformers/organizations'
 require 'rialto/etl/namespaces'
 
 RSpec.describe Rialto::Etl::Transformers::Organizations do
+  before do
+    Settings.entity_resolver.api_key = 'abc123'
+    Settings.entity_resolver.url = 'http://127.0.0.1:3001'
+    # Makes sure Entity Resolver is using above settings.
+    Rialto::Etl::ServiceClient::EntityResolver.instance.initialize_connection
+  end
+
   describe '.construct_organization' do
     subject(:org) do
       described_class.construct_org(org_name: org_name)

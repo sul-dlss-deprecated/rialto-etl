@@ -5,6 +5,7 @@ require 'traject_plus'
 require 'rialto/etl/readers/ndjson_reader'
 require 'rialto/etl/writers/sparql_statement_writer'
 require 'rialto/etl/transformers/people'
+require 'rialto/etl/transformers/addresses'
 require 'active_support/core_ext/array/wrap'
 require 'rialto/etl/namespaces'
 
@@ -125,13 +126,11 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
                                                                            family_name: c['last_name'],
                                                                            addl_params: person_params)
     person_id = remove_vocab_from_uri(RIALTO_PEOPLE, person['@id'])
-    # For now, adding a country for all people.
-    # Some people may already have address vcards.
-    # The URI of the vcard is tied to this publication, so users will end up with many address vcards.
-    if address && address.key?('country')
-      address_vcard = Rialto::Etl::Transformers::People.construct_address_vcard("#{person_id}_#{json['UID']}",
-                                                                                country: address['country'])
-      person[RDF::Vocab::VCARD.hasAddress.to_s] = address_vcard
+    # Note: Adding a country for each publication, so person may have many countries.
+    if address &&
+       address.key?('country') &&
+       (country = Rialto::Etl::Transformers::Addresses.geocode_for_country(country: address['country']))
+      person[RDF::Vocab::DC.spatial.to_s] = country
     end
 
     # If there is an organization, add a position for the person

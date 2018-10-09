@@ -295,38 +295,14 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
 
-        # Test person address vcard
+        # Test person country
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 RDF::Vocab::VCARD['hasAddress'],
-                                 Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150']])
-                       .true?
-        expect(result).to be true
-        result = client.ask
-                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF.type,
-                                 RDF::Vocab::VCARD.Address])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['street-address'],
-                                 'Tresidder Memorial Union,, 2nd Floor, Suite 4, 459 Lagunita Drive'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['locality'],
-                                 'Stanford'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['region'],
-                                 'California'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['postal-code'],
-                                 '94305-3073'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['country-name'],
-                                 'United States'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
                                  RDF::Vocab::DC.spatial,
                                  RDF::URI.new('http://sws.geonames.org/6252001/')])
-        expect(result).to be_true
+                       .true?
+        expect(result).to be true
       end
 
       it 'is inserted with advisee triples' do
@@ -533,33 +509,6 @@ RSpec.describe Rialto::Etl::Transformer do
                                  Rialto::Etl::Vocabs::VIVO['overview'],
                                  'Billy Chen, M.D., is a Professor of Dermatology and Director of Mohs '\
                                  'and Dermatologic Surgery.'])
-                       .true?
-        expect(result).to be true
-
-        # Test person address vcard changed
-        result = client.ask
-                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF.type,
-                                 RDF::Vocab::VCARD.Address])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['street-address'],
-                                 'Tresidder Memorial Union, 3rd Floor, Suite 4, 459 Lagunita Drive'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD.locality,
-                                 'Stanford'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD.region,
-                                 'California'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['postal-code'],
-                                 '94305-3073'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::VCARD['country-name'],
-                                 'United States'])
-                       .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['400150'],
-                                 RDF::Vocab::DC.spatial,
-                                 RDF::URI.new('http://sws.geonames.org/6252001/')])
                        .true?
         expect(result).to be true
 

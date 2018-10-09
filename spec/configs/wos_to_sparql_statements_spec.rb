@@ -195,18 +195,6 @@ RSpec.describe Rialto::Etl::Transformer do
         # Authors
         expect(repository).to has_quads(
           [[Rialto::Etl::Vocabs::RIALTO_PEOPLE['15bf29be-470a-442e-9389-f66aac440a7b'],
-            RDF::Vocab::VCARD['hasAddress'],
-            Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
-            graph],
-           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
-            RDF.type,
-            RDF::Vocab::VCARD['Address'],
-            graph],
-           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
-            RDF::Vocab::VCARD['country-name'],
-            'Peoples R China',
-            graph],
-           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['15bf29be-470a-442e-9389-f66aac440a7b_WOS:000424386600014'],
             RDF::Vocab::DC.spatial,
             Rialto::Etl::Vocabs::SWS_GEONAMES['1814991/'],
             graph]]
@@ -214,18 +202,6 @@ RSpec.describe Rialto::Etl::Transformer do
 
         expect(repository).to has_quads(
           [[Rialto::Etl::Vocabs::RIALTO_PEOPLE['dc934b74-e554-409b-967b-0d555c44cc2c'],
-            RDF::Vocab::VCARD['hasAddress'],
-            Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
-            graph],
-           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
-            RDF.type,
-            RDF::Vocab::VCARD['Address'],
-            graph],
-           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
-            RDF::Vocab::VCARD['country-name'],
-            'USA',
-            graph],
-           [Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['dc934b74-e554-409b-967b-0d555c44cc2c_WOS:000424386600014'],
             RDF::Vocab::DC.spatial,
             Rialto::Etl::Vocabs::SWS_GEONAMES['6252001/'],
             graph]]
