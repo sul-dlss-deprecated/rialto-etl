@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl::ServiceClient::EntityResolver do
+  before do
+    Settings.entity_resolver.url = 'http://127.0.0.1:3001'
+    # Makes sure Entity Resolver is using above settings.
+    described_class.instance.initialize_connection
+  end
+
   describe '.resolve' do
     subject(:resolve) do
       described_class.resolve('person', 'orcid_id' => '0000-0002-2328-2018', 'full_name' => 'Wilson, Jennifer L.')

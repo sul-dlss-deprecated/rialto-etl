@@ -21,3 +21,10 @@ sparql_writer:
 entity_resolver:
   url: http://127.0.0.1:3001/
   api_key: abc123
+
+sns_writer:
+  access_key: 999999
+  secret_key: 1231
+  endpoint_url: http://localhost:4575
+  region: us-east-1
+  topic_arn: arn:aws:sns:us-east-1:123456789012:data-update

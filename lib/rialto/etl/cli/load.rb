@@ -23,7 +23,7 @@ module Rialto
         # List callable loaders
         def list
           callable_loaders = Rialto::Etl::Loaders.constants
-          say "Loaders supported: #{callable_loaders.join(', ')}"
+          say "Loaders supported: #{callable_loaders.sort.join(', ')}"
         end
       end
     end
