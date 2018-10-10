@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/transformers/people/positions'
-require 'rialto/etl/transformers/people/addresses'
 require 'rialto/etl/transformers/people/names'
 require 'rialto/etl/namespaces'
 
@@ -25,24 +24,6 @@ module Rialto
         def self.construct_position(org_name:, person_id:)
           Positions.new.construct_position(org_name: org_name, person_id: person_id)
         end
-
-        # Transform addresses into the hash for an address Vcard
-        # @param id [String] an id to use to construct the Vcard URI
-        # @param street_address [String] street address
-        # @param locality [String] town / city
-        # @param region [String] state
-        # @param postal_code [String] zip
-        # @param country [String] country
-        # @return [Hash] a hash representing the Vcard
-        # rubocop:disable Metrics/ParameterLists
-        def self.construct_address_vcard(id, street_address: nil, locality: nil, region: nil, postal_code: nil, country: nil)
-          Addresses.new.construct_address_vcard(id, street_address: street_address,
-                                                    locality: locality,
-                                                    region: region,
-                                                    postal_code: postal_code,
-                                                    country: country)
-        end
-        # rubocop:enable Metrics/ParameterLists
 
         # Transform names into the hash for a name Vcard
         # @param id [String] an id to use to construct the Vcard URI. If omitted, one will be constructed.

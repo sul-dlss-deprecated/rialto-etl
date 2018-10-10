@@ -4,6 +4,13 @@ require 'rialto/etl/transformers/people'
 require 'rialto/etl/namespaces'
 
 RSpec.describe Rialto::Etl::Transformers::People do
+  before do
+    Settings.entity_resolver.api_key = 'abc123'
+    Settings.entity_resolver.url = 'http://127.0.0.1:3001'
+    # Makes sure Entity Resolver is using above settings.
+    Rialto::Etl::ServiceClient::EntityResolver.instance.initialize_connection
+  end
+
   describe '.construct_stanford_positions' do
     subject(:positions) { described_class.construct_stanford_positions(titles: titles, profile_id: id) }
 
@@ -125,75 +132,6 @@ RSpec.describe Rialto::Etl::Transformers::People do
             RDF::RDFS.label.to_s => 'Stanford University'
           }
         )
-      end
-    end
-  end
-
-  describe '.construct_address_vcard' do
-    subject(:vcard) do
-      described_class.construct_address_vcard(id, street_address: address,
-                                                  locality: city,
-                                                  region: state,
-                                                  postal_code: zip,
-                                                  country: country)
-    end
-
-    let(:id) { '123' }
-
-    context 'when address is provided' do
-      let(:address) { '557 Escondido Mall' }
-
-      let(:city) { 'Stanford' }
-
-      let(:state) { 'CA' }
-
-      let(:zip) { '94305' }
-
-      let(:country) { 'USA' }
-
-      it 'returns address vcard hash' do
-        expect(vcard).to eq(
-          '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['123'],
-          '@type' => RDF::Vocab::VCARD['Address'],
-          "!#{RDF::Vocab::VCARD['street-address']}" => true,
-          "!#{RDF::Vocab::VCARD['locality']}" => true,
-          "!#{RDF::Vocab::VCARD['region']}" => true,
-          "!#{RDF::Vocab::VCARD['country-name']}" => true,
-          "!#{RDF::Vocab::VCARD['postal-code']}" => true,
-          "!#{RDF::Vocab::DC.spatial}" => true,
-          RDF::Vocab::VCARD['street-address'].to_s => '557 Escondido Mall',
-          RDF::Vocab::VCARD['locality'].to_s => 'Stanford',
-          RDF::Vocab::VCARD['region'].to_s => 'CA',
-          RDF::Vocab::VCARD['postal-code'].to_s => '94305',
-          RDF::Vocab::VCARD['country-name'].to_s => 'USA',
-          RDF::Vocab::DC.spatial.to_s => Rialto::Etl::Vocabs::SWS_GEONAMES['6252001/']
-        )
-      end
-      context 'when country only is provided' do
-        let(:address) { nil }
-
-        let(:city) { nil }
-
-        let(:state) { nil }
-
-        let(:zip) { nil }
-
-        let(:country) { 'Wales' }
-
-        it 'returns address vcard hash' do
-          expect(vcard).to eq(
-            '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_ADDRESSES['123'],
-            '@type' => RDF::Vocab::VCARD['Address'],
-            "!#{RDF::Vocab::VCARD['street-address']}" => true,
-            "!#{RDF::Vocab::VCARD['locality']}" => true,
-            "!#{RDF::Vocab::VCARD['region']}" => true,
-            "!#{RDF::Vocab::VCARD['country-name']}" => true,
-            "!#{RDF::Vocab::VCARD['postal-code']}" => true,
-            "!#{RDF::Vocab::DC.spatial}" => true,
-            RDF::Vocab::VCARD['country-name'].to_s => 'Wales',
-            RDF::Vocab::DC.spatial.to_s => Rialto::Etl::Vocabs::SWS_GEONAMES['2635167/']
-          )
-        end
       end
     end
   end

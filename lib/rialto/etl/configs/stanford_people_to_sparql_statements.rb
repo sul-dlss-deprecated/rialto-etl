@@ -5,6 +5,7 @@ require 'rialto/etl/readers/ndjson_reader'
 require 'rialto/etl/writers/sparql_statement_writer'
 require 'rialto/etl/namespaces'
 require 'rialto/etl/transformers/people'
+require 'rialto/etl/transformers/addresses'
 
 extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
@@ -73,18 +74,9 @@ to_field RDF::Vocab::VCARD.hasName.to_s, lambda { |json, accum|
 to_field "!#{VIVO['overview']}", literal(true), single: true
 to_field VIVO['overview'].to_s, extract_json('$.bio.text'), single: true
 
-# Person address
-to_field "!#{RDF::Vocab::VCARD.hasAddress}", literal(true), single: true
-to_field RDF::Vocab::VCARD.hasAddress.to_s, lambda { |json, accum|
-  address_json = JsonPath.on(json, '$.contacts[?(@["type"] == "academic")]').first
-  if address_json
-    accum << Rialto::Etl::Transformers::People.construct_address_vcard(json['profileId'],
-                                                                       street_address: address_json['address'],
-                                                                       locality: address_json['city'],
-                                                                       region: address_json['state'],
-                                                                       postal_code: address_json['zip'],
-                                                                       country: 'United States')
-  end
+# Person country
+to_field RDF::Vocab::DC.spatial.to_s, lambda { |_, accum|
+  accum << Rialto::Etl::Transformers::Addresses.geocode_for_country(country: 'United States')
 }, single: true
 
 # Note: There is also relatedBy for positions.
