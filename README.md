@@ -59,6 +59,8 @@ exe/load call Sparql -i researchers.sparql
 ### Pipeline to harvest Publications from Web of Science
 Notes:
 * The transform step depends on `researchers.ndj` from researcher pipeline.
+* The load step can be skipped with the `--skip-load` flag.
+* The extract and transform steps will be skipped if the files aready exist with the `--skip-existing` flag.
 
 ```
 exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
