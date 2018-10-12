@@ -7,4 +7,5 @@ settings do
   provide 'reader_class_name', 'Rialto::Etl::Readers::SparqlStatementReader'
   provide 'sparql_writer.update_url', ::Settings.sparql_writer.update_url
   provide 'sparql_writer.thread_pool', 0
+  provide 'sparql_writer.batch_size', ::Settings.sparql_writer.batch_size
 end
