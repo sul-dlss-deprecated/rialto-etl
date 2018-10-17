@@ -73,7 +73,7 @@ module Rialto
 
           return if options[:skip_load]
           puts "Loading sparql for #{profile_id}: #{row[:uri]}"
-          Rialto::Etl::Loaders::Sparql.new(input: sparql_file)
+          Rialto::Etl::Loaders::Sparql.new(input: sparql_file).load
         end
 
         def transform_publications(wos_file, profile_id)
