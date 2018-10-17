@@ -3,6 +3,7 @@
 require 'rialto/etl/namespaces'
 require 'rialto/etl/logging'
 require 'rialto/etl/transformers/organizations'
+require 'rialto/etl/organizations'
 
 module Rialto
   module Etl

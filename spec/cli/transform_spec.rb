@@ -11,7 +11,8 @@ RSpec.describe Rialto::Etl::CLI::Transform do
       before do
         allow(Rialto::Etl::Transformer).to receive(:new).and_return(mock_transformer_instance)
         allow(transformer).to receive(:configs).and_return('FooBar' => 'path/to/config.rb')
-        allow(transformer).to receive(:options).and_return(input_file: 'spec/fixtures/organizations.ndj')
+        allow(transformer).to receive(:options).and_return(input_file: 'spec/fixtures/organizations.ndj',
+                                                           organizations: 'organizations.json')
       end
 
       context 'with missing name argument' do

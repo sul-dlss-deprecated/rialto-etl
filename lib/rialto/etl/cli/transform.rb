@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/transformer'
+require 'rialto/etl/organizations'
 
 module Rialto
   module Etl
@@ -12,6 +13,13 @@ module Rialto
                banner: 'FILENAME',
                desc: 'Name of file with data to be transformed (REQUIRED)',
                aliases: '-i'
+
+        option :organizations,
+               default: 'organizations.json',
+               banner: 'ORGANIZATIONS',
+               desc: 'Name of the JSON file with organization data',
+               aliases: '-o'
+
         desc 'call NAME', "Call named transformer (`#{@package_name} list` to see available names)"
         # Call a transformer by name
         def call(name)
@@ -21,6 +29,7 @@ module Rialto
             warn "No '#{name}' transformer exists. Call '#{$PROGRAM_NAME} list' to see valid options."
             exit(1)
           end
+          Rialto::Etl::Organizations.organizations_data = options.fetch(:organizations)
           Transformer.new(input_stream: stream, config_file_path: config).transform
         end
 
