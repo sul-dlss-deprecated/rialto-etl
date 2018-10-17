@@ -21,19 +21,21 @@ RSpec.describe Rialto::Etl::ServiceClient::EntityResolver do
         stub_request(:get, 'http://127.0.0.1:3001/person?full_name=Wilson,%20Jennifer%20L.&orcid_id=0000-0002-2328-2018')
           .to_return(status: 404, body: '')
       end
-      it 'gets the URI' do
+      it 'returns nil' do
         expect(resolve).to be_nil
       end
     end
 
+    # rubocop:disable Metrics/LineLength
     context 'when resolver behaves unexpectedly' do
       before do
         stub_request(:get, 'http://127.0.0.1:3001/person?full_name=Wilson,%20Jennifer%20L.&orcid_id=0000-0002-2328-2018')
           .to_return(status: 500, body: '')
       end
-      it 'gets the URI' do
-        expect { resolve }.to raise_error(RuntimeError, /Entity resolver returned 500 for person type and/)
+      it 'prints a warning' do
+        expect { resolve }.to output('Error resolving with path person?orcid_id=0000-0002-2328-2018&full_name=Wilson%2C+Jennifer+L.: Entity resolver returned 500 for person type and {"orcid_id"=>"0000-0002-2328-2018", "full_name"=>"Wilson, Jennifer L."} params.' + "\n").to_stderr
       end
     end
+    # rubocop:enable Metrics/LineLength
   end
 end

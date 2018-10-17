@@ -17,35 +17,34 @@ module Rialto
                banner: 'FILENAME',
                desc: 'Name of file with data to be loaded (REQUIRED)',
                aliases: '-i'
-
         option :dir,
                required: false,
                default: 'data',
                banner: 'DIR',
                desc: 'Name of the directory to store data in',
                aliases: '-d'
-
         option :offset,
+               required: false,
                default: 0,
                type: :numeric,
-               required: false,
                banner: 'OFFSET',
                desc: 'Number of records to offset',
                aliases: '-o'
-
-        option :skip_existing,
+        option :force,
+               required: false,
                default: false,
                type: :boolean,
-               required: false,
-               desc: 'Skip extract and transform steps if files already exist'
-
+               banner: 'FORCE',
+               desc: 'Overwrite files that already exist',
+               aliases: '-f'
         option :skip_load,
+               required: false,
                default: false,
                type: :boolean,
-               required: false,
+               banner: 'SKIP_LOAD',
                desc: 'Skip load step'
 
-        desc 'load', 'Load all publications for all researchers in the file'
+        desc 'load', 'Load all publications for all researchers in the CSV file'
         def load
           FileUtils.mkdir_p(options[:dir])
           csv_path = options[:input_file]
@@ -54,46 +53,61 @@ module Rialto
           CSV.foreach(csv_path, headers: true, header_converters: :symbol) do |row|
             count += 1
             next if offset > count
-            handle_row(row, count, options[:skip_existing], options[:skip_load])
+            handle_row(row, count)
           end
         end
 
         private
 
-        def handle_row(row, count, skip_existing = false, skip_load = false)
+        def handle_row(row, count)
           profile_id = row[:profileid]
           puts "Retrieving publications for: #{profile_id} (row: #{count})"
 
-          wos_file = retrieve_publications(row, profile_id, skip_existing)
-          return if File.empty?(wos_file)
+          wos_file = retrieve_publications(row, profile_id)
+          return if !File.exist?(wos_file) || File.empty?(wos_file)
 
-          sparql_file = transform_publications(wos_file, profile_id, skip_existing)
-          return if File.empty?(sparql_file)
+          puts "Transforming publications for: #{profile_id} (row: #{count})"
 
-          return if skip_load
+          sparql_file = transform_publications(wos_file, profile_id)
+          return if !File.exist?(sparql_file) || File.empty?(sparql_file)
+
+          return if options[:skip_load]
           puts "Loading sparql for #{profile_id}: #{row[:uri]}"
-          system("exe/load call Sparql -i #{sparql_file}")
+          Rialto::Etl::Loaders::Sparql.new(input: sparql_file)
         end
 
-        def transform_publications(wos_file, profile_id, skip_existing)
+        def transform_publications(wos_file, profile_id)
           sparql_file = File.join(options[:dir], "#{profile_id}.sparql")
-          unless skip_existing && File.exist?(sparql_file)
-            transform = "exe/transform call WebOfScience -i #{wos_file} > #{sparql_file}"
-            system(transform)
+          if File.exist?(sparql_file) && !options[:force]
+            say "file #{sparql_file} already exists, skipping. use -f to force overwrite"
+            return sparql_file
           end
+          Rialto::Etl::Transformer.new(
+            input_stream: File.open(wos_file, 'r'),
+            config_file_path: 'lib/rialto/etl/configs/wos_to_sparql_statements.rb',
+            output_file_path: sparql_file
+          ).transform
           sparql_file
         end
 
-        def retrieve_publications(row, profile_id, skip_existing)
+        # rubocop:disable Metrics/MethodLength
+        def retrieve_publications(row, profile_id)
           wos_file = File.join(options[:dir], "#{profile_id}.ndj")
-          unless skip_existing && File.exist?(wos_file)
-            first = Shellwords.escape(row[:first_name])
-            last = Shellwords.escape(row[:last_name])
-            extract = "exe/extract call WebOfScience --firstname #{first} --lastname #{last} > #{wos_file}"
-            system(extract)
+          if File.exist?(wos_file) && !options[:force]
+            say "file #{wos_file} already exists, skipping. use -f to force overwrite"
+            return wos_file
+          end
+          results = []
+          Rialto::Etl::Extractors::WebOfScience.new(firstname: row[:first_name], lastname: row[:last_name]).each do |result|
+            results << result
+          end
+          return wos_file if results.empty?
+          File.open(wos_file, 'w') do |f|
+            f.write(results.join("\n"))
           end
           wos_file
         end
+        # rubocop:enable Metrics/MethodLength
       end
     end
   end

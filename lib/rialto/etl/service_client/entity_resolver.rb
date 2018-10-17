@@ -25,8 +25,10 @@ module Rialto
           @conn = connection
         end
 
+        # rubocop:disable Metrics/MethodLength
         def resolve(type, params)
-          resp = conn.get(type, params)
+          path = "#{type}?#{URI.encode_www_form(params)}"
+          resp = conn.get(path)
           case resp.status
           when 200..299
             RDF::URI.new(resp.body)
@@ -35,7 +37,10 @@ module Rialto
           else
             raise "Entity resolver returned #{resp.status} for #{type} type and #{params} params."
           end
+        rescue StandardError => exception
+          warn "Error resolving with path #{path}: #{exception.message}"
         end
+        # rubocop:enable Metrics/MethodLength
 
         def connection
           ConnectionFactory.build(uri: ::Settings.entity_resolver.url, headers: connection_headers)

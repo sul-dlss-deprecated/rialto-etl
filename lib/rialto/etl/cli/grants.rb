@@ -26,17 +26,19 @@ module Rialto
         option :batch_size,
                required: false,
                default: 3,
+               type: :numeric,
                banner: 'BATCH_SIZE',
                desc: 'Size of batch for parallel processing',
                aliases: '-s'
         option :force,
                required: false,
                default: false,
+               type: :boolean,
                banner: 'FORCE',
                desc: 'Overwrite files that already exist',
                aliases: '-f'
 
-        desc 'Load', 'Load all grants for all researchers in the file'
+        desc 'Load', 'Load all grants for all researchers in the JSON file'
         # rubocop:disable Metrics/MethodLength
         # rubocop:disable Metrics/AbcSize
         def load
