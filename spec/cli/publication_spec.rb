@@ -11,6 +11,7 @@ RSpec.describe Rialto::Etl::CLI::Publications do
     }
   end
 
+  # rubocop:disable RSpec/VerifiedDoubles
   describe '#load' do
     let(:row) do
       {
@@ -24,7 +25,7 @@ RSpec.describe Rialto::Etl::CLI::Publications do
 
     context 'with a valid transformer' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv']
+        ['--input-file', 'data/researchers.csv', '--force']
       end
       let(:row) do
         {
@@ -38,40 +39,43 @@ RSpec.describe Rialto::Etl::CLI::Publications do
 
       before do
         allow(CSV).to receive(:foreach).and_yield(row)
-        allow(loader).to receive(:system)
+        allow(Rialto::Etl::Loaders::Sparql).to receive(:new)
+        allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
+        allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return(['foo'])
+        allow(File).to receive(:exist?).and_return(true)
         allow(File).to receive(:empty?).and_return(false)
       end
 
       it 'calls extract, transform, and load' do
         loader.invoke_command(command)
-        expect(loader).to have_received(:system)
-          .with('exe/extract call WebOfScience --firstname Valerie --lastname Jarrett > data/123.ndj')
-        expect(loader).to have_received(:system)
-          .with('exe/transform call WebOfScience -i data/123.ndj > data/123.sparql')
-        expect(loader).to have_received(:system)
-          .with('exe/load call Sparql -i data/123.sparql')
+        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new)
+          .with(firstname: 'Valerie', lastname: 'Jarrett')
+        expect(Rialto::Etl::Transformer).to have_received(:new).once
+        expect(Rialto::Etl::Loaders::Sparql).to have_received(:new)
+          .with(input: 'data/123.sparql')
       end
     end
     context 'when json and sparql files already exist' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--skip-existing']
+        ['--input-file', 'data/researchers.csv']
       end
 
       before do
         allow(CSV).to receive(:foreach).and_yield(row)
-        allow(loader).to receive(:system)
+        allow(Rialto::Etl::Loaders::Sparql).to receive(:new)
+        allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
+        allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return(['foo'])
         allow(File).to receive(:exist?).and_return(true)
         allow(File).to receive(:empty?).and_return(false)
       end
 
       it 'calls load' do
         loader.invoke_command(command)
-        expect(loader).not_to have_received(:system)
-          .with('exe/extract call WebOfScience --firstname Valerie --lastname Jarrett > data/123.ndj')
-        expect(loader).not_to have_received(:system)
-          .with('exe/transform call WebOfScience -i data/123.ndj > data/123.sparql')
-        expect(loader).to have_received(:system)
-          .with('exe/load call Sparql -i data/123.sparql')
+        expect(Rialto::Etl::Extractors::WebOfScience).not_to have_received(:new)
+          .with(firstname: 'Valerie', lastname: 'Jarrett')
+        expect(Rialto::Etl::Transformer).not_to have_received(:new)
+        expect(Rialto::Etl::Loaders::Sparql).to have_received(:new)
+          .with(input: 'data/123.sparql')
       end
     end
     context 'when load is skipped' do
@@ -81,20 +85,21 @@ RSpec.describe Rialto::Etl::CLI::Publications do
 
       before do
         allow(CSV).to receive(:foreach).and_yield(row)
-        allow(loader).to receive(:system)
-        allow(File).to receive(:exist?).and_return(false)
+        allow(Rialto::Etl::Loaders::Sparql).to receive(:new)
+        allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
+        allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return(['foo'])
+        allow(File).to receive(:exist?).and_return(false, true, false, true)
         allow(File).to receive(:empty?).and_return(false)
       end
 
       it 'calls extract and transform' do
         loader.invoke_command(command)
-        expect(loader).to have_received(:system)
-          .with('exe/extract call WebOfScience --firstname Valerie --lastname Jarrett > data/123.ndj')
-        expect(loader).to have_received(:system)
-          .with('exe/transform call WebOfScience -i data/123.ndj > data/123.sparql')
-        expect(loader).not_to have_received(:system)
-          .with('exe/load call Sparql -i data/123.sparql')
+        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new)
+          .with(firstname: 'Valerie', lastname: 'Jarrett')
+        expect(Rialto::Etl::Transformer).to have_received(:new).once
+        expect(Rialto::Etl::Loaders::Sparql).not_to have_received(:new)
       end
     end
+    # rubocop:enable RSpec/VerifiedDoubles
   end
 end
