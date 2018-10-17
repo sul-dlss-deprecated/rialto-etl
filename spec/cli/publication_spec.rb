@@ -39,7 +39,7 @@ RSpec.describe Rialto::Etl::CLI::Publications do
 
       before do
         allow(CSV).to receive(:foreach).and_yield(row)
-        allow(Rialto::Etl::Loaders::Sparql).to receive(:new)
+        allow(Rialto::Etl::Loaders::Sparql).to receive(:new).and_return(double(load: true))
         allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
         allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return(['foo'])
         allow(File).to receive(:exist?).and_return(true)
@@ -62,7 +62,7 @@ RSpec.describe Rialto::Etl::CLI::Publications do
 
       before do
         allow(CSV).to receive(:foreach).and_yield(row)
-        allow(Rialto::Etl::Loaders::Sparql).to receive(:new)
+        allow(Rialto::Etl::Loaders::Sparql).to receive(:new).and_return(double(load: true))
         allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
         allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return(['foo'])
         allow(File).to receive(:exist?).and_return(true)
