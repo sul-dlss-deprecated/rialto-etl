@@ -48,6 +48,9 @@ RSpec.describe Rialto::Etl::Transformers::People do
       it 'returns positions' do
         expect(positions).to eq []
       end
+      it 'logs a warning' do
+        expect { positions.each {} }.to output(/has no Stanford positions because no titles/).to_stderr
+      end
     end
 
     context 'when org code is invalid' do
@@ -67,8 +70,12 @@ RSpec.describe Rialto::Etl::Transformers::People do
         expect(positions).to eq []
       end
 
-      it 'logs a warning' do
+      it 'logs a warning for organization' do
         expect { positions.each {} }.to output(/Unmapped organization/).to_stderr
+      end
+
+      it 'logs a warning for no positions' do
+        expect { positions.each {} }.to output(/has no Stanford positions after mapping to organizations/).to_stderr
       end
     end
   end
