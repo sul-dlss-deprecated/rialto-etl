@@ -60,7 +60,7 @@ exe/load call Sparql -i researchers.sparql
 Notes:
 * The transform step depends on `researchers.ndj` from researcher pipeline.
 * The load step can be skipped with the `--skip-load` flag.
-* The extract and transform steps will be skipped if the files aready exist with the `--skip-existing` flag.
+* The extract and transform steps will be skipped if the files already exist. Use the `--force`/`-f` flag to overwrite files.
 
 ```
 exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
@@ -73,9 +73,10 @@ Notes:
 * The transform step depends on `researchers.ndj` from the researcher pipeline
 
 ```
-exe/transform call StanfordPeopleIds -i researchers.ndj > sunetids.txt
-exe/grants load -i sunetids.txt
-# TODO: the rest
+exe/transform call StanfordPeopleIds -i researchers.ndj > sunetids.ndj
+# NOTE: the grants loader only handles extraction at the moment
+exe/grants load -i sunetids.ndj
+# TODO: grant transformation and actual loading
 ```
 
 #### Authentication
