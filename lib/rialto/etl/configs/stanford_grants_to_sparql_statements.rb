@@ -20,7 +20,7 @@ end
 
 # The named graph to place these triples into.
 to_field '@graph', literal(STANFORD_GRANTS_GRAPH.to_s), single: true
-to_field '@type', literal("#{VIVO['Grant']}"), single: true
+to_field '@type', literal(VIVO['Grant']), single: true
 
 to_field '@id', lambda { |json, accum|
   accum << RIALTO_GRANTS[json['spoNumber']]
