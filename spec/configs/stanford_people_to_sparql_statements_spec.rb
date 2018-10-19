@@ -6,6 +6,7 @@ require 'sparql'
 require 'sparql/client'
 require 'rialto/etl/readers/sparql_statement_reader'
 require 'rialto/etl/namespaces'
+require 'rialto/etl/organizations'
 
 STANFORD_PERSON_INSERT = <<~JSON
   {
@@ -224,6 +225,7 @@ RSpec.describe Rialto::Etl::Transformer do
 
     describe 'insert' do
       before do
+        Rialto::Etl::Organizations.organizations_data = 'spec/translation_maps/organizations.json'
         transform(STANFORD_PERSON_INSERT)
       end
       it 'is inserted with person triples' do

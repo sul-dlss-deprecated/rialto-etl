@@ -2,6 +2,7 @@
 
 require 'rialto/etl/transformers/people'
 require 'rialto/etl/namespaces'
+require 'rialto/etl/organizations'
 
 RSpec.describe Rialto::Etl::Transformers::People do
   before do
@@ -9,6 +10,7 @@ RSpec.describe Rialto::Etl::Transformers::People do
     Settings.entity_resolver.url = 'http://127.0.0.1:3001'
     # Makes sure Entity Resolver is using above settings.
     Rialto::Etl::ServiceClient::EntityResolver.instance.initialize_connection
+    Rialto::Etl::Organizations.organizations_data = 'spec/translation_maps/organizations.json'
   end
 
   describe '.construct_stanford_positions' do
