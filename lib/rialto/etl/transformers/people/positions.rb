@@ -20,7 +20,12 @@ module Rialto
           # @return [Array<Hash>] a list of vivo positions described in our IR
           # rubocop:disable Metrics/MethodLength
           def construct_stanford_positions(titles:, profile_id:)
-            positions = Array(titles).map do |title_json|
+            titles_array = Array(titles)
+            if titles_array.empty?
+              logger.warn("#{profile_id} has no Stanford positions because no titles")
+              return []
+            end
+            positions = titles_array.map do |title_json|
               org_code = title_json['organization']['orgCode']
               org_id = orgs_map[org_code]
               if org_id.nil?
@@ -34,7 +39,9 @@ module Rialto
                            person_id: profile_id,
                            valid: true)
             end
-            positions.compact
+            positions.compact!
+            logger.warn("#{profile_id} has no Stanford positions after mapping to organizations") if positions.empty?
+            positions
           end
           # rubocop:enable Metrics/MethodLength
 
