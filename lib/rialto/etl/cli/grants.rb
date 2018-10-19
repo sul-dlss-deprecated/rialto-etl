@@ -6,10 +6,10 @@ require 'parallel'
 module Rialto
   module Etl
     module CLI
-      # Grants iterates over the people in the input file JSON and for each
+      # Grants iterates over the people in the input file ND-JSON and for each
       # valid UID (SUNet ID) calls three other commands:
-      #   exe/extract call Sera --sunetid username > username.json
-      #   TODO: exe/transform call Sera -i username.json > username.sparql
+      #   exe/extract call Sera --sunetid username > username.ndj
+      #   TODO: exe/transform call Sera -i username.jdj > username.sparql
       #   TODO: exe/load call Sparql -i username.sparql
       class Grants < Thor
         option :input_file,
