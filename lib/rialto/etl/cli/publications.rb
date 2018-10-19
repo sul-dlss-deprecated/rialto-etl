@@ -9,8 +9,8 @@ module Rialto
       # Publications iterates over the people in the input file CSV and for each
       # calls three other commands:
       #   exe/extract call WebOfScience --firstname Russ --lastname Altman > altman.ndj
-      #   exe/transform call WebOfScience -i altman.ndj > altman.jsonld
-      #   exe/load call Sparql -i altman.jsonld
+      #   exe/transform call WebOfScience -i altman.ndj > altman.sparql
+      #   exe/load call Sparql -i altman.sparql
       class Publications < Thor
         option :input_file,
                required: true,
