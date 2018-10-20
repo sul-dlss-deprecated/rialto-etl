@@ -41,7 +41,8 @@ RSpec.describe Rialto::Etl::CLI::Transform do
       allow(transformer).to receive(:say)
       transformer.list
       expect(transformer).to have_received(:say)
-        .with('Transformers supported: StanfordOrganizations, StanfordPeople, StanfordPeopleIds, StanfordPeopleList, WebOfScience')
+        .with('Transformers supported: ' \
+          'StanfordGrants, StanfordOrganizations, StanfordPeople, StanfordPeopleIds, StanfordPeopleList, WebOfScience')
     end
   end
 end

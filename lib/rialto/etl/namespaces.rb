@@ -61,6 +61,7 @@ module Rialto
         property :RO_0000053
       end
 
+      # FRAPO, the Funding, Research Administration and Projects Ontology
       class FRAPO < RDF::StrictVocabulary('http://purl.org/cerif/frapo/')
         property :hasStartDate
         property :hasEndDate

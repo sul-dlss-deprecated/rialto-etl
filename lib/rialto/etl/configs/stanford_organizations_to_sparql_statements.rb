@@ -4,7 +4,7 @@ require 'traject_plus'
 require 'rialto/etl/readers/stanford_organizations_json_reader'
 require 'rialto/etl/writers/sparql_statement_writer'
 require 'rialto/etl/namespaces'
-require 'byebug'
+
 extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
 extend Rialto::Etl::NamedGraphs
@@ -23,13 +23,8 @@ end
 # The named graph to place these triples into.
 to_field '@graph', literal(STANFORD_ORGANIZATIONS_GRAPH.to_s), single: true
 
- # -- need to give @graph and @id (i.e. the id for each grant)
- # -- just use the regular ndjson_reader (each record will be for one grant)
- # -- @types will be the classes that the grant is -->  http://vivoweb.org/ontology/core#Grant, which is roughly VIVO['GRANT']
- # -- also the fields
 # Subject
 to_field '@id', lambda { |json, accum|
-  byebug
   accum << RIALTO_ORGANIZATIONS[json['alias']]
 }, single: true
 

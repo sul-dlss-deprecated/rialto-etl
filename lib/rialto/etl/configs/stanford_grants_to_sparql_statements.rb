@@ -14,7 +14,6 @@ extend Rialto::Etl::Vocabs
 
 settings do
   provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlStatementWriter'
-  #provide 'writer_class_name', 'Traject::JsonWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::NDJsonReader'
 end
 
@@ -26,29 +25,42 @@ to_field '@id', lambda { |json, accum|
   accum << RIALTO_GRANTS[json['spoNumber']]
 }, single: true
 
-to_field "!#{RDF::Vocab::RDFS['label']}", extract_json('$.projectTitle'), single: true
-to_field "!#{RDF::Vocab::SKOS['prefLabel']}", extract_json('$.projectTitle'), single: true
-to_field "!#{FRAPO['hasStartDate']}", extract_json('$.projectStartDate'), single: true
-to_field "!#{FRAPO['hasEndDate']}", extract_json('$.projectEndDate'), single: true
-to_field "!#{VIVO['assignedBy']}", extract_json('$.directSponsorName'), single: true
+to_field '!' + RDF::Vocab::RDFS.label.to_s, literal(true)
+to_field RDF::Vocab::RDFS.label.to_s, extract_json('$.projectTitle'), single: true
+to_field '!' + RDF::Vocab::SKOS.prefLabel.to_s, literal(true)
+to_field RDF::Vocab::SKOS.prefLabel.to_s, extract_json('$.projectTitle'), single: true
+to_field '!' + FRAPO.hasStartDate.to_s, literal(true)
+to_field FRAPO.hasStartDate.to_s, extract_json('$.projectStartDate'), single: true
+to_field '!' + FRAPO.hasEndDate.to_s, literal(true)
+to_field FRAPO.hasEndDate.to_s, extract_json('$.projectEndDate'), single: true
 
+to_field '!' + VIVO['assignedBy'], literal(true)
+to_field VIVO['assignedBy'].to_s, lambda { |json, accum|
+  org_name = JsonPath.on(json, '$.directSponsorName')
+  accum << Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: org_name) if org_name.first
+}, single: true
+
+# See https://wiki.duraspace.org/display/VTDA/VIVO-ISF+1.6+relationship+diagrams%3A+Grant
 to_field VIVO['relates'].to_s, lambda { |json, accum|
   person = RIALTO_PEOPLE[json['piEmployeeId']]
   pi_role = RIALTO_CONTEXT_ROLES["#{json['spoNumber']}_#{json['piEmployeeId']}"]
-  accum << {
-              '@id' => pi_role,
-              '@type' => VIVO['PrincipalInvestigatorRole'],
-              "!{VIVO['relates'}" => true,
-              OBO['RO_0000052'].to_s => person,
-              "#person_to_role" => {
-                                     '@id' => person,
-                                     OBO['RO_0000053'].to_s => pi_role
-                                   },
-              VIVO['relatedBy'].to_s => RIALTO_GRANTS[json['spoNumber']]
-           }
 
+  # Adding grant-relates-to-pi-role
   accum << {
-              '@id' => person,
-              VIVO['relatedBy'].to_s => RIALTO_GRANTS[json['spoNumber']]
-           }
+    '@id' => pi_role,
+    '@type' => VIVO['PrincipalInvestigatorRole'],
+    "!{VIVO['relates'}" => true,
+    OBO['RO_0000052'].to_s => person,
+    '#person_to_role' => {
+      '@id' => person,
+      OBO['RO_0000053'].to_s => pi_role
+    },
+    VIVO['relatedBy'].to_s => RIALTO_GRANTS[json['spoNumber']]
+  }
+
+  # Adding grant-relates-to-person
+  accum << {
+    '@id' => person,
+    VIVO['relatedBy'].to_s => RIALTO_GRANTS[json['spoNumber']]
+  }
 }
