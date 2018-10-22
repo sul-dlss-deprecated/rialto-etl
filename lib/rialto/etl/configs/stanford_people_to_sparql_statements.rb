@@ -57,6 +57,16 @@ to_field "!#{RDF::Vocab::RDFS.label}", literal(true)
 to_field RDF::Vocab::RDFS.label.to_s, lambda { |json, accum|
   accum << full_name(json)
 }, single: true
+# Alternate labels
+to_field "!#{RDF::Vocab::SKOS.altLabel}", literal(true)
+to_field RDF::Vocab::SKOS.altLabel.to_s, lambda { |json, accum|
+  name_json = JsonPath.on(json, '$.names.preferred').first
+  if name_json
+    accum << Rialto::Etl::Transformers::People.name_variations_from_names(given_name: name_json['firstName'],
+                                                                          middle_name: name_json['middleName'],
+                                                                          family_name: name_json['lastName'])
+  end
+}, single: true
 
 # Person name (Vcard)
 to_field "!#{RDF::Vocab::VCARD.hasName}", literal(true), single: true

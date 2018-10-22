@@ -44,6 +44,15 @@ module Rialto
           Names.new.fullname_from_names(given_name: given_name, middle_name: middle_name, family_name: family_name)
         end
 
+        # Transform names into variations
+        # @param given_name [String] first name
+        # @param middle_name [String] middle name
+        # @param family_name [String] last name
+        # @return [String] the full name
+        def self.name_variations_from_names(given_name:, middle_name: nil, family_name:)
+          Names.new.name_variations_from_names(given_name: given_name, middle_name: middle_name, family_name: family_name)
+        end
+
         # Transform names into the hash for person, including types, labels, and name Vcard
         # @param id [String] an id to use to construct URIs. If omitted, one will be constructed.
         # @param given_name [String] first name
@@ -62,6 +71,9 @@ module Rialto
             '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person],
             RDF::Vocab::SKOS.prefLabel.to_s => full_name,
             RDF::Vocab::RDFS.label.to_s => full_name,
+            RDF::Vocab::SKOS.altLabel.to_s => name_variations_from_names(given_name: given_name,
+                                                                         middle_name: middle_name,
+                                                                         family_name: family_name),
             # Name VCard
             RDF::Vocab::VCARD.hasName.to_s => names_constructor.construct_name_vcard(id: id,
                                                                                      given_name: given_name,

@@ -47,6 +47,39 @@ module Rialto
             name_parts << family_name
             name_parts.compact.join(' ')
           end
+
+          # Constructs name variations from name parts.
+          # @param given_name [String] first name
+          # @param family_name [String] last name
+          # @return [Array(String)] array of name variations
+          # rubocop:disable Metrics/MethodLength
+          def name_variations_from_names(given_name:, middle_name: nil, family_name:)
+            name_variations = []
+            name_variations << "#{family_name}, #{given_name}"
+            name_variations << "#{given_name} #{family_name}"
+            if given_name
+              given_initial = given_name[0]
+              name_variations << "#{family_name}, #{given_initial}"
+              name_variations << "#{family_name}, #{given_initial}."
+              name_variations << "#{given_initial} #{family_name}"
+              name_variations << "#{given_initial}. #{family_name}"
+              if middle_name
+                name_variations << "#{family_name}, #{given_name} #{middle_name}"
+                name_variations << "#{given_name} #{middle_name} #{family_name}"
+                middle_initial = middle_name[0]
+                name_variations << "#{family_name}, #{given_name} #{middle_initial}"
+                name_variations << "#{family_name}, #{given_name} #{middle_initial}."
+                name_variations << "#{given_name} #{middle_initial} #{family_name}"
+                name_variations << "#{given_name} #{middle_initial}. #{family_name}"
+                name_variations << "#{family_name}, #{given_initial}#{middle_initial}"
+                name_variations << "#{family_name}, #{given_initial}.#{middle_initial}."
+                name_variations << "#{given_initial}#{middle_initial} #{family_name}"
+                name_variations << "#{given_initial}.#{middle_initial}. #{family_name}"
+              end
+            end
+            name_variations
+          end
+          # rubocop:enable Metrics/MethodLength
         end
       end
     end
