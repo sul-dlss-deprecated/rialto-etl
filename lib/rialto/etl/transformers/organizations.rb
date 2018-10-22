@@ -10,9 +10,9 @@ module Rialto
       module Organizations
         # Transform name into the hash for an organization
         # @param org_name [String] the organization's name
-        def self.construct_org(org_name:)
+        def self.construct_org(org_name:, org_id: nil)
           {
-            '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS[Digest::MD5.hexdigest(org_name.downcase)],
+            '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS[org_id || Digest::MD5.hexdigest(org_name.downcase)],
             '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization],
             RDF::Vocab::SKOS.prefLabel.to_s => org_name,
             RDF::RDFS.label.to_s => org_name

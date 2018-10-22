@@ -30,18 +30,17 @@ module Rialto
               org_id = orgs_map[org_code]
               if org_id.nil?
                 logger.warn("Unmapped organization: #{org_code}")
-                next
+                construct_dummy_position(profile_id: profile_id, title_json: title_json)
+              else
+                position_for(position_id: "#{org_code}_#{profile_id}",
+                             org_id: org_id,
+                             hr_title: title_json['title'],
+                             label: title_json['label']['text'],
+                             person_id: profile_id,
+                             valid: true)
               end
-              position_for(position_id: "#{org_code}_#{profile_id}",
-                           org_id: org_id,
-                           hr_title: title_json['title'],
-                           label: title_json['label']['text'],
-                           person_id: profile_id,
-                           valid: true)
             end
-            positions.compact!
-            logger.warn("#{profile_id} has no Stanford positions after mapping to organizations") if positions.empty?
-            positions
+            positions.compact
           end
           # rubocop:enable Metrics/MethodLength
 
@@ -63,6 +62,26 @@ module Rialto
           end
 
           private
+
+          def construct_dummy_position(profile_id:, title_json:)
+            # Add a dummy department
+            dummy_dept = construct_dummy_department
+            position = position_for(position_id: "stanford_unmapped_dept_#{profile_id}",
+                                    org_id: 'stanford_unmapped_dept',
+                                    hr_title: title_json['title'],
+                                    label: title_json['label']['text'],
+                                    person_id: profile_id,
+                                    valid: true)
+            position['#dummy_dept'] = dummy_dept
+            position
+          end
+
+          def construct_dummy_department
+            dummy_org = Rialto::Etl::Transformers::Organizations.construct_org(org_name: 'Stanford Unmapped Department',
+                                                                               org_id: 'stanford_unmapped_dept')
+            dummy_org['@type'] << VIVO['Department']
+            dummy_org
+          end
 
           # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, ParameterLists
           def position_for(position_id:, org_id:, hr_title: nil, label: nil, person_id:, valid: false)
