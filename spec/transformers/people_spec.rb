@@ -235,6 +235,11 @@ RSpec.describe Rialto::Etl::Transformers::People do
         '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person],
         RDF::Vocab::SKOS.prefLabel.to_s => 'Justin Cunningham Littman',
         RDF::Vocab::RDFS.label.to_s => 'Justin Cunningham Littman',
+        RDF::Vocab::SKOS.altLabel.to_s => ['Littman, Justin', 'Justin Littman', 'Littman, J', 'Littman, J.',
+                                           'J Littman', 'J. Littman', 'Littman, Justin Cunningham',
+                                           'Justin Cunningham Littman', 'Littman, Justin C', 'Littman, Justin C.',
+                                           'Justin C Littman', 'Justin C. Littman', 'Littman, JC', 'Littman, J.C.',
+                                           'JC Littman', 'J.C. Littman'],
         RDF::Vocab::VCARD['hasName'].to_s => {
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['123'],
           '@type' => RDF::Vocab::VCARD['Name'],
@@ -288,6 +293,8 @@ RSpec.describe Rialto::Etl::Transformers::People do
           '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person],
           RDF::Vocab::SKOS.prefLabel.to_s => 'Justin Littman',
           RDF::RDFS.label.to_s => 'Justin Littman',
+          RDF::Vocab::SKOS.altLabel.to_s => ['Littman, Justin', 'Justin Littman', 'Littman, J', 'Littman, J.',
+                                             'J Littman', 'J. Littman'],
           RDF::Vocab::VCARD.hasName.to_s => {
             '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['ed1aa059391f675499eda6172ddc29f4'],
             '@type' => RDF::Vocab::VCARD.Name,

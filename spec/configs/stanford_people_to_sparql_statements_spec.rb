@@ -245,6 +245,18 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
 
+        # Test a few alternate labels
+        result = client.ask
+                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
+                       .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
+                                 RDF::Vocab::SKOS.altLabel,
+                                 'Bill Chen'])
+                       .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
+                                 RDF::Vocab::SKOS.altLabel,
+                                 'Chen, B.'])
+                       .true?
+        expect(result).to be true
+
         # Test person name vcard
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
