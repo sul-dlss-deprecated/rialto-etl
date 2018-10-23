@@ -66,16 +66,23 @@ RSpec.describe Rialto::Etl::Transformers::People do
         }]
       end
 
-      it 'returns positions' do
-        expect(positions).to eq []
+      it 'returns a position' do
+        position = positions.first
+        expect(position['@id']).to eq RDF::URI('http://sul.stanford.edu/rialto/context/positions/stanford_unmapped_dept_123')
+        expect(position['@type']).to eq RDF::URI('http://vivoweb.org/ontology/core#Position')
+        expect(position['http://vivoweb.org/ontology/core#relates'][0])
+          .to eq RDF::URI('http://sul.stanford.edu/rialto/agents/people/123')
+        expect(position['http://vivoweb.org/ontology/core#relates'][1])
+          .to eq RDF::URI('http://sul.stanford.edu/rialto/agents/orgs/stanford_unmapped_dept')
       end
 
       it 'logs a warning for organization' do
         expect { positions.each {} }.to output(/Unmapped organization/).to_stderr
       end
 
-      it 'logs a warning for no positions' do
-        expect { positions.each {} }.to output(/has no Stanford positions after mapping to organizations/).to_stderr
+      it 'adds a dummy department' do
+        position = positions.first
+        expect(position['#dummy_dept']['@id']).to eq RDF::URI('http://sul.stanford.edu/rialto/agents/orgs/stanford_unmapped_dept')
       end
     end
   end
@@ -249,7 +256,6 @@ RSpec.describe Rialto::Etl::Transformers::People do
           RDF::Vocab::VCARD['given-name'].to_s => 'Justin',
           RDF::Vocab::VCARD['additional-name'].to_s => 'Cunningham',
           RDF::Vocab::VCARD['family-name'].to_s => 'Littman'
-
         }
       )
     end
