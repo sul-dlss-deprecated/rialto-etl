@@ -10,6 +10,8 @@ module Rialto
       module Organizations
         # Transform name into the hash for an organization
         # @param org_name [String] the organization's name
+        # @param org_id [String] the ID, i.e., the URI less the namespace, of the organization (e.g.,
+        #   department-of-athletics-physical-education-and-recreation/coed-sports)
         def self.construct_org(org_name:, org_id: nil)
           {
             '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS[org_id || Digest::MD5.hexdigest(org_name.downcase)],
