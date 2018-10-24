@@ -1,43 +1,92 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
-  let(:instance) do
-    described_class.new(firstname: 'Russ', lastname: 'Altman', institution: 'Stanford University')
+  subject(:client) { described_class.new(firstname: 'Tom', lastname: 'Cramer', institution: 'Stanford University') }
+
+  let(:api_response) { '{}' }
+  let(:records_found) { 1 }
+
+  before do
+    stub_request(:get, 'https://api.clarivate.com/api/wos?count=1&databaseId=WOS&firstRecord=1' \
+      '&usrQuery=AU=%22Cramer,Tom%22%20AND%20OG=Stanford%20University')
+      .to_return(status: 200, body: api_response, headers: {})
+
+    allow(client).to receive(:query_id).and_return(123)
+    allow(client).to receive(:records_found).and_return(records_found)
   end
 
-  describe '#uri' do
-    subject { instance.path(page: page) }
+  describe '#each' do
+    context 'when connection raises an exception' do
+      let(:error_message) { 'Uh oh!' }
+      let(:path) { '/api/wos/query/123?firstRecord=1&count=100' }
 
-    context 'when page is 1' do
-      let(:page) { 1 }
+      before do
+        stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=100&firstRecord=1')
+          .to_return(status: 500, body: error_message, headers: {})
+      end
 
-      it do
-        is_expected.to eq '/api/wos?databaseId=WOS&' \
-        'firstRecord=1&count=100&usrQuery=AU%3DAltman%2CRuss+AND+OG%3DStanford+University'
+      it 'prints out the exception' do
+        expect { client.each {} }.to output("Error fetching #{path}: #{error_message} (#{RuntimeError})\n").to_stderr
       end
     end
-    context 'when page is 2' do
-      let(:page) { 2 }
 
-      it do
-        is_expected.to eq '/api/wos?databaseId=WOS&' \
-        'firstRecord=101&count=100&usrQuery=AU%3DAltman%2CRuss+AND+OG%3DStanford+University'
+    context 'when connection is throttled' do
+      before do
+        stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=100&firstRecord=1')
+          .to_return(status: 429, body: '', headers: {})
+        allow(client).to receive(:sleep)
+      end
+
+      it 'retries three times' do
+        expect { client.each {} }.to output(
+          "retrying connection to WebOfScience because connection throttled or failed. Sleeping for 1 second(s)...\n" \
+            "retrying connection to WebOfScience because connection throttled or failed. Sleeping for 2 second(s)...\n" \
+            "retrying connection to WebOfScience because connection throttled or failed. Sleeping for 3 second(s)...\n" \
+            "aborting, retries limit exceeded for /api/wos/query/123?firstRecord=1&count=100\n"
+        ).to_stderr
+        expect(client).to have_received(:sleep).exactly(3).times
       end
     end
-  end
 
-  describe '#request' do
-    subject { instance.request(page: 1).body }
+    context 'when there is only one result' do
+      let(:api_response) { '{"Records": { "records": {"REC": "one"}},"QueryResult": {"RecordsFound": 1}}' }
 
-    before do
-      stub_request(:get, 'https://api.clarivate.com/api/wos?count=100&databaseId=WOS&firstRecord=1&usrQuery=AU=Altman,Russ%20AND%20OG=Stanford%20University')
-        .with(
-          headers: {
-            'X-Apikey' => /.*/
-          }
-        )
-        .to_return(status: 200, body: 'Dood', headers: {})
+      before do
+        stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=100&firstRecord=1')
+          .to_return(status: 200, body: api_response, headers: {})
+      end
+
+      it 'calls the block on single result' do
+        results = []
+        client.each do |records|
+          results << records
+        end
+        expect(results).to eq ['one']
+      end
     end
-    it { is_expected.to eq 'Dood' }
+
+    context 'when there is more than one page of results' do
+      let(:api_response) { '{"Records": { "records": {"REC": ["one", "two"]}},"QueryResult": {"RecordsFound": 3}}' }
+      let(:api_response2) { '{"Records": { "records": {"REC": ["three"]}},"QueryResult": {"RecordsFound": 3}}' }
+      let(:records_found) { 3 }
+
+      before do
+        stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=2&firstRecord=1')
+          .to_return(status: 200, body: api_response, headers: {})
+
+        stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=2&firstRecord=3')
+          .to_return(status: 200, body: api_response2, headers: {})
+
+        allow(client).to receive(:page_size).and_return(2)
+      end
+
+      it 'calls the block on each result' do
+        results = []
+        client.each do |records|
+          results << records
+        end
+        expect(results).to eq %w[one two three]
+      end
+    end
   end
 end
