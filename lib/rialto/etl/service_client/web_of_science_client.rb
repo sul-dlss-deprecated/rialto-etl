@@ -5,9 +5,13 @@ module Rialto
     module ServiceClient
       # Client for hitting Stanford APIs using Stanford authz
       class WebOfScienceClient
+        # Raise a custom error so it can be rescued reliably
+        class ThrottledConnectionError < StandardError; end
+
         HOST = 'api.clarivate.com'
-        PATH = '/api/wos'
-        PARAMS = { 'databaseId' => 'WOS' }.freeze
+        USER_QUERY_PATH = '/api/wos'
+        USER_QUERY_PARAMS = { 'databaseId' => 'WOS' }.freeze
+        QUERY_BY_ID_PATH = '/api/wos/query'
         MAX_PER_PAGE = 100 # 100 is the max the API allows
 
         def initialize(firstname:, lastname:, institution:)
@@ -18,28 +22,83 @@ module Rialto
 
         attr_reader :lastname, :firstname, :institution
 
-        # @return [Faraday::Response] the response to the request
-        def request(page: 1)
-          connection.get(path(page: page))
-        end
+        # Hit the API endpoint and iterate over resulting records
+        def each
+          return to_enum(:each) unless block_given?
 
-        # @return [Integer] the position of the last possible record on this page
-        def last_record(page:)
-          page * page_size
-        end
+          # Run the initial query to get a query ID (for pagination)
+          perform_initial_query!
 
-        # @return [String] path for the query
-        def path(page:)
-          usr_query = "AU=#{lastname},#{firstname} AND OG=#{institution}"
-          hash = PARAMS.merge(firstRecord: first_record(page: page), count: page_size, usrQuery: usr_query)
-          uri = URI::HTTPS.build(host: HOST, path: PATH, query: URI.encode_www_form(hash))
-          "#{uri.path}?#{uri.query}"
+          records = []
+          first_record_values.each do |first_record|
+            records += query_by_id(first_record: first_record)
+          end
+          # Yield the block for each result on the page
+          records.each do |val|
+            yield val
+          end
         end
 
         private
 
-        def first_record(page:)
-          1 + (page - 1) * page_size
+        attr_reader :records_found, :query_id
+
+        def query_by_id(first_record:)
+          path = query_by_id_path(first_record: first_record)
+          response = connect_with_retries(path: path)
+          return [] if response.nil?
+          Array.wrap(response.fetch('Records').fetch('records').fetch('REC'))
+        end
+
+        def perform_initial_query!
+          response = connect_with_retries(path: user_query_path) || {}
+          @query_id = response.fetch('QueryResult', {}).fetch('QueryID', 0)
+          @records_found = response.fetch('QueryResult', {}).fetch('RecordsFound', 0)
+        end
+
+        # rubocop:disable Metrics/MethodLength
+        def connect_with_retries(path:)
+          retries ||= 0
+          response = connection.get(path)
+          unless response.success?
+            raise response.status == 429 ? ThrottledConnectionError : response.body
+          end
+          JSON.parse(response.body)
+        rescue ThrottledConnectionError, Faraday::ConnectionFailed
+          retries += 1
+          warn "retrying connection to WebOfScience because connection throttled or failed. Sleeping for #{retries} second(s)..."
+          sleep retries
+          retry if retries < 3
+          warn "aborting, retries limit exceeded for #{path}"
+        rescue StandardError => exception
+          warn "Error fetching #{path}: #{exception.message} (#{exception.class})"
+        end
+        # rubocop:enable Metrics/MethodLength
+
+        # @return [String] path for the user query
+        def user_query_path
+          usr_query = "AU=\"#{lastname},#{firstname}\" AND OG=#{institution}"
+          params = USER_QUERY_PARAMS.merge(firstRecord: 1, count: 1, usrQuery: usr_query)
+          build_uri(path: USER_QUERY_PATH, params: params)
+        end
+
+        # @return [String] path for the query with query ID
+        def query_by_id_path(first_record:)
+          params = { firstRecord: first_record, count: page_size }
+          path = "#{QUERY_BY_ID_PATH}/#{query_id}"
+          build_uri(path: path, params: params)
+        end
+
+        def build_uri(path:, params:)
+          uri = URI::HTTPS.build(host: HOST, path: path, query: URI.encode_www_form(params))
+          "#{uri.path}?#{uri.query}"
+        end
+
+        def first_record_values
+          return [] if records_found.zero?
+          0.upto(records_found / page_size).map do |value|
+            value * page_size + 1
+          end
         end
 
         def page_size
