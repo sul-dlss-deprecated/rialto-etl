@@ -14,6 +14,7 @@ module Rialto
       rialto_base = 'http://sul.stanford.edu/rialto/'
       RIALTO_ORGANIZATIONS = RDF::Vocabulary.new(rialto_base + 'agents/orgs/')
       RIALTO_PEOPLE = RDF::Vocabulary.new(rialto_base + 'agents/people/')
+      RIALTO_GRANTS = RDF::Vocabulary.new(rialto_base + 'grants/')
       RIALTO_PUBLICATIONS = RDF::Vocabulary.new(rialto_base + 'publications/')
       RIALTO_CONCEPTS = RDF::Vocabulary.new(rialto_base + 'concepts/')
       RIALTO_CONTEXT_NAMES = RDF::Vocabulary.new(rialto_base + 'context/names/')
@@ -40,7 +41,10 @@ module Rialto
         term :School
         term :Student
         term :University
+        term :Grant
+        term :PrincipalInvestigatorRole
 
+        property :assignedBy
         property :hrJobTitle
         property :informationResourceSupportedBy
         property :overview
@@ -56,6 +60,13 @@ module Rialto
         property :RO_0000052
         property :RO_0000053
       end
+
+      # FRAPO, the Funding, Research Administration and Projects Ontology
+      class FRAPO < RDF::StrictVocabulary('http://purl.org/cerif/frapo/')
+        property :hasStartDate
+        property :hasEndDate
+      end
+
       SWS_GEONAMES = RDF::Vocabulary.new('http://sws.geonames.org/')
     end
     # Holds graph names
@@ -64,6 +75,7 @@ module Rialto
       STANFORD_PEOPLE_GRAPH = RDF::URI.new(rialto_base + 'stanford_people')
       STANFORD_ORGANIZATIONS_GRAPH = RDF::URI.new(rialto_base + 'stanford_organizations')
       WOS_GRAPH = RDF::URI.new(rialto_base + 'wos')
+      STANFORD_GRANTS_GRAPH = RDF::URI.new(rialto_base + 'stanford_grants')
     end
   end
 end
