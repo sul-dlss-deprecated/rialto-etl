@@ -1,82 +1,30 @@
 # frozen_string_literal: true
 
+require 'csv'
 require 'fileutils'
-require 'parallel'
+require 'rialto/etl/cli/composite_etl'
 
 module Rialto
   module Etl
     module CLI
-      # Grants iterates over the people in the input file ND-JSON and for each
-      # valid UID (SUNet ID) calls three other commands:
-      #   exe/extract call Sera --sunetid username > username.ndj
-      #   TODO: exe/transform call Sera -i username.jdj > username.sparql
-      #   TODO: exe/load call Sparql -i username.sparql
-      class Grants < Thor
-        option :input_file,
-               required: true,
-               banner: 'FILENAME',
-               desc: 'Name of file with data to be loaded (REQUIRED)',
-               aliases: '-i'
-        option :dir,
-               required: false,
-               default: 'data',
-               banner: 'DIR',
-               desc: 'Name of the directory to store data in',
-               aliases: '-d'
-        option :batch_size,
-               required: false,
-               default: 3,
-               type: :numeric,
-               banner: 'BATCH_SIZE',
-               desc: 'Size of batch for parallel processing',
-               aliases: '-s'
-        option :force,
-               required: false,
-               default: false,
-               type: :boolean,
-               banner: 'FORCE',
-               desc: 'Overwrite files that already exist',
-               aliases: '-f'
+      # Grants iterates over the people in the input file CSV and for each
+      # calls extract, transform, and load.
+      class Grants < CompositeEtl
+        protected
 
-        desc 'Load', 'Load all grants for all researchers in the JSON file'
+        def file_prefix
+          'sera'
+        end
+
         # rubocop:disable Metrics/MethodLength
-        # rubocop:disable Metrics/AbcSize
-        def load
-          FileUtils.mkdir_p(options[:dir])
-          File.open(options[:input_file], 'r') do |f|
-            f.each_line.lazy.each_slice(options[:batch_size].to_i) do |lines|
-              batch_ids = lines.map { |line| JSON.parse(line)['sunetid'] }
-              begin
-                Parallel.map(batch_ids, in_processes: options[:batch_size].to_i) do |id|
-                  output_file = File.join(options[:dir], "#{id}.json")
-                  if File.exist?(output_file) && !options[:force]
-                    say "file #{output_file} already exists, skipping. use -f to force overwrite"
-                    next
-                  end
-                  extract_and_write(id, output_file)
-                end
-              rescue TypeError => exception
-                sleep(90)
-                say "Unable to write to pipe, retrying after 90 seconds: #{exception.message}"
-                retry
-              end
+        def perform_extract(row)
+          results = []
+          if (sunetid = row[:sunetid])
+            Rialto::Etl::Extractors::Sera.new(sunetid: sunetid).each do |result|
+              results << result
             end
           end
-        end
-        # rubocop:enable Metrics/AbcSize
-
-        private
-
-        def extract_and_write(id, output_file)
-          say "#{Time.now} extracting SeRA records for #{id}"
-          results = []
-          Rialto::Etl::Extractors::Sera.new(sunetid: id).each do |result|
-            results << result
-          end
-          return if results.empty?
-          File.open(output_file, 'w') do |f|
-            f.write(results.join("\n"))
-          end
+          results
         rescue Rialto::Etl::Extractors::Sera::ConnectionError,
                SocketError,
                Faraday::TimeoutError,
@@ -86,8 +34,12 @@ module Rialto
         rescue StandardError => exception
           say "aborting #{id}, failed with #{exception.class}: #{exception.message}"
         end
+        # rubocop:enable Metrics/MethodLength
+
+        def transformer_config
+          'lib/rialto/etl/configs/stanford_grants_to_sparql_statements.rb'
+        end
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end
