@@ -36,8 +36,8 @@ to_field FRAPO.hasEndDate.to_s, extract_json('$.projectEndDate'), single: true
 
 to_field '!' + VIVO['assignedBy'], literal(true)
 to_field VIVO['assignedBy'].to_s, lambda { |json, accum|
-  org_name = JsonPath.on(json, '$.directSponsorName')
-  accum << Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: org_name) if org_name.first
+  org_name = JsonPath.on(json, '$.directSponsorName').first
+  accum << Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: org_name) if org_name
 }, single: true
 
 # See https://wiki.duraspace.org/display/VTDA/VIVO-ISF+1.6+relationship+diagrams%3A+Grant
