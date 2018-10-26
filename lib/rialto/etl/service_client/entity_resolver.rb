@@ -44,7 +44,7 @@ module Rialto
         # rubocop:enable Metrics/MethodLength
 
         def connection
-          ConnectionFactory.build(uri: ::Settings.entity_resolver.url, headers: connection_headers)
+          RetriableConnectionFactory.build(uri: ::Settings.entity_resolver.url, headers: connection_headers)
         end
 
         def connection_headers

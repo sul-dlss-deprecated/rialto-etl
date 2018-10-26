@@ -8,9 +8,6 @@ module Rialto
     module Extractors
       # Documentation: https://asconfluence.stanford.edu/confluence/display/MaIS/SeRA+API+-+User+Documentation
       class Sera
-        # Instead of a bare `raise`, raise a custom error so it can be caught reliably
-        class ConnectionError < StandardError; end
-
         def initialize(options = {})
           @sunetid = options.fetch(:sunetid)
         end
@@ -28,18 +25,10 @@ module Rialto
         attr_reader :sunetid
 
         def client
-          @client ||= Faraday.new ::Settings.sera.service_url do |conn|
-            conn.request :oauth2, token, token_type: :bearer
-            conn.adapter Faraday.default_adapter
-          end
-        end
-
-        def token
-          client = OAuth2::Client.new(::Settings.sera.clientid,
-                                      ::Settings.sera.secret,
-                                      token_url: ::Settings.sera.token_url,
-                                      auth_scheme: :request_body)
-          client.client_credentials.get_token.token
+          @client ||= ServiceClient::OauthConnectionFactory.build(service_url: ::Settings.sera.service_url,
+                                                                  client_id: ::Settings.sera.clientid,
+                                                                  client_secret: ::Settings.sera.secret,
+                                                                  token_url: ::Settings.sera.token_url)
         end
 
         # @return[Array<Hash>] the results of the API call
@@ -48,7 +37,7 @@ module Rialto
           when 404
             []
           when 400..499, 500..599
-            raise ConnectionError, "There was a problem with the request to `#{url}` (#{response.status}): #{response.body}"
+            raise "There was a problem with the request to `#{url}` (#{response.status}): #{response.body}"
           else
             hash = JSON.parse(response.body)
             hash['SeRARecord']

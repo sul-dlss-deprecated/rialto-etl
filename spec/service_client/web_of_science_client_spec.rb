@@ -6,6 +6,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
   let(:api_response) { '{}' }
   let(:records_found) { 1 }
 
+  # rubocop:disable RSpec/AnyInstance
   before do
     stub_request(:get, 'https://api.clarivate.com/api/wos?count=1&databaseId=WOS&firstRecord=1' \
       '&usrQuery=AU=%22Cramer,Tom%22%20AND%20OG=Stanford%20University')
@@ -13,7 +14,9 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
 
     allow(client).to receive(:query_id).and_return(123)
     allow(client).to receive(:records_found).and_return(records_found)
+    allow_any_instance_of(Faraday::Request::Retry).to receive(:sleep)
   end
+  # rubocop:enable RSpec/AnyInstance
 
   describe '#each' do
     context 'when connection raises an exception' do
@@ -26,25 +29,29 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       end
 
       it 'prints out the exception' do
-        expect { client.each {} }.to output("Error fetching #{path}: #{error_message} (#{RuntimeError})\n").to_stderr
+        expect { client.each {} }.to output(/#{error_message}/).to_stderr
       end
     end
 
     context 'when connection is throttled' do
+      let(:expected_output_regex) do
+        /
+        retrying\ connection\ \(5\ remaining\).+
+        retrying\ connection\ \(4\ remaining\).+
+        retrying\ connection\ \(3\ remaining\).+
+        retrying\ connection\ \(2\ remaining\).+
+        retrying\ connection\ \(1\ remaining\).+
+        retrying\ connection\ \(0\ remaining\)
+        /mx
+      end
+
       before do
         stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=100&firstRecord=1')
           .to_return(status: 429, body: '', headers: {})
-        allow(client).to receive(:sleep)
       end
 
-      it 'retries three times' do
-        expect { client.each {} }.to output(
-          "retrying connection to WebOfScience because connection throttled or failed. Sleeping for 1 second(s)...\n" \
-            "retrying connection to WebOfScience because connection throttled or failed. Sleeping for 2 second(s)...\n" \
-            "retrying connection to WebOfScience because connection throttled or failed. Sleeping for 3 second(s)...\n" \
-            "aborting, retries limit exceeded for /api/wos/query/123?firstRecord=1&count=100\n"
-        ).to_stderr
-        expect(client).to have_received(:sleep).exactly(3).times
+      it 'retries and writes to stderr multiple times' do
+        expect { client.each {} }.to output(expected_output_regex).to_stderr
       end
     end
 

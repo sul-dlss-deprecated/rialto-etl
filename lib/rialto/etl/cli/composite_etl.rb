@@ -42,25 +42,18 @@ module Rialto
                aliases: '-s'
         desc 'load', 'Extract, load, and transform for all researchers in the CSV file'
 
-        # rubocop:disable Metrics/MethodLength
         def load
           FileUtils.mkdir_p(options[:dir])
           csv_path = options[:input_file]
           count = 0
           CSV.foreach(csv_path, headers: true, header_converters: :symbol).each_slice(options[:batch_size].to_i) do |rows|
-            begin
-              Parallel.each_with_index(rows, in_processes: rows.length) do |row, index|
-                handle_row(row, count + index + 1)
-              end
-              count += rows.length
-            rescue TypeError => exception
-              sleep(90)
-              say "Unable to write to pipe, retrying after 90 seconds: #{exception.message}"
-              retry
+            Parallel.each_with_index(rows, in_processes: rows.length) do |row, index|
+              handle_row(row, count + index + 1)
             end
+            count += rows.length
           end
         end
-        # rubocop:enable Metrics/MethodLength
+
         no_commands do
           # rubocop:disable Metrics/AbcSize
           # Performs ETL on a single row

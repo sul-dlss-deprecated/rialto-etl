@@ -16,7 +16,6 @@ module Rialto
           'sera'
         end
 
-        # rubocop:disable Metrics/MethodLength
         def perform_extract(row)
           results = []
           if (sunetid = row[:sunetid])
@@ -25,16 +24,9 @@ module Rialto
             end
           end
           results
-        rescue Rialto::Etl::Extractors::Sera::ConnectionError,
-               SocketError,
-               Faraday::TimeoutError,
-               Faraday::ConnectionFailed => exception
-          say "retrying #{id}, failed with #{exception.class}: #{exception.message}"
-          retry
         rescue StandardError => exception
           say "aborting #{id}, failed with #{exception.class}: #{exception.message}"
         end
-        # rubocop:enable Metrics/MethodLength
 
         def transformer_config
           'lib/rialto/etl/configs/stanford_grants_to_sparql_statements.rb'
