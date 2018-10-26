@@ -291,14 +291,14 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['FacultyMember']])
+                                 Rialto::Etl::Vocabs::Stanford.Faculty])
                        .true?
         expect(result).to be true
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['Student']])
+                                 Rialto::Etl::Vocabs::Stanford.MsStudent])
                        .true?
         expect(result).to be false
 
@@ -508,14 +508,14 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['NonAcademic']])
+                                 Rialto::Etl::Vocabs::Stanford.Staff])
                        .true?
         expect(result).to be true
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['FacultyMember']])
+                                 Rialto::Etl::Vocabs::Stanford.Faculty])
                        .true?
         expect(result).to be false
 
