@@ -5,14 +5,13 @@ module Rialto
     module ServiceClient
       # Client for hitting Stanford APIs using Stanford authz
       class WebOfScienceClient
-        # Raise a custom error so it can be rescued reliably
-        class ThrottledConnectionError < StandardError; end
-
         HOST = 'api.clarivate.com'
         USER_QUERY_PATH = '/api/wos'
         USER_QUERY_PARAMS = { 'databaseId' => 'WOS' }.freeze
         QUERY_BY_ID_PATH = '/api/wos/query'
         MAX_PER_PAGE = 100 # 100 is the max the API allows
+        DEFAULT_QUERY_ID = 0
+        NO_RECORDS_FOUND = 0
 
         def initialize(firstname:, lastname:, institution:)
           @lastname = lastname
@@ -46,34 +45,22 @@ module Rialto
         def query_by_id(first_record:)
           path = query_by_id_path(first_record: first_record)
           response = connect_with_retries(path: path)
-          return [] if response.nil?
-          Array.wrap(response.fetch('Records').fetch('records').fetch('REC'))
+          Array.wrap(response.dig('Records', 'records', 'REC'))
         end
 
         def perform_initial_query!
-          response = connect_with_retries(path: user_query_path) || {}
-          @query_id = response.fetch('QueryResult', {}).fetch('QueryID', 0)
-          @records_found = response.fetch('QueryResult', {}).fetch('RecordsFound', 0)
+          response = connect_with_retries(path: user_query_path)
+          @query_id = response.dig('QueryResult', 'QueryID') || DEFAULT_QUERY_ID
+          @records_found = response.dig('QueryResult', 'RecordsFound') || NO_RECORDS_FOUND
         end
 
-        # rubocop:disable Metrics/MethodLength
         def connect_with_retries(path:)
-          retries ||= 0
-          response = connection.get(path)
-          unless response.success?
-            raise response.status == 429 ? ThrottledConnectionError : response.body
-          end
+          response = client.get(path)
           JSON.parse(response.body)
-        rescue ThrottledConnectionError, Faraday::ConnectionFailed
-          retries += 1
-          warn "retrying connection to WebOfScience because connection throttled or failed. Sleeping for #{retries} second(s)..."
-          sleep retries
-          retry if retries < 3
-          warn "aborting, retries limit exceeded for #{path}"
         rescue StandardError => exception
-          warn "Error fetching #{path}: #{exception.message} (#{exception.class})"
+          logger.warn "Error fetching #{path}: #{exception.message} (#{exception.class})"
+          {}
         end
-        # rubocop:enable Metrics/MethodLength
 
         # @return [String] path for the user query
         def user_query_path
@@ -105,13 +92,18 @@ module Rialto
           MAX_PER_PAGE
         end
 
-        def connection
-          ConnectionFactory.build(uri: "https://#{HOST}", headers: connection_headers)
+        def client
+          RetriableConnectionFactory.build(uri: "https://#{HOST}", headers: connection_headers)
         end
 
         def connection_headers
-          key = Settings.wos.api_key
-          { 'X-ApiKey' => key }
+          {
+            'X-ApiKey' => Settings.wos.api_key
+          }
+        end
+
+        def logger
+          @logger ||= Yell.new(STDERR)
         end
       end
     end

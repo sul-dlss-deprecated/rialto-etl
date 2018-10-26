@@ -7,7 +7,7 @@ require 'traject/qualified_const_get'
 require 'traject/thread_pool'
 
 require 'concurrent' # for atomic_fixnum
-require 'rialto/etl/service_client/connection_factory'
+require 'rialto/etl/service_client/retriable_connection_factory'
 
 module Rialto
   module Etl
@@ -102,29 +102,11 @@ module Rialto
         # Post the statements to the SPARQL endpoint
         # @param [String] SPARQL statements to send
         def post(statements)
-          on_fail = lambda { |resp, retries|
-            logger.error "Error in SPARQL update: #{resp.status} #{resp.body} (#{retries} retries remaining)"
-          }
-          with_retries(on_fail: on_fail) do |req|
-            req.headers['Content-Type'] = 'application/sparql-update'
+          client.post do |req|
             req.body = statements
           end
         rescue StandardError => exception
-          logger.error "Error in SPARQL update. #{exception}"
-        end
-
-        def with_retries(on_fail:, retries: 3)
-          while retries.positive?
-            resp = client.post do |req|
-              yield req
-            end
-            if resp.success?
-              retries = 0
-            else
-              retries -= 1
-              on_fail.call(resp, retries)
-            end
-          end
+          logger.error "Error in SPARQL update. #{exception.message} (#{exception.class})"
         end
 
         # Get the logger from the settings, or default to an effectively null logger
@@ -140,7 +122,7 @@ module Rialto
         end
 
         def client
-          @client ||= ServiceClient::ConnectionFactory.build(uri: sparql_update_url, headers: connection_headers)
+          @client ||= ServiceClient::RetriableConnectionFactory.build(uri: sparql_update_url, headers: connection_headers)
         end
 
         def sparql_update_url
@@ -148,8 +130,10 @@ module Rialto
         end
 
         def connection_headers
-          key = Settings.sparql_writer.api_key
-          { 'X-Api-Key' => key }
+          {
+            'X-Api-Key' => Settings.sparql_writer.api_key,
+            'Content-Type' => 'application/sparql-update'
+          }
         end
       end
     end

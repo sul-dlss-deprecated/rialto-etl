@@ -30,7 +30,7 @@ module Rialto
         end
 
         def connection(uri:)
-          ConnectionFactory.build(uri: uri, headers: connection_headers)
+          RetriableConnectionFactory.build(uri: uri, headers: connection_headers)
         end
 
         def connection_headers
