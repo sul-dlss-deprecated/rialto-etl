@@ -74,9 +74,8 @@ module Rialto
             puts "Transforming for #{profile_id} (row: #{count})"
 
             sparql_file = transform(source_file, profile_id, options[:force])
-            return if !File.exist?(sparql_file) || File.empty?(sparql_file)
+            return if options[:skip_load] || !File.exist?(sparql_file) || File.empty?(sparql_file)
 
-            return if options[:skip_load]
             puts "Loading sparql for #{profile_id}: #{row[:uri]}"
             Rialto::Etl::Loaders::Sparql.new(input: sparql_file).load
           end
