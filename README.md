@@ -46,7 +46,7 @@ Notes:
 * The extract step takes about 20 min as it has to make ~796 requests to get the full
 1.6GB of data.
 * The transform step depends on `organizations.json` from organizations pipeline.
-* The transform step takes about 13 minutes on a single thread
+* The transform step takes about 35 minutes on a single thread
 * The load step takes about 9 hours on a single thread
 
 ```
