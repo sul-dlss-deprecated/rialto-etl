@@ -71,12 +71,11 @@ exe/publications load -i researchers.csv
 
 Notes:
 * The transform step depends on `researchers.ndj` from the researcher pipeline
+* Extracting will be sped up by setting a batch size with `-s`.
 
 ```
-exe/transform call StanfordPeopleIds -i researchers.ndj > sunetids.ndj
-# NOTE: the grants loader only handles extraction at the moment
-exe/grants load -i sunetids.ndj
-# TODO: grant transformation and actual loading
+exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
+exe/grants load -s 3 -i researchers.csv
 ```
 
 #### Authentication
