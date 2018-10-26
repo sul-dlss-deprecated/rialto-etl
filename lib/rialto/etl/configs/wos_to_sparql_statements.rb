@@ -185,9 +185,9 @@ to_field RDF::Vocab::DC.title.to_s,
          single: true
 
 to_field "!#{RDF::Vocab::DC.created}", literal(true), single: true
-to_field RDF::Vocab::DC.created.to_s,
-         extract_json('$.static_data.summary.pub_info.sortdate'),
-         single: true
+to_field RDF::Vocab::DC.created.to_s, lambda { |json, accumulator|
+  accumulator << RDF::Literal::Date.new(JsonPath.on(json, '$.static_data.summary.pub_info.sortdate').first)
+}, single: true
 
 to_field VIVO['informationResourceSupportedBy'].to_s, lambda { |json, accumulator|
   grant_agencies = fetch_grant_agencies(json)
