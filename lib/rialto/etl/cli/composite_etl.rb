@@ -50,7 +50,7 @@ module Rialto
           CSV.foreach(csv_path, headers: true, header_converters: :symbol).each_slice(options[:batch_size].to_i) do |rows|
             begin
               Parallel.each_with_index(rows, in_processes: rows.length) do |row, index|
-                handle_row(row, count + index + 1)
+                handle_row(profile_id: row.fetch(:profileid), uri: row.fetch(:uri), count: count + index + 1)
               end
               count += rows.length
             rescue TypeError => exception
@@ -61,11 +61,10 @@ module Rialto
           end
         end
         # rubocop:enable Metrics/MethodLength
+
         no_commands do
-          # rubocop:disable Metrics/AbcSize
           # Performs ETL on a single row
-          def handle_row(row, count)
-            profile_id = row[:profileid]
+          def handle_row(profile_id:, uri:, count:)
             puts "Extracting for #{profile_id} (row: #{count})"
 
             source_file = extract(row, profile_id, options[:force])
@@ -76,10 +75,9 @@ module Rialto
             sparql_file = transform(source_file, profile_id, options[:force])
             return if options[:skip_load] || !File.exist?(sparql_file) || File.empty?(sparql_file)
 
-            puts "Loading sparql for #{profile_id}: #{row[:uri]}"
+            puts "Loading sparql for #{profile_id}: #{uri}"
             Rialto::Etl::Loaders::Sparql.new(input: sparql_file).load
           end
-          # rubocop:enable Metrics/AbcSize
         end
 
         protected
