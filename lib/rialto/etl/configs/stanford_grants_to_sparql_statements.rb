@@ -29,10 +29,15 @@ to_field '!' + RDF::Vocab::RDFS.label.to_s, literal(true)
 to_field RDF::Vocab::RDFS.label.to_s, extract_json('$.projectTitle'), single: true
 to_field '!' + RDF::Vocab::SKOS.prefLabel.to_s, literal(true)
 to_field RDF::Vocab::SKOS.prefLabel.to_s, extract_json('$.projectTitle'), single: true
+
 to_field '!' + FRAPO.hasStartDate.to_s, literal(true)
-to_field FRAPO.hasStartDate.to_s, extract_json('$.projectStartDate'), single: true
+to_field FRAPO.hasStartDate.to_s, lambda { |json, accum|
+  accum << RDF::Literal::Date.new(JsonPath.on(json, '$.projectStartDate').first[0..9])
+}, single: true
 to_field '!' + FRAPO.hasEndDate.to_s, literal(true)
-to_field FRAPO.hasEndDate.to_s, extract_json('$.projectEndDate'), single: true
+to_field FRAPO.hasEndDate.to_s, lambda { |json, accum|
+  accum << RDF::Literal::Date.new(JsonPath.on(json, '$.projectEndDate').first[0..9])
+}, single: true
 
 to_field '!' + VIVO['assignedBy'], literal(true)
 to_field VIVO['assignedBy'].to_s, lambda { |json, accum|

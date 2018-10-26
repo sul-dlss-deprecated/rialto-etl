@@ -101,7 +101,7 @@ RSpec.describe Rialto::Etl::Transformer do
         # Created
         expect(repository).to have_quad([id,
                                          RDF::Vocab::DC['created'],
-                                         '2018-02-01',
+                                         RDF::Literal::Date.new('2018-02-01'),
                                          graph])
 
         # Subject
@@ -361,11 +361,11 @@ RSpec.describe Rialto::Etl::Transformer do
         # Created
         expect(repository).to have_quad([id,
                                          RDF::Vocab::DC['created'],
-                                         '2017-02-01',
+                                         RDF::Literal::Date.new('2017-02-01'),
                                          graph])
         expect(repository).not_to have_quad([id,
                                              RDF::Vocab::DC['created'],
-                                             '2018-02-01',
+                                             RDF::Literal::Date.new('2018-02-01'),
                                              graph])
 
         # Subject
