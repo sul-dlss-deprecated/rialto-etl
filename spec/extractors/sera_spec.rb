@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl::Extractors::Sera do
+  before do
+    Settings.sera.token_url = 'https://aswsuat.stanford.edu/api/oauth/token'
+    Settings.sera.service_url = 'https://aswsuat.stanford.edu'
+  end
+
   let(:token_response) do
     '{"access_token":"ABCD123","token_type":"Bearer","expires_in":3599,"scope":"sera.public sera.stanford-only"}'
   end

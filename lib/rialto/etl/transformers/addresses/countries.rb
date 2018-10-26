@@ -10,9 +10,21 @@ module Rialto
         # Country transformer
         class Countries
           include Rialto::Etl::Logging
-          # Returns the geocode id for a country name
+          # Constructs a country, including label.
           # @param country [String] name of the country
-          # @return [RDF::Uri] Geonames URI for the country or nil
+          # @return [Hash] Hash representing the country or nil
+          def construct_country(country:)
+            geocode = geocode_for_country(country: country)
+            return nil if geocode.nil?
+            {
+              '@id' => geocode,
+              "!#{RDF::Vocab::RDFS.label}" => true,
+              RDF::Vocab::RDFS.label.to_s => geocodes_map[geocode.to_s]
+            }
+          end
+
+          private
+
           def geocode_for_country(country:)
             geocode_id = countries_map[country.downcase]
             return Rialto::Etl::Vocabs::SWS_GEONAMES["#{geocode_id}/"] if geocode_id
@@ -21,11 +33,13 @@ module Rialto
             nil
           end
 
-          private
-
           def countries_map
             @countries_map ||= [Traject::TranslationMap.new('country_names_to_geocode_ids'),
                                 Traject::TranslationMap.new('additional_country_names_to_geocode_ids')].reduce(:merge)
+          end
+
+          def geocodes_map
+            @geocodes_map ||= Traject::TranslationMap.new('geocodes_to_country_names')
           end
         end
       end

@@ -86,7 +86,8 @@ to_field VIVO['overview'].to_s, extract_json('$.bio.text'), single: true
 
 # Person country
 to_field RDF::Vocab::DC.spatial.to_s, lambda { |_, accum|
-  accum << Rialto::Etl::Transformers::Addresses.geocode_for_country(country: 'United States')
+  country = Rialto::Etl::Transformers::Addresses.construct_country(country: 'United States')
+  accum << country unless country.nil?
 }, single: true
 
 # Note: There is also relatedBy for positions.

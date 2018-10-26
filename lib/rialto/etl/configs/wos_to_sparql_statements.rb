@@ -129,7 +129,7 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
     # Note: Adding a country for each publication, so person may have many countries.
     if address &&
        address.key?('country') &&
-       (country = Rialto::Etl::Transformers::Addresses.geocode_for_country(country: address['country']))
+       (country = Rialto::Etl::Transformers::Addresses.construct_country(country: address['country']))
       person[RDF::Vocab::DC.spatial.to_s] = country
     end
 
