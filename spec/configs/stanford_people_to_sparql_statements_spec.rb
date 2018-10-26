@@ -306,7 +306,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VIVO['overview'],
+                                 Rialto::Etl::Vocabs::VIVO.overview,
                                  'Bill Chen, M.D., is a Professor of Dermatology and Director of Mohs and '\
                                  'Dermatologic Surgery.'])
                        .true?
@@ -353,12 +353,12 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['AdvisingRelationship']])
+                                 Rialto::Etl::Vocabs::VIVO.AdvisingRelationship])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
-                                 Rialto::Etl::Vocabs::VIVO['relatedBy'],
+                                 Rialto::Etl::Vocabs::VIVO.relatedBy,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VIVO['relatedBy'],
+                                 Rialto::Etl::Vocabs::VIVO.relatedBy,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_RELATIONSHIPS['188882_400150'],
                                  RDF::Vocab::DC.valid,
@@ -370,7 +370,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdvisorRole'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['AdvisorRole']])
+                                 Rialto::Etl::Vocabs::VIVO.AdvisorRole])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
                                  Rialto::Etl::Vocabs::OBO['RO_0000053'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdvisorRole']])
@@ -384,7 +384,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdviseeRole'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['AdviseeRole']])
+                                 Rialto::Etl::Vocabs::VIVO.AdviseeRole])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
                                  Rialto::Etl::Vocabs::OBO['RO_0000053'],
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdviseeRole']])
@@ -415,24 +415,24 @@ RSpec.describe Rialto::Etl::Transformer do
         # Test 1 position
         query = client.select(count: { pos: :p })
                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
-                      .where([:pos, RDF.type, Rialto::Etl::Vocabs::VIVO['Position']])
+                      .where([:pos, RDF.type, Rialto::Etl::Vocabs::VIVO.Position])
         expect(query.solutions.first[:p].to_i).to eq(1)
 
         # Test position's relationships
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VIVO['relatedBy'],
+                                 Rialto::Etl::Vocabs::VIVO.relatedBy,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['vice-provost-for-student-affairs/residential'\
                           '-education/residential-education-operations/residential-education-central-operations'],
-                                 Rialto::Etl::Vocabs::VIVO['relatedBy'],
+                                 Rialto::Etl::Vocabs::VIVO.relatedBy,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
-                                 Rialto::Etl::Vocabs::VIVO['relates'],
+                                 Rialto::Etl::Vocabs::VIVO.relates,
                                  Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
-                                 Rialto::Etl::Vocabs::VIVO['relates'],
+                                 Rialto::Etl::Vocabs::VIVO.relates,
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['vice-provost-for-student-affairs/residential'\
                           '-education/residential-education-operations/residential-education-central-operations']])
                        .true?
@@ -451,7 +451,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
-                                 Rialto::Etl::Vocabs::VIVO['hrJobTitle'],
+                                 Rialto::Etl::Vocabs::VIVO.hrJobTitle,
                                  'Accountant'])
                        .true?
         expect(result).to be true
@@ -523,7 +523,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::VIVO['overview'],
+                                 Rialto::Etl::Vocabs::VIVO.overview,
                                  'Billy Chen, M.D., is a Professor of Dermatology and Director of Mohs '\
                                  'and Dermatologic Surgery.'])
                        .true?
@@ -542,14 +542,14 @@ RSpec.describe Rialto::Etl::Transformer do
         # Test 1 position
         query = client.select(count: { pos: :p })
                       .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
-                      .where([:pos, RDF.type, Rialto::Etl::Vocabs::VIVO['Position']])
+                      .where([:pos, RDF.type, Rialto::Etl::Vocabs::VIVO.Position])
         expect(query.solutions.first[:p].to_i).to eq(1)
 
         # Test position hrJobTitle
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['HMGN_400150'],
-                                 Rialto::Etl::Vocabs::VIVO['hrJobTitle'],
+                                 Rialto::Etl::Vocabs::VIVO.hrJobTitle,
                                  'Senior accountant'])
                        .true?
         expect(result).to be true

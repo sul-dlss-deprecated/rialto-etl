@@ -72,7 +72,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
         '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'].to_s,
         '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
         '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::Stanford.Staff],
-        Rialto::Etl::Vocabs::VIVO['overview'].to_s => 'Justin Littman is a software developer and librarian.',
+        Rialto::Etl::Vocabs::VIVO.overview.to_s => 'Justin Littman is a software developer and librarian.',
         RDF::Vocab::VCARD['hasEmail'].to_s => 'jlittypo@example.org',
         '#advisee' => {
           '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'].to_s,
@@ -101,7 +101,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, RDF::Vocab::FOAF.Person]
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, Rialto::Etl::Vocabs::Stanford.Staff]
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
-                Rialto::Etl::Vocabs::VIVO['overview'],
+                Rialto::Etl::Vocabs::VIVO.overview,
                 'Justin Littman is a software developer and librarian.']
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
                 RDF::Vocab::VCARD['hasEmail'],

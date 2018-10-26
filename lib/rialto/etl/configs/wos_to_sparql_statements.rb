@@ -111,9 +111,9 @@ to_field RDF::Vocab::BIBO.doi.to_s, lambda { |json, accumulator|
   accumulator << doi if doi
 }, single: true
 
-to_field "!#{VIVO['relatedBy']}", literal(true), single: true
+to_field "!#{VIVO.relatedBy}", literal(true), single: true
 # rubocop:disable Metrics/BlockLength
-to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
+to_field VIVO.relatedBy.to_s, lambda { |json, accumulator|
   addresses = fetch_addresses(json)
   # Lookup all the contributors in the entity resolution service to find their URIs.
   contributors = Array.wrap(JsonPath.on(json, '$.static_data.summary.names.name').first)
@@ -141,9 +141,9 @@ to_field VIVO['relatedBy'].to_s, lambda { |json, accumulator|
 
     {
       '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{person_id}"],
-      '@type' => c['role'] == 'book_editor' ? VIVO['Editorship'] : VIVO['Authorship'],
+      '@type' => c['role'] == 'book_editor' ? VIVO.Editorship : VIVO.Authorship,
       "!{VIVO['relates'}" => true,
-      VIVO['relates'].to_s => person['@id'],
+      VIVO.relates.to_s => person['@id'],
       # Always add with # since always adding country for all people.
       '#person' => person
     }
@@ -172,8 +172,8 @@ to_field RDF::Vocab::DC.isPartOf.to_s,
          extract_json("$.static_data.summary.titles.title[?(@.type=='source')].content"),
          single: true
 
-to_field "!#{VIVO['publisher']}", literal(true), single: true
-to_field VIVO['publisher'].to_s, lambda { |json, accumulator|
+to_field "!#{VIVO.publisher}", literal(true), single: true
+to_field VIVO.publisher.to_s, lambda { |json, accumulator|
   accumulator << fetch_publishers(json).map do |name|
     Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: name)
   end
@@ -189,7 +189,7 @@ to_field RDF::Vocab::DC.created.to_s,
          extract_json('$.static_data.summary.pub_info.sortdate'),
          single: true
 
-to_field VIVO['informationResourceSupportedBy'].to_s, lambda { |json, accumulator|
+to_field VIVO.informationResourceSupportedBy.to_s, lambda { |json, accumulator|
   grant_agencies = fetch_grant_agencies(json)
   accumulator << grant_agencies.map do |agency|
     Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: agency)

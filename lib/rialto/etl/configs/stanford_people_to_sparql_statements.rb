@@ -82,8 +82,8 @@ to_field RDF::Vocab::VCARD.hasName.to_s, lambda { |json, accum|
 }, single: true
 
 # Bio
-to_field "!#{VIVO['overview']}", literal(true), single: true
-to_field VIVO['overview'].to_s, extract_json('$.bio.text'), single: true
+to_field "!#{VIVO.overview}", literal(true), single: true
+to_field VIVO.overview.to_s, extract_json('$.bio.text'), single: true
 
 # Person country
 to_field RDF::Vocab::DC.spatial.to_s, lambda { |_, accum|
@@ -92,13 +92,13 @@ to_field RDF::Vocab::DC.spatial.to_s, lambda { |_, accum|
 }, single: true
 
 # Note: There is also relatedBy for positions.
-to_field VIVO['relatedBy'].to_s, lambda { |json, accum|
+to_field VIVO.relatedBy.to_s, lambda { |json, accum|
   advisees_json = JsonPath.on(json, '$.advisees[*].advisee')
   advisees = []
   advisees_json.each do |advisee_json|
     advisees << {
       '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"],
-      '@type' => VIVO['AdvisingRelationship'],
+      '@type' => VIVO.AdvisingRelationship,
       RDF::Vocab::DC.valid.to_s => Time.now.to_date
     }
   end
