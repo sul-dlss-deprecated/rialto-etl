@@ -102,17 +102,17 @@ RSpec.describe Rialto::Etl::Transformers::People do
       it 'returns position with resolved organization' do
         expect(position).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123'],
-          '@type' => Rialto::Etl::Vocabs::VIVO['Position'],
-          Rialto::Etl::Vocabs::VIVO['relates'].to_s => [Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
-                                                        Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']],
+          '@type' => Rialto::Etl::Vocabs::VIVO.Position,
+          Rialto::Etl::Vocabs::VIVO.relates.to_s => [Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
+                                                     Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']],
           '#position_person_relatedby' => {
             '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
-            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123']
+            Rialto::Etl::Vocabs::VIVO.relatedBy.to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123']
 
           },
           '#position_org_relatedby' => {
             '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford'],
-            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123']
+            Rialto::Etl::Vocabs::VIVO.relatedBy.to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['stanford_123']
           }
         )
       end
@@ -126,19 +126,19 @@ RSpec.describe Rialto::Etl::Transformers::People do
       it 'returns position with new organization' do
         expect(position).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcdd2c0220c7cde1d23c989_123'],
-          '@type' => Rialto::Etl::Vocabs::VIVO['Position'],
-          Rialto::Etl::Vocabs::VIVO['relates'].to_s => [Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
-                                                        Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220'\
-                                                          'c7cde1d23c989']],
+          '@type' => Rialto::Etl::Vocabs::VIVO.Position,
+          Rialto::Etl::Vocabs::VIVO.relates.to_s => [Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
+                                                     Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220'\
+                                                       'c7cde1d23c989']],
           '#position_person_relatedby' => {
             '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123'],
-            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcd'\
+            Rialto::Etl::Vocabs::VIVO.relatedBy.to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcd'\
                                                           'd2c0220c7cde1d23c989_123']
 
           },
           '#position_org_relatedby' => {
             '@id' => Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['0a4246f93dcdd2c0220c7cde1d23c989'],
-            Rialto::Etl::Vocabs::VIVO['relatedBy'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcd'\
+            Rialto::Etl::Vocabs::VIVO.relatedBy.to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_POSITIONS['0a4246f93dcd'\
                                                           'd2c0220c7cde1d23c989_123']
           },
           '#organization' => {

@@ -79,7 +79,7 @@ module Rialto
           def construct_dummy_department
             dummy_org = Rialto::Etl::Transformers::Organizations.construct_org(org_name: 'Stanford Unmapped Department',
                                                                                org_id: 'stanford_unmapped_dept')
-            dummy_org['@type'] << VIVO['Department']
+            dummy_org['@type'] << VIVO.Department
             dummy_org
           end
 
@@ -87,15 +87,15 @@ module Rialto
           def position_for(position_id:, org_id:, hr_title: nil, label: nil, person_id:, valid: false)
             position = {
               '@id' => RIALTO_CONTEXT_POSITIONS[position_id],
-              '@type' => VIVO['Position'],
-              VIVO['relates'].to_s => [RIALTO_PEOPLE[person_id], RIALTO_ORGANIZATIONS[org_id]],
+              '@type' => VIVO.Position,
+              VIVO.relates.to_s => [RIALTO_PEOPLE[person_id], RIALTO_ORGANIZATIONS[org_id]],
               '#position_person_relatedby' => {
                 '@id' => RIALTO_PEOPLE[person_id],
-                VIVO['relatedBy'].to_s => RIALTO_CONTEXT_POSITIONS[position_id]
+                VIVO.relatedBy.to_s => RIALTO_CONTEXT_POSITIONS[position_id]
               },
               '#position_org_relatedby' => {
                 '@id' => RIALTO_ORGANIZATIONS[org_id],
-                VIVO['relatedBy'].to_s => RIALTO_CONTEXT_POSITIONS[position_id]
+                VIVO.relatedBy.to_s => RIALTO_CONTEXT_POSITIONS[position_id]
               }
 
             }
@@ -104,8 +104,8 @@ module Rialto
               position[RDF::Vocab::DC.valid.to_s] = Time.now.to_date
             end
             if hr_title
-              position["!#{VIVO['hrJobTitle']}"] = true
-              position[VIVO['hrJobTitle'].to_s] = hr_title
+              position["!#{VIVO.hrJobTitle}"] = true
+              position[VIVO.hrJobTitle.to_s] = hr_title
             end
             if label
               position["!#{RDF::RDFS.label}"] = true

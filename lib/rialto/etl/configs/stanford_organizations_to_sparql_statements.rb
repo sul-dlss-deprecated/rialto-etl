@@ -33,17 +33,17 @@ to_field '@type', lambda { |json, accum|
   org_types = [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization]
   org_types << case JsonPath.on(json, '$.type').first
                when 'DEPARTMENT'
-                 VIVO['Department']
+                 VIVO.Department
                when 'DIVISION'
-                 VIVO['Division']
+                 VIVO.Division
                when 'ROOT'
-                 VIVO['University']
+                 VIVO.University
                when 'SCHOOL'
-                 VIVO['School']
+                 VIVO.School
                when 'SUB_DIVISION'
-                 VIVO['Division']
+                 VIVO.Division
                else
-                 VIVO['Department']
+                 VIVO.Department
                end
   accum.concat(org_types)
 }

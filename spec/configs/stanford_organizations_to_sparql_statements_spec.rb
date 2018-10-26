@@ -198,7 +198,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['University']])
+                                 Rialto::Etl::Vocabs::VIVO.University])
                        .true?
         expect(result).to eq(true)
         result = client.ask
@@ -206,7 +206,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['Department']])
+                                 Rialto::Etl::Vocabs::VIVO.Department])
                        .true?
         expect(result).to be true
       end
@@ -240,7 +240,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['Department']])
+                                 Rialto::Etl::Vocabs::VIVO.Department])
                        .true?
         expect(result).to be false
         result = client.ask
@@ -248,7 +248,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
                                  RDF.type,
-                                 Rialto::Etl::Vocabs::VIVO['Division']])
+                                 Rialto::Etl::Vocabs::VIVO.Division])
                        .true?
         expect(result).to be true
 
