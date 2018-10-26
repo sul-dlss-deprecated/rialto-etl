@@ -24,6 +24,19 @@ module Rialto
       RIALTO_CONTEXT_IDENTIFIERS = RDF::Vocabulary.new(rialto_base + 'context/identifiers/')
       RIALTO_CONTEXT_POSITIONS = RDF::Vocabulary.new(rialto_base + 'context/positions/')
 
+      # Local ontology
+      class Stanford < RDF::StrictVocabulary(rialto_base + 'ontology#')
+        term :PhdStudent
+        term :MsStudent
+        term :MdStudent
+        term :Faculty
+        term :Fellow
+        term :Resident
+        term :Postdoc
+        term :Physician
+        term :Staff
+      end
+
       # The VIVO ontology
       class VIVO < RDF::StrictVocabulary('http://vivoweb.org/ontology/core#')
         term :AdviseeRole
@@ -33,13 +46,8 @@ module Rialto
         term :Department
         term :Division
         term :Editorship
-        term :FacultyMember
-        term :Librarian
-        term :NonAcademic
-        term :NonFacultyAcademic
         term :Position
         term :School
-        term :Student
         term :University
         term :Grant
         term :PrincipalInvestigatorRole

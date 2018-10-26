@@ -71,7 +71,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
       {
         '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'].to_s,
         '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
-        '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::VIVO['Librarian']],
+        '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::Stanford.Staff],
         Rialto::Etl::Vocabs::VIVO['overview'].to_s => 'Justin Littman is a software developer and librarian.',
         RDF::Vocab::VCARD['hasEmail'].to_s => 'jlittypo@example.org',
         '#advisee' => {
@@ -87,7 +87,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
       {
         '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'].to_s,
         '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
-        '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::VIVO['Librarian']],
+        '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::Stanford.Staff],
         "!#{RDF::Vocab::VCARD['hasEmail']}" => true,
         RDF::Vocab::VCARD['hasEmail'].to_s => 'jlit@example.org'
       }
@@ -99,7 +99,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
 
     before do
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, RDF::Vocab::FOAF.Person]
-      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, Rialto::Etl::Vocabs::VIVO['Librarian']]
+      graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'], RDF.type, Rialto::Etl::Vocabs::Stanford.Staff]
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
                 Rialto::Etl::Vocabs::VIVO['overview'],
                 'Justin Littman is a software developer and librarian.']

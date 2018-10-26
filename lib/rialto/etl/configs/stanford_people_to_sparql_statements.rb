@@ -36,15 +36,16 @@ to_field '@id', lambda { |json, accum|
 # Person types
 to_field '@type', lambda { |json, accum|
   person_types = [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person]
-  person_types << VIVO['Student'] if JsonPath.on(json, '$.affiliations.capPhdStudent').first == true ||
-                                     JsonPath.on(json, '$.affiliations.capMsStudent').first == true ||
-                                     JsonPath.on(json, '$.affiliations.capMdStudent').first == true
-  person_types << VIVO['FacultyMember'] if JsonPath.on(json, '$.affiliations.capFaculty').first
-  person_types << VIVO['NonFacultyAcademic'] if JsonPath.on(json, '$.affiliations.capFellow').first == true ||
-                                                JsonPath.on(json, '$.affiliations.capResident').first == true ||
-                                                JsonPath.on(json, '$.affiliations.capPostdoc').first == true
-  person_types << VIVO['NonAcademic'] if JsonPath.on(json, '$.affiliations.physician').first == true ||
-                                         JsonPath.on(json, '$.affiliations.capStaff').first == true
+  person_types << Stanford.PhdStudent if JsonPath.on(json, '$.affiliations.capPhdStudent').first
+  person_types << Stanford.MsStudent if JsonPath.on(json, '$.affiliations.capMsStudent').first
+  person_types << Stanford.MdStudent if JsonPath.on(json, '$.affiliations.capMdStudent').first
+  person_types << Stanford.Faculty if JsonPath.on(json, '$.affiliations.capFaculty').first
+  person_types << Stanford.Fellow if JsonPath.on(json, '$.affiliations.capFellow').first
+  person_types << Stanford.Resident if JsonPath.on(json, '$.affiliations.capResident').first
+  person_types << Stanford.Postdoc if JsonPath.on(json, '$.affiliations.capPostdoc').first
+  person_types << Stanford.Physician if JsonPath.on(json, '$.affiliations.physician').first
+  person_types << Stanford.Staff if JsonPath.on(json, '$.affiliations.capStaff').first
+
   accum.concat(person_types)
 }
 
