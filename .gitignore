@@ -13,3 +13,4 @@
 .ruby-version
 config/settings.local.yml
 config/settings/*.local.yml
+warnings*.log
