@@ -35,14 +35,13 @@ RSpec.describe Rialto::Etl::CLI::Grants do
 
     before do
       allow(Rialto::Etl::Extractors::Sera).to receive(:new).and_return(extractor)
-      allow(loader).to receive(:say)
+      allow(loader).to receive(:say).and_return(STDOUT)
     end
 
     context 'when there is an error' do
       before { allow(extractor).to receive(:each).and_raise }
-
       it 'handles errors' do
-        loader.send(:perform_extract, row)
+        expect(loader.send(:perform_extract, row)).to respond_to(:join)
         expect(loader).to have_received(:say).with('aborting vjarrett, failed with RuntimeError: ')
       end
     end
