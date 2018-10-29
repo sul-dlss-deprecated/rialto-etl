@@ -3,7 +3,16 @@
 RSpec.describe Rialto::Etl::CLI::Grants do
   subject(:loader) { described_class.new([], args, conf) }
 
+  let(:dir) do
+    Dir.mktmpdir
+  end
+
+  let(:args) do
+    ['--input-file', 'data/researchers.csv', '--force', '--dir', dir]
+  end
+
   let(:command) { described_class.all_commands['load'] }
+
   let(:conf) do
     {
       current_command: command,
@@ -21,17 +30,27 @@ RSpec.describe Rialto::Etl::CLI::Grants do
     }
   end
 
-  # rubocop:disable RSpec/VerifiedDoubles
-  describe '#handle_row' do
-    let(:dir) do
-      Dir.mktmpdir
+  describe '#perform_extract' do
+    let(:extractor) { instance_double(Rialto::Etl::Extractors::Sera) }
+
+    before do
+      allow(Rialto::Etl::Extractors::Sera).to receive(:new).and_return(extractor)
+      allow(loader).to receive(:say)
     end
 
-    context 'with a valid transformer' do
-      let(:args) do
-        ['--input-file', 'data/researchers.csv', '--force', '--dir', dir]
-      end
+    context 'when there is an error' do
+      before { allow(extractor).to receive(:each).and_raise }
 
+      it 'handles errors' do
+        loader.send(:perform_extract, row)
+        expect(loader).to have_received(:say).with('aborting vjarrett, failed with RuntimeError: ')
+      end
+    end
+  end
+
+  # rubocop:disable RSpec/VerifiedDoubles
+  describe '#handle_row' do
+    context 'with a valid transformer' do
       before do
         allow(Rialto::Etl::Loaders::Sparql).to receive(:new).and_return(double(load: true))
         allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
