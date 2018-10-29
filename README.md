@@ -13,22 +13,6 @@ RIALTO-ETL is a set of ETL tools for RIALTO, Stanford Libraries' research intell
 
 - Ruby >= 2.5.0
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rialto-etl'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install rialto-etl
-
 ## Usage
 
 ### Pipeline to ingest organizations into RIALTO Core
@@ -60,18 +44,19 @@ exe/load call Sparql -i researchers.sparql
 Notes:
 * The transform step depends on `researchers.ndj` from the researcher pipeline
 * Extracting will be sped up by setting a batch size with `-s`.
+* The following steps are a way to streamline doing full ETL. If you need to run the transform and load on already extracted  grant data, you can run them independently via `exe/transform call StanfordGrants -i my_extracted_grant_file.json > my_transformed_grant_file.sparql` and `exe/load call Sparql -i my_transformed_grant_file.sparql`.
 
 ```
 exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
 exe/grants load -s 3 -i researchers.csv
 ```
 
-
 ### Pipeline to harvest Publications from Web of Science
 Notes:
 * The transform step depends on `researchers.ndj` from researcher pipeline.
 * The load step can be skipped with the `--skip-load` flag.
 * The extract and transform steps will be skipped if the files already exist. Use the `--force`/`-f` flag to overwrite files.
+* The following steps are a way to streamline doing full ETL. If you need to run the transform and load on already extracted  publication data, you can run them independently via `exe/transform call WebOfScience -i my_extracted_publication_file.ndj > my_transformed_publication_file.sparql` and `exe/load call Sparql -i my_transformed_publication_file.sparql`.
 
 ```
 exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
