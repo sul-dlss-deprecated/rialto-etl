@@ -3,7 +3,6 @@
 require 'config'
 require 'rialto/etl/extractors'
 require 'rialto/etl/transformer'
-require 'rialto/etl/version'
 
 module Rialto
   # The top-level Rialto::Etl module
