@@ -25,7 +25,7 @@ module Rialto
           end
           results
         rescue StandardError => exception
-          say "aborting #{id}, failed with #{exception.class}: #{exception.message}"
+          say "aborting #{sunetid}, failed with #{exception.class}: #{exception.message}"
         end
 
         def transformer_config
