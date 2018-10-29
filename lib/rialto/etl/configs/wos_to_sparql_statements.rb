@@ -142,7 +142,7 @@ to_field VIVO.relatedBy.to_s, lambda { |json, accumulator|
     {
       '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{person_id}"],
       '@type' => c['role'] == 'book_editor' ? VIVO.Editorship : VIVO.Authorship,
-      "!{VIVO['relates'}" => true,
+      "!#{VIVO.relates}" => true,
       VIVO.relates.to_s => person['@id'],
       # Always add with # since always adding country for all people.
       '#person' => person

@@ -73,12 +73,12 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
         '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
         '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::Stanford.Staff],
         Rialto::Etl::Vocabs::VIVO.overview.to_s => 'Justin Littman is a software developer and librarian.',
-        RDF::Vocab::VCARD['hasEmail'].to_s => 'jlittypo@example.org',
+        RDF::Vocab::VCARD.hasEmail.to_s => 'jlittypo@example.org',
         '#advisee' => {
           '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'].to_s,
           '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
           '@type' => [RDF::Vocab::FOAF.Person],
-          RDF::Vocab::VCARD['hasName'].to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']
+          RDF::Vocab::VCARD.hasName.to_s => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']
         }
       }
     end
@@ -88,8 +88,8 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
         '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'].to_s,
         '@graph' => Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH.to_s,
         '@type' => [RDF::Vocab::FOAF.Person, Rialto::Etl::Vocabs::Stanford.Staff],
-        "!#{RDF::Vocab::VCARD['hasEmail']}" => true,
-        RDF::Vocab::VCARD['hasEmail'].to_s => 'jlit@example.org'
+        "!#{RDF::Vocab::VCARD.hasEmail}" => true,
+        RDF::Vocab::VCARD.hasEmail.to_s => 'jlit@example.org'
       }
     end
 
@@ -104,11 +104,11 @@ RSpec.describe Rialto::Etl::Writers::SparqlStatementWriter do
                 Rialto::Etl::Vocabs::VIVO.overview,
                 'Justin Littman is a software developer and librarian.']
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['1234'],
-                RDF::Vocab::VCARD['hasEmail'],
+                RDF::Vocab::VCARD.hasEmail,
                 'jlit@example.org']
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'], RDF.type, RDF::Vocab::FOAF.Person]
       graph << [Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
-                RDF::Vocab::VCARD['hasName'],
+                RDF::Vocab::VCARD.hasName,
                 Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']]
 
       execute_sparql!(first_statements)

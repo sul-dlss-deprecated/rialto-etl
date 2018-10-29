@@ -54,11 +54,11 @@ to_field VIVO.relates.to_s, lambda { |json, accum|
   accum << {
     '@id' => pi_role,
     '@type' => VIVO.PrincipalInvestigatorRole,
-    "!{VIVO['relates'}" => true,
-    OBO['RO_0000052'].to_s => person,
+    "!#{VIVO.relates}" => true,
+    OBO.RO_0000052.to_s => person,
     '#person_to_role' => {
       '@id' => person,
-      OBO['RO_0000053'].to_s => pi_role
+      OBO.RO_0000053.to_s => pi_role
     },
     VIVO.relatedBy.to_s => RIALTO_GRANTS[json['spoNumber']]
   }

@@ -264,7 +264,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 RDF::Vocab::VCARD['hasName'],
+                                 RDF::Vocab::VCARD.hasName,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['400150']])
                        .true?
         expect(result).to be true
@@ -335,7 +335,7 @@ RSpec.describe Rialto::Etl::Transformer do
         result = client.ask
                        .from(Rialto::Etl::NamedGraphs::STANFORD_PEOPLE_GRAPH)
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
-                                 RDF::Vocab::VCARD['hasName'],
+                                 RDF::Vocab::VCARD.hasName,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['188882']])
         expect(result).to be_true
         result = client.ask
@@ -372,10 +372,10 @@ RSpec.describe Rialto::Etl::Transformer do
                                  RDF.type,
                                  Rialto::Etl::Vocabs::VIVO.AdvisorRole])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150'],
-                                 Rialto::Etl::Vocabs::OBO['RO_0000053'],
+                                 Rialto::Etl::Vocabs::OBO.RO_0000053,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdvisorRole']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdvisorRole'],
-                                 Rialto::Etl::Vocabs::OBO['RO_0000052'],
+                                 Rialto::Etl::Vocabs::OBO.RO_0000052,
                                  Rialto::Etl::Vocabs::RIALTO_PEOPLE['400150']])
         expect(result).to be_true
 
@@ -386,10 +386,10 @@ RSpec.describe Rialto::Etl::Transformer do
                                  RDF.type,
                                  Rialto::Etl::Vocabs::VIVO.AdviseeRole])
                        .whether([Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882'],
-                                 Rialto::Etl::Vocabs::OBO['RO_0000053'],
+                                 Rialto::Etl::Vocabs::OBO.RO_0000053,
                                  Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdviseeRole']])
                        .whether([Rialto::Etl::Vocabs::RIALTO_CONTEXT_ROLES['AdviseeRole'],
-                                 Rialto::Etl::Vocabs::OBO['RO_0000052'],
+                                 Rialto::Etl::Vocabs::OBO.RO_0000052,
                                  Rialto::Etl::Vocabs::RIALTO_PEOPLE['188882']])
         expect(result).to be_true
 
