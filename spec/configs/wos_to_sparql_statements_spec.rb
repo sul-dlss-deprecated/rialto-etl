@@ -94,25 +94,25 @@ RSpec.describe Rialto::Etl::Transformer do
                                          graph])
         # has Part
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['isPartOf'],
+                                         RDF::Vocab::DC.isPartOf,
                                          'EXPERIMENTAL BIOLOGY AND MEDICINE',
                                          graph])
 
         # Created
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['created'],
+                                         RDF::Vocab::DC.created,
                                          RDF::Literal::Date.new('2018-02-01'),
                                          graph])
 
         # Subject
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['subject'],
+                                         RDF::Vocab::DC.subject,
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f9'],
                                          graph])
 
         # Title
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['title'],
+                                         RDF::Vocab::DC.title,
                                          'Biomarkers: Delivering on the expectation of molecularly driven, quantitative health',
                                          graph])
 
@@ -265,17 +265,17 @@ RSpec.describe Rialto::Etl::Transformer do
 
       it 'is inserted with subject triples' do
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['subject'],
+                                         RDF::Vocab::DC.subject,
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
                                          graph])
 
         expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
                                          RDF.type,
-                                         RDF::Vocab::SKOS['Concept'],
+                                         RDF::Vocab::SKOS.Concept,
                                          graph])
 
         expect(repository).to have_quad([Rialto::Etl::Vocabs::RIALTO_CONCEPTS['5a2cd5c7582ed1a1bbcc3a5c62786dca'],
-                                         RDF::Vocab::DC['subject'],
+                                         RDF::Vocab::DC.subject,
                                          'Research & Experimental Medicine',
                                          graph])
       end
@@ -350,42 +350,42 @@ RSpec.describe Rialto::Etl::Transformer do
       it 'updates the publication' do
         # has Part
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['isPartOf'],
+                                         RDF::Vocab::DC.isPartOf,
                                          'SPECULATIVE BIOLOGY AND MEDICINE',
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             RDF::Vocab::DC['isPartOf'],
+                                             RDF::Vocab::DC.isPartOf,
                                              'EXPERIMENTAL BIOLOGY AND MEDICINE',
                                              graph])
 
         # Created
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['created'],
+                                         RDF::Vocab::DC.created,
                                          RDF::Literal::Date.new('2017-02-01'),
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             RDF::Vocab::DC['created'],
+                                             RDF::Vocab::DC.created,
                                              RDF::Literal::Date.new('2018-02-01'),
                                              graph])
 
         # Subject
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['subject'],
+                                         RDF::Vocab::DC.subject,
                                          Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f10'],
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             RDF::Vocab::DC['subject'],
+                                             RDF::Vocab::DC.subject,
                                              Rialto::Etl::Vocabs::RIALTO_CONCEPTS['d700824f-ae47-4244-885c-7cfc55b240f9'],
                                              graph])
 
         # Title
         expect(repository).to have_quad([id,
-                                         RDF::Vocab::DC['title'],
+                                         RDF::Vocab::DC.title,
                                          'Biomarkers: Delivering some day on the expectation of molecularly driven, '\
                                          'quantitative health',
                                          graph])
         expect(repository).not_to have_quad([id,
-                                             RDF::Vocab::DC['title'],
+                                             RDF::Vocab::DC.title,
                                              'Biomarkers: Delivering on the expectation of molecularly driven, quantitative health',
                                              graph])
 

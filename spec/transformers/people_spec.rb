@@ -168,7 +168,7 @@ RSpec.describe Rialto::Etl::Transformers::People do
       it 'returns the correct fullname' do
         expect(vcard).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['123'],
-          '@type' => RDF::Vocab::VCARD['Name'],
+          '@type' => RDF::Vocab::VCARD.Name,
           "!#{RDF::Vocab::VCARD['given-name']}" => true,
           "!#{RDF::Vocab::VCARD['additional-name']}" => true,
           "!#{RDF::Vocab::VCARD['family-name']}" => true,
@@ -185,7 +185,7 @@ RSpec.describe Rialto::Etl::Transformers::People do
         it 'returns the correct fullname' do
           expect(vcard).to eq(
             '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['ed1aa059391f675499eda6172ddc29f4'],
-            '@type' => RDF::Vocab::VCARD['Name'],
+            '@type' => RDF::Vocab::VCARD.Name,
             "!#{RDF::Vocab::VCARD['given-name']}" => true,
             "!#{RDF::Vocab::VCARD['additional-name']}" => true,
             "!#{RDF::Vocab::VCARD['family-name']}" => true,
@@ -247,9 +247,9 @@ RSpec.describe Rialto::Etl::Transformers::People do
                                            'Justin Cunningham Littman', 'Littman, Justin C', 'Littman, Justin C.',
                                            'Justin C Littman', 'Justin C. Littman', 'Littman, JC', 'Littman, J.C.',
                                            'JC Littman', 'J.C. Littman'],
-        RDF::Vocab::VCARD['hasName'].to_s => {
+        RDF::Vocab::VCARD.hasName.to_s => {
           '@id' => Rialto::Etl::Vocabs::RIALTO_CONTEXT_NAMES['123'],
-          '@type' => RDF::Vocab::VCARD['Name'],
+          '@type' => RDF::Vocab::VCARD.Name,
           "!#{RDF::Vocab::VCARD['given-name']}" => true,
           "!#{RDF::Vocab::VCARD['additional-name']}" => true,
           "!#{RDF::Vocab::VCARD['family-name']}" => true,

@@ -105,13 +105,13 @@ to_field VIVO.relatedBy.to_s, lambda { |json, accum|
   accum.concat(advisees)
 }
 
-to_field OBO['RO_0000053'].to_s, lambda { |json, accum|
+to_field OBO.RO_0000053.to_s, lambda { |json, accum|
   unless JsonPath.on(json, '$.advisees').empty?
     accum << {
       '@id' => RIALTO_CONTEXT_ROLES['AdvisorRole'],
       '@type' => VIVO.AdvisorRole,
       # This points back at the advisor
-      OBO['RO_0000052'].to_s => RIALTO_PEOPLE[json['profileId']]
+      OBO.RO_0000052.to_s => RIALTO_PEOPLE[json['profileId']]
     }
   end
 }
@@ -126,11 +126,11 @@ to_field '#advisees', lambda { |json, accum|
     # Related by
     advisee_hash[VIVO.relatedBy.to_s] = RIALTO_CONTEXT_RELATIONSHIPS["#{advisee_json['profileId']}_#{json['profileId']}"]
     # Advisee role
-    advisee_hash[OBO['RO_0000053'].to_s] = {
+    advisee_hash[OBO.RO_0000053.to_s] = {
       '@id' => RIALTO_CONTEXT_ROLES['AdviseeRole'],
       '@type' => VIVO.AdviseeRole,
       # This points back at the advisee
-      OBO['RO_0000052'].to_s => RIALTO_PEOPLE[advisee_json['profileId']]
+      OBO.RO_0000052.to_s => RIALTO_PEOPLE[advisee_json['profileId']]
     }
     advisees << advisee_hash
   end
