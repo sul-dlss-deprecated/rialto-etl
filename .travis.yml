@@ -8,6 +8,8 @@ rvm:
 git:
   submodules: false
 before_install: gem install bundler
+bundler_args: --without debug
+
 env:
   global:
     - CC_TEST_REPORTER_ID=a4d38091b68203a6cff44ff22c58cba78bc62e8207b16112d03e8c1fd345b3c5

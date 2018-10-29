@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl do
-  it 'has a version number' do
-    expect(Rialto::Etl::VERSION).not_to be nil
-  end
-
   describe 'configuration' do
     it 'provides a configuration value for CAP token' do
       expect(Settings.cap.api_key).not_to be_empty
