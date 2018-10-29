@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
+$LOAD_PATH.unshift 'lib'
 require 'rialto/etl/cli'
 
 Rialto::Etl::CLI::Grants.start(ARGV)
