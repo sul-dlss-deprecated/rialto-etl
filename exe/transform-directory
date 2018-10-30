@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Sample usage:
+#   ./exe/transform-directory StanfordGrants -i ../rialto-sample-data/raw/grants/grouped_by_sunetid \
+#                -o ../rialto-sample-data/mapped/grants
+require 'bundler/setup'
+$LOAD_PATH.unshift 'lib'
+require 'rialto/etl/cli'
+
+Rialto::Etl::CLI::TransformDirectory.start(ARGV)
