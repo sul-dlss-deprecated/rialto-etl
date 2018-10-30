@@ -6,7 +6,7 @@ require 'digest'
 module Rialto
   module Etl
     module Transformers
-      module People
+      class People
         # Name transformer
         class Names
           # Transform names into the hash for an address Vcard

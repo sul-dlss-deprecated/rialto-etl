@@ -8,7 +8,7 @@ module Rialto
   module Etl
     module Transformers
       # Transformers for a Person
-      module People
+      class People
         # Transform titles from the CAP people api response to positions in the IR
         # @param titles [Array] a list of titles the person has
         # @param profile_id [String] the identifier for the person profile
@@ -88,22 +88,41 @@ module Rialto
         # @param family_name [String] last name
         # @param addl_params [Hash] additional parameters for resolving a person.
         # @return [Hash] a hash representing the person
-        # rubocop:disable Metrics/MethodLength
-        def self.resolve_or_construct_person(given_name:, family_name:, addl_params: nil)
-          params = {
-            'first_name' => given_name,
-            'last_name' => family_name
-          }
-          params.merge!(addl_params) if addl_params
-          if (resolved_person = Rialto::Etl::ServiceClient::EntityResolver.resolve('person', params))
-            {
-              '@id' => resolved_person
-            }
+        def self.resolve_or_construct_person(given_name:, family_name:, addl_params: {})
+          if (resolved_person_hash = resolve_person(given_name: given_name, family_name: family_name, addl_params: addl_params))
+            resolved_person_hash
           else
             construct_person(given_name: given_name, family_name: family_name)
           end
         end
-        # rubocop:enable Metrics/MethodLength
+
+        # Resolve a person
+        # @param given_name [String] first name
+        # @param family_name [String] last name
+        # @param addl_params [Hash] additional parameters for resolving a person.
+        # @return [Hash] a hash representing the person
+        def self.resolve_person(given_name:, family_name:, addl_params: {})
+          params = people_params(given_name: given_name, family_name: family_name, addl_params: addl_params)
+          resolved_person = Rialto::Etl::ServiceClient::EntityResolver.resolve('person', params)
+          return if resolved_person.nil?
+          {
+            '@id' => resolved_person
+          }
+        end
+
+        # Construct params from args
+        # @param given_name [String] first name
+        # @param family_name [String] last name
+        # @param addl_params [Hash] additional parameters for resolving a person.
+        # @return [Hash] a hash representing the person
+        def self.people_params(given_name:, family_name:, addl_params:)
+          params = {
+            'first_name' => given_name,
+            'last_name' => family_name
+          }
+          params.merge(addl_params)
+        end
+        private_class_method :people_params
       end
     end
   end

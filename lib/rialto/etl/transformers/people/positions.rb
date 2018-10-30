@@ -8,7 +8,7 @@ require 'rialto/etl/organizations'
 module Rialto
   module Etl
     module Transformers
-      module People
+      class People
         # Position transformer for the CAP Person API
         class Positions
           include Rialto::Etl::Vocabs
