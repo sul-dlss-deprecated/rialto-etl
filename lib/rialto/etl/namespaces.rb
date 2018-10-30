@@ -46,11 +46,12 @@ module Rialto
         term :Department
         term :Division
         term :Editorship
+        term :Grant
+        term :Institute
         term :Position
+        term :PrincipalInvestigatorRole
         term :School
         term :University
-        term :Grant
-        term :PrincipalInvestigatorRole
 
         property :assignedBy
         property :hrJobTitle

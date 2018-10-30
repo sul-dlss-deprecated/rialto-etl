@@ -32,8 +32,6 @@ to_field '@id', lambda { |json, accum|
 to_field '@type', lambda { |json, accum|
   org_types = [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Organization]
   org_types << case JsonPath.on(json, '$.type').first
-               when 'DEPARTMENT'
-                 VIVO.Department
                when 'DIVISION'
                  VIVO.Division
                when 'ROOT'
@@ -43,7 +41,8 @@ to_field '@type', lambda { |json, accum|
                when 'SUB_DIVISION'
                  VIVO.Division
                else
-                 VIVO.Department
+                 # Department or Institute
+                 VIVO[Traject::TranslationMap.new('stanford_departments_to_vivo_types', default: 'Department')[json['alias']]]
                end
   accum.concat(org_types)
 }
