@@ -20,7 +20,6 @@ end
 # The named graph to place these triples into.
 to_field '@graph', literal(STANFORD_GRANTS_GRAPH.to_s), single: true
 to_field '@type', literal(VIVO.Grant), single: true
-
 to_field '@id', lambda { |json, accum|
   accum << RIALTO_GRANTS[json['spoNumber']]
 }, single: true
@@ -32,11 +31,13 @@ to_field RDF::Vocab::SKOS.prefLabel.to_s, extract_json('$.projectTitle'), single
 
 to_field '!' + FRAPO.hasStartDate.to_s, literal(true)
 to_field FRAPO.hasStartDate.to_s, lambda { |json, accum|
-  accum << RDF::Literal::Date.new(JsonPath.on(json, '$.projectStartDate').first[0..9])
+  maybe_date = JsonPath.on(json, '$.projectStartDate').first
+  accum << RDF::Literal::Date.new(maybe_date[0..9]) if maybe_date
 }, single: true
 to_field '!' + FRAPO.hasEndDate.to_s, literal(true)
 to_field FRAPO.hasEndDate.to_s, lambda { |json, accum|
-  accum << RDF::Literal::Date.new(JsonPath.on(json, '$.projectEndDate').first[0..9])
+  maybe_date = JsonPath.on(json, '$.projectEndDate').first
+  accum << RDF::Literal::Date.new(maybe_date[0..9]) if maybe_date
 }, single: true
 
 to_field '!' + VIVO.assignedBy, literal(true)
