@@ -244,6 +244,25 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
     end
   end
 
+  context 'when the dates are null' do
+    let(:json) do
+      <<~JSON
+        {
+          "spoNumber": "12345",
+          "projectTitle": "The Effects of Commas on Sentences",
+          "projectStartDate": null,
+          "projectEndDate": null,
+          "directSponsorName": "The William and Flora Hewlett Foundation",
+          "piEmployeeId": "12345678"
+        }
+      JSON
+    end
+
+    it 'transforms the record without errors' do
+      expect { transform(json) }.not_to raise_error
+    end
+  end
+
   describe 'add and delete grants' do
     before do
       transform(STANFORD_GRANTS_INSERT1)
