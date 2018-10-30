@@ -96,6 +96,17 @@ STANFORD_ORGS_UPDATE = <<~JSON
   }
 JSON
 
+STANFORD_INSTITURE = <<~JSON
+  {
+  	"alias": "independent-labs-institutes-and-centers-dean-of-research/stanford-neurosciences-institute",
+  	"browsable": false,
+  	"name": "Stanford Neurosciences Institute",
+  	"onboarding": false,
+  	"orgCodes": ["AA00"],
+  	"type": "DEPARTMENT"
+  }
+JSON
+
 RSpec.describe Rialto::Etl::Transformer do
   describe 'stanford_organizations_to_sparql_statements' do
     let(:repository) do
@@ -166,8 +177,6 @@ RSpec.describe Rialto::Etl::Transformer do
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['stanford']])
                        .true?
         expect(result).to be true
-
-        # TODO: Test children
 
         # Test parent label/name
         result = client.ask
@@ -313,8 +322,22 @@ RSpec.describe Rialto::Etl::Transformer do
                                  Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['amherst']])
                        .true?
         expect(result).to be true
+      end
+      describe 'add institute' do
+        before do
+          transform(STANFORD_INSTITURE)
+        end
 
-        # TODO: Test change children
+        it 'adds the new org as an institute' do
+          result = client.ask
+                         .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
+                         .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['independent-labs-institutes-and-centers-'\
+                          'dean-of-research/stanford-neurosciences-institute'],
+                                   RDF.type,
+                                   Rialto::Etl::Vocabs::VIVO.Institute])
+                         .true?
+          expect(result).to be true
+        end
       end
     end
   end
