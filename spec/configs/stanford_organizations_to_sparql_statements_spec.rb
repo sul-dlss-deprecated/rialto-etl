@@ -96,7 +96,7 @@ STANFORD_ORGS_UPDATE = <<~JSON
   }
 JSON
 
-STANFORD_INSTITURE = <<~JSON
+STANFORD_INSTITUTE_DEPT = <<~JSON
   {
   	"alias": "independent-labs-institutes-and-centers-dean-of-research/stanford-neurosciences-institute",
   	"browsable": false,
@@ -104,6 +104,17 @@ STANFORD_INSTITURE = <<~JSON
   	"onboarding": false,
   	"orgCodes": ["AA00"],
   	"type": "DEPARTMENT"
+  }
+JSON
+
+STANFORD_INSTITUTE_DIV = <<~JSON
+  {
+  	"alias": "independent-labs-institutes-and-centers-dean-of-research/stanford-neurosciences-institute",
+  	"browsable": false,
+  	"name": "Stanford Neurosciences Institute",
+  	"onboarding": false,
+  	"orgCodes": ["AA00"],
+  	"type": "DIVISION"
   }
 JSON
 
@@ -323,9 +334,25 @@ RSpec.describe Rialto::Etl::Transformer do
                        .true?
         expect(result).to be true
       end
-      describe 'add institute' do
+      describe 'add institute from department' do
         before do
-          transform(STANFORD_INSTITURE)
+          transform(STANFORD_INSTITUTE_DEPT)
+        end
+
+        it 'adds the new org as an institute' do
+          result = client.ask
+                         .from(Rialto::Etl::NamedGraphs::STANFORD_ORGANIZATIONS_GRAPH)
+                         .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['independent-labs-institutes-and-centers-'\
+                          'dean-of-research/stanford-neurosciences-institute'],
+                                   RDF.type,
+                                   Rialto::Etl::Vocabs::VIVO.Institute])
+                         .true?
+          expect(result).to be true
+        end
+      end
+      describe 'add institute from division' do
+        before do
+          transform(STANFORD_INSTITUTE_DIV)
         end
 
         it 'adds the new org as an institute' do
