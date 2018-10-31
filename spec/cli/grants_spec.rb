@@ -8,7 +8,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
   end
 
   let(:args) do
-    ['--input-file', 'data/researchers.csv', '--force', '--dir', dir]
+    ['--input-file', 'data/researchers.csv', '--force', '--input-directory', dir, '--output-directory', dir]
   end
 
   let(:command) { described_class.all_commands['load'] }

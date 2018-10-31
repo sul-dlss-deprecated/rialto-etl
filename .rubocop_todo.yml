@@ -25,3 +25,6 @@ RSpec/MultipleExpectations:
 # URISchemes: http, https
 Metrics/LineLength:
   Max: 133
+
+Metrics/ClassLength:
+  Max: 101

@@ -29,7 +29,7 @@ RSpec.describe Rialto::Etl::CLI::Publications do
 
     context 'with a valid transformer' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--force', '--dir', dir]
+        ['--input-file', 'data/researchers.csv', '--force', '--input-directory', dir, '--output-directory', dir]
       end
 
       before do

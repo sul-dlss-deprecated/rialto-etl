@@ -12,14 +12,18 @@ module Rialto
         option :input_file,
                required: true,
                banner: 'FILENAME',
-               desc: 'Name of file with data to be loaded (REQUIRED)',
+               desc: 'Path to the CSV manifest with researchers to be loaded (REQUIRED)',
                aliases: '-i'
-        option :dir,
-               required: false,
+        option :input_directory,
                default: 'data',
-               banner: 'DIR',
-               desc: 'Name of the directory to store data in',
+               banner: 'INPUT',
+               desc: 'Name of directory with data to be transformed',
                aliases: '-d'
+        option :output_directory,
+               default: 'data',
+               banner: 'OUTPUT',
+               desc: 'Name of directory to write transformed data to',
+               aliases: '-o'
         option :force,
                required: false,
                default: false,
@@ -43,7 +47,7 @@ module Rialto
         desc 'load', 'Extract, load, and transform for all researchers in the CSV file'
 
         def load
-          FileUtils.mkdir_p(options[:dir])
+          FileUtils.mkdir_p(input_directory)
           csv_path = options[:input_file]
           count = 0
           CSV.foreach(csv_path, headers: true, header_converters: :symbol).each_slice(options[:batch_size].to_i) do |rows|
@@ -77,12 +81,20 @@ module Rialto
 
         protected
 
+        def input_directory
+          options.fetch(:input_directory)
+        end
+
+        def output_directory
+          options.fetch(:output_directory)
+        end
+
         def file_prefix
           raise NotImplementedError
         end
 
         def extract(row, profile_id, force)
-          extract_file = File.join(options[:dir], "#{file_prefix}-#{profile_id}.ndj")
+          extract_file = File.join(input_directory, "#{file_prefix}-#{profile_id}.ndj")
           if File.exist?(extract_file) && !force
             say "file #{extract_file} already exists, skipping. use -f to force overwrite"
             return extract_file
@@ -99,7 +111,7 @@ module Rialto
         end
 
         def transform(source_file, profile_id, force)
-          sparql_file = File.join(options[:dir], "#{file_prefix}-#{profile_id}.sparql")
+          sparql_file = File.join(output_directory, "#{file_prefix}-#{profile_id}.sparql")
           if File.exist?(sparql_file) && !force
             say "file #{sparql_file} already exists, skipping. use -f to force overwrite"
             return sparql_file
