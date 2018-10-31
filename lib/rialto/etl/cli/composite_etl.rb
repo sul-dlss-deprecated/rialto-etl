@@ -25,36 +25,41 @@ module Rialto
                desc: 'Name of directory to write transformed data to',
                aliases: '-o'
         option :force,
-               required: false,
                default: false,
                type: :boolean,
                banner: 'FORCE',
                desc: 'Overwrite files that already exist',
                aliases: '-f'
         option :skip_load,
-               required: false,
                default: false,
                type: :boolean,
                banner: 'SKIP_LOAD',
                desc: 'Skip load step'
         option :batch_size,
-               required: false,
                default: 1,
                type: :numeric,
                banner: 'BATCH_SIZE',
                desc: 'Size of batch for parallel processing',
                aliases: '-s'
+        option :offset,
+               default: 0,
+               type: :numeric,
+               banner: 'OFFSET',
+               desc: 'Number of records to offset',
+               aliases: '-n'
+
         desc 'load', 'Extract, load, and transform for all researchers in the CSV file'
 
         def load
           FileUtils.mkdir_p(input_directory)
           csv_path = options[:input_file]
           count = 0
-          CSV.foreach(csv_path, headers: true, header_converters: :symbol).each_slice(options[:batch_size].to_i) do |rows|
-            Parallel.each_with_index(rows, in_processes: rows.length) do |row, index|
-              handle_row(row, count + index + 1)
-            end
+          CSV.foreach(csv_path, headers: true, header_converters: :symbol).each_slice(batch_size) do |rows|
             count += rows.length
+            next if offset > count + rows.length
+            Parallel.each_with_index(rows, in_processes: rows.length) do |row, index|
+              handle_row(row, count - batch_size + index + 1)
+            end
           end
         end
 
@@ -80,6 +85,14 @@ module Rialto
         end
 
         protected
+
+        def offset
+          options.fetch(:offset)
+        end
+
+        def batch_size
+          options.fetch(:batch_size).to_i
+        end
 
         def input_directory
           options.fetch(:input_directory)
