@@ -60,7 +60,9 @@ Notes:
 
 ```
 exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
-exe/publications load -i researchers.csv
+exe/publications load -i researchers.csv \
+  --input-directory ../rialto-sample-data/raw/pubs/via_publications_cli \
+  --output-directory ../rialto-sample-data/mapped/pubs
 ```
 
 #### Authentication
