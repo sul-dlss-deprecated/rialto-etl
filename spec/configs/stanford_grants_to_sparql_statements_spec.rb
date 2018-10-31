@@ -96,6 +96,11 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
   end
 
   before do
+    Settings.entity_resolver.api_key = 'abc123'
+    Settings.entity_resolver.url = 'http://127.0.0.1:3001'
+    # Makes sure Entity Resolver is using above settings.
+    Rialto::Etl::ServiceClient::EntityResolver.instance.initialize_connection
+
     stub_request(:get, 'http://127.0.0.1:3001/organization?name=The%20William%20and%20Flora%20Hewlett%20Foundation')
       .to_return(status: 200,
                  body: organization_uri.to_s,
