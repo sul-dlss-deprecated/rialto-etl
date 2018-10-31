@@ -76,7 +76,7 @@ RSpec.describe Rialto::Etl::CLI::DummyEtl do
 
     context 'with a valid transformer' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--force', '--dir', dir]
+        ['--input-file', 'data/researchers.csv', '--force', '--input-directory', dir, '--output-directory', dir]
       end
 
       before do
@@ -98,7 +98,7 @@ RSpec.describe Rialto::Etl::CLI::DummyEtl do
     end
     context 'when json and sparql files already exist' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--dir', dir]
+        ['--input-file', 'data/researchers.csv', '--input-directory', dir, '--output-directory', dir]
       end
 
       before do
@@ -120,7 +120,7 @@ RSpec.describe Rialto::Etl::CLI::DummyEtl do
     end
     context 'when load is skipped' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--skip-load', '--dir', dir]
+        ['--input-file', 'data/researchers.csv', '--skip-load', '--input-directory', dir, '--output-directory', dir]
       end
 
       before do
