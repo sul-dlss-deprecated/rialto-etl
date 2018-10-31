@@ -540,6 +540,40 @@ RSpec.describe Rialto::Etl::Transformer do
 
       it { is_expected.to eq(1 => { 'country' => 'USA', 'organization' => 'Stanford University' }) }
     end
+    context 'with an address without organizations' do
+      let(:json) do
+        <<~JSON2
+          {
+            "UID": "WOS:000359895400001",
+            "static_data": {
+              "fullrecord_metadata": {
+                "addresses": {
+                  "address_name": [{
+                    "address_spec": {
+                      "zip": {
+          							"location": "AP",
+          							"content": 94305
+          						},
+          						"country": "USA",
+          						"city": "Stanford",
+          						"addr_no": 1,
+          						"full_address": "Stanford Univ, Stanford Cardiovasc Inst, Sch Med, Stanford, CA 94305 USA",
+          						"state": "CA",
+          						"suborganizations": {
+          							"count": 2,
+          							"suborganization": ["Stanford Cardiovasc Inst", "Sch Med"]
+          						}
+                    }
+                  }]
+                }
+              }
+            }
+          }
+        JSON2
+      end
+
+      it { is_expected.to eq(1 => { 'country' => 'USA' }) }
+    end
   end
   describe '#fetch_grant_agencies' do
     subject { indexer.fetch_grant_agencies(json) }

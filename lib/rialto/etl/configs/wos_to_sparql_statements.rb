@@ -32,18 +32,22 @@ def fetch_addresses(json)
   end
 end
 
+# rubocop:disable Metrics/MethodLength
 def parse_address(addr)
   result = addr.slice('country')
-  org = addr.fetch('organizations').fetch('organization')
-  label = case org
-          when String
-            org
-          when Array
-            org.find { |o| o['pref'] == 'Y' }['content']
-          end
-  result['organization'] = label
+  if addr.key?('organizations')
+    org = addr.fetch('organizations').fetch('organization')
+    label = case org
+            when String
+              org
+            when Array
+              org.find { |o| o['pref'] == 'Y' }['content']
+            end
+    result['organization'] = label
+  end
   result
 end
+# rubocop:enable Metrics/MethodLength
 
 # Find the grants
 def fetch_grant_agencies(json)
