@@ -8,7 +8,7 @@ require 'rialto/etl/namespaces'
 
 STANFORD_GRANTS_INSERT1 = <<~JSON
   {
-    "spoNumber": "12345",
+    "spoNumber": "12345-A",
     "projectTitle": "The Effects of Commas on Sentences",
     "projectStartDate": "2017-07-01T00:00:00.000-07:00",
     "projectEndDate": "2018-11-01T00:00:00.000-07:00",
@@ -30,7 +30,7 @@ JSON
 
 STANFORD_GRANTS_ADD_AND_DELETE1 = <<~JSON
   {
-    "spoNumber": "12345",
+    "spoNumber": "12345-A",
     "projectTitle": "The Effects of Commas on Sentences",
     "projectStartDate": "2017-07-01T00:00:00.000-07:00",
     "projectEndDate": "2018-11-01T00:00:00.000-07:00",
@@ -52,7 +52,7 @@ JSON
 
 STANFORD_GRANTS_UPDATE1 = <<~JSON
   {
-    "spoNumber": "12345",
+    "spoNumber": "12345-A",
     "projectTitle": "The Effects of Commas on Sentences: Take Two",
     "projectStartDate": "2017-07-02T00:00:00.000-07:00",
     "projectEndDate": "2018-11-02T00:00:00.000-07:00",
@@ -154,23 +154,41 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Grant URI correct
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'], :p, :o])
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'], :p, :o])
                      .true?
       expect(result).to be true
 
       # Test title
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                RDF::Vocab::SKOS.prefLabel,
                                'The Effects of Commas on Sentences'])
+                     .true?
+      expect(result).to be true
+
+      # Test bare identifier
+      result = client.ask
+                     .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
+                               RDF::Vocab::DC.identifier,
+                               '12345-A'])
+                     .true?
+      expect(result).to be true
+
+      # Test normalized identifier
+      result = client.ask
+                     .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
+                               RDF::Vocab::DC.identifier,
+                               '12345a'])
                      .true?
       expect(result).to be true
 
       # Test start date
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::FRAPO.hasStartDate,
                                RDF::Literal::Date.new('2017-07-01')])
                      .true?
@@ -179,7 +197,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Test end date
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::FRAPO.hasEndDate,
                                RDF::Literal::Date.new('2018-11-01')])
                      .true?
@@ -188,7 +206,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Test grant sponsor URI
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::VIVO.assignedBy,
                                organization_uri])
                      .true?
@@ -197,7 +215,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Test grant relationship to PI (person)
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::VIVO.relates,
                                RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678')])
                      .true?
@@ -206,42 +224,42 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
                      .whether([RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678'),
                                Rialto::Etl::Vocabs::VIVO.relatedBy,
-                               Rialto::Etl::Vocabs::RIALTO_GRANTS['12345']])
+                               Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A']])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
                      .whether([RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678'),
                                Rialto::Etl::Vocabs::OBO.RO_0000053,
-                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345_12345678')])
+                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678')])
                      .true?
       expect(result).to be true
 
       # Test grant relationship to PI (role)
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::VIVO.relates,
-                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345_12345678')])
+                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678')])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345_12345678'),
+                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678'),
                                Rialto::Etl::Vocabs::VIVO.relatedBy,
-                               Rialto::Etl::Vocabs::RIALTO_GRANTS['12345']])
+                               Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A']])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345_12345678'),
+                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678'),
                                Rialto::Etl::Vocabs::OBO.RO_0000052,
                                RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678')])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345_12345678'),
+                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678'),
                                RDF.type,
                                Rialto::Etl::Vocabs::VIVO.PrincipalInvestigatorRole])
                      .true?
@@ -253,7 +271,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
     let(:json) do
       <<~JSON
         {
-          "spoNumber": "12345",
+          "spoNumber": "12345-A",
           "projectTitle": "The Effects of Commas on Sentences",
           "projectStartDate": null,
           "projectEndDate": null,
@@ -297,7 +315,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Test title change
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                RDF::Vocab::SKOS.prefLabel,
                                'The Effects of Commas on Sentences: Take Two'])
                      .true?
@@ -306,7 +324,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Test start date change
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::FRAPO.hasStartDate,
                                RDF::Literal::Date.new('2017-07-02')])
                      .true?
@@ -315,7 +333,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Test end date change
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::FRAPO.hasEndDate,
                                RDF::Literal::Date.new('2018-11-02')])
                      .true?
@@ -324,7 +342,7 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
       # Test grant sponsor URI change
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345'],
+                     .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::VIVO.assignedBy,
                                updated_organization_uri])
                      .true?

@@ -54,6 +54,7 @@ module Rialto
         term :University
 
         property :assignedBy
+        property :hasFundingVehicle
         property :hrJobTitle
         property :informationResourceSupportedBy
         property :overview

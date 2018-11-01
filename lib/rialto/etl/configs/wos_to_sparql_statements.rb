@@ -4,8 +4,9 @@ require 'digest'
 require 'traject_plus'
 require 'rialto/etl/readers/ndjson_reader'
 require 'rialto/etl/writers/sparql_statement_writer'
-require 'rialto/etl/transformers/people'
 require 'rialto/etl/transformers/addresses'
+require 'rialto/etl/transformers/grants'
+require 'rialto/etl/transformers/people'
 require 'active_support/core_ext/array/wrap'
 require 'rialto/etl/namespaces'
 
@@ -49,13 +50,20 @@ def parse_address(addr)
 end
 # rubocop:enable Metrics/MethodLength
 
-# Find the grants
+# Find the grant agencies
 def fetch_grant_agencies(json)
   agencies = Array.wrap(JsonPath.on(json, '$.static_data.fullrecord_metadata.fund_ack.grants.grant').first).map do |grant|
     next if grant['grant_agency'].empty?
     grant['grant_agency']
   end
   agencies.compact
+end
+
+# Find the grant identifiers
+def fetch_grant_identifiers(json)
+  Array.wrap(
+    JsonPath.on(json, '$.static_data.fullrecord_metadata.fund_ack.grants.grant[*].grant_ids.grant_id').flatten
+  ).reject { |id| id.empty? || id.nil? }
 end
 
 # Return the names of the publishers
@@ -193,9 +201,18 @@ to_field RDF::Vocab::DC.created.to_s, lambda { |json, accumulator|
   accumulator << RDF::Literal::Date.new(JsonPath.on(json, '$.static_data.summary.pub_info.sortdate').first)
 }, single: true
 
+to_field "!#{VIVO.informationResourceSupportedBy}", literal(true), single: true
 to_field VIVO.informationResourceSupportedBy.to_s, lambda { |json, accumulator|
   grant_agencies = fetch_grant_agencies(json)
   accumulator << grant_agencies.map do |agency|
     Rialto::Etl::Transformers::Organizations.resolve_or_construct_org(org_name: agency)
   end
+}, single: true
+
+to_field "!#{VIVO.hasFundingVehicle}", literal(true), single: true
+to_field VIVO.hasFundingVehicle.to_s, lambda { |json, accumulator|
+  grant_identifiers = fetch_grant_identifiers(json)
+  accumulator << grant_identifiers.map do |identifier|
+    Rialto::Etl::Transformers::Grants.resolve_grant(grant_identifier: identifier)
+  end.compact
 }, single: true

@@ -4,6 +4,7 @@ require 'traject_plus'
 require 'rialto/etl/readers/ndjson_reader'
 require 'rialto/etl/writers/sparql_statement_writer'
 require 'rialto/etl/namespaces'
+require 'rialto/etl/transformers/identifiers'
 require 'rialto/etl/transformers/people'
 require 'rialto/etl/logging'
 
@@ -28,6 +29,14 @@ to_field '!' + RDF::Vocab::RDFS.label.to_s, literal(true)
 to_field RDF::Vocab::RDFS.label.to_s, extract_json('$.projectTitle'), single: true
 to_field '!' + RDF::Vocab::SKOS.prefLabel.to_s, literal(true)
 to_field RDF::Vocab::SKOS.prefLabel.to_s, extract_json('$.projectTitle'), single: true
+
+to_field '!' + RDF::Vocab::DC.identifier.to_s, literal(true)
+to_field RDF::Vocab::DC.identifier.to_s, lambda { |json, accum|
+  # Persist both the original grant identifier and a normalized form
+  # This allows easier grant resolution from WoS data.
+  accum << json['spoNumber']
+  accum << Rialto::Etl::Transformers::Identifiers.normalize(identifier: json['spoNumber'])
+}
 
 to_field '!' + FRAPO.hasStartDate.to_s, literal(true)
 to_field FRAPO.hasStartDate.to_s, lambda { |json, accum|

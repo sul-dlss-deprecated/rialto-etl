@@ -32,6 +32,24 @@ RSpec.describe Rialto::Etl::Transformer do
       SPARQL::Client.new(repository)
     end
 
+    before do
+      stub_request(:get, 'http://127.0.0.1:3001/grant?identifier=LM05652')
+        .with(headers: { 'X-Api-Key' => 'abc123' })
+        .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/grants/LM05652')
+
+      stub_request(:get, 'http://127.0.0.1:3001/grant?identifier=GM61374')
+        .with(headers: { 'X-Api-Key' => 'abc123' })
+        .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/grants/GM61374')
+
+      stub_request(:get, 'http://127.0.0.1:3001/grant?identifier=U01FD004979')
+        .with(headers: { 'X-Api-Key' => 'abc123' })
+        .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/grants/U01FD004979')
+
+      stub_request(:get, 'http://127.0.0.1:3001/grant?identifier=GM102365')
+        .with(headers: { 'X-Api-Key' => 'abc123' })
+        .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/grants/GM102365')
+    end
+
     def transform(source_file)
       statements_io = StringIO.new
 
@@ -189,6 +207,28 @@ RSpec.describe Rialto::Etl::Transformer do
             Rialto::Etl::Vocabs::VIVO.informationResourceSupportedBy,
             Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['national_institutes_of_health'],
             graph]]
+        )
+
+        # Has associated grants
+        expect(repository).to has_quads(
+          [
+            [id,
+             Rialto::Etl::Vocabs::VIVO.hasFundingVehicle,
+             Rialto::Etl::Vocabs::RIALTO_GRANTS['LM05652'],
+             graph],
+            [id,
+             Rialto::Etl::Vocabs::VIVO.hasFundingVehicle,
+             Rialto::Etl::Vocabs::RIALTO_GRANTS['GM61374'],
+             graph],
+            [id,
+             Rialto::Etl::Vocabs::VIVO.hasFundingVehicle,
+             Rialto::Etl::Vocabs::RIALTO_GRANTS['U01FD004979'],
+             graph],
+            [id,
+             Rialto::Etl::Vocabs::VIVO.hasFundingVehicle,
+             Rialto::Etl::Vocabs::RIALTO_GRANTS['GM102365'],
+             graph]
+          ]
         )
       end
       it 'is inserted with author triples' do
