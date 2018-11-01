@@ -13,7 +13,8 @@ STANFORD_GRANTS_INSERT1 = <<~JSON
     "projectStartDate": "2017-07-01T00:00:00.000-07:00",
     "projectEndDate": "2018-11-01T00:00:00.000-07:00",
     "directSponsorName": "The William and Flora Hewlett Foundation",
-    "piEmployeeId": "12345678"
+    "piFullName": "Giarlo, Michael J.",
+    "piSunetId": "mjgiarlo"
   }
 JSON
 
@@ -24,7 +25,8 @@ STANFORD_GRANTS_INSERT2 = <<~JSON
     "projectStartDate": "2017-08-15T00:00:00.000-07:00",
     "projectEndDate": "2018-10-01T00:00:00.000-07:00",
     "directSponsorName": "The Foundation for Generous Funding",
-    "piEmployeeId": "87654321"
+    "piFullName": "Collier, Aaron M.",
+    "piSunetId": "amcollie"
   }
 JSON
 
@@ -35,7 +37,8 @@ STANFORD_GRANTS_ADD_AND_DELETE1 = <<~JSON
     "projectStartDate": "2017-07-01T00:00:00.000-07:00",
     "projectEndDate": "2018-11-01T00:00:00.000-07:00",
     "directSponsorName": "The William and Flora Hewlett Foundation",
-    "piEmployeeId": "12345678"
+    "piFullName": "Giarlo, Michael J.",
+    "piSunetId": "mjgiarlo"
   }
 JSON
 
@@ -46,7 +49,8 @@ STANFORD_GRANTS_ADD_AND_DELETE2 = <<~JSON
     "projectStartDate": "2017-07-15T00:00:00.000-07:00",
     "projectEndDate": "2018-12-01T00:00:00.000-07:00",
     "directSponsorName": "The Beverly M. F. Hills Society of Southern California",
-    "piEmployeeId": "90210000"
+    "piFullName": "Coyne, Justin M.",
+    "piSunetId": "jcoyne85"
   }
 JSON
 
@@ -57,7 +61,8 @@ STANFORD_GRANTS_UPDATE1 = <<~JSON
     "projectStartDate": "2017-07-02T00:00:00.000-07:00",
     "projectEndDate": "2018-11-02T00:00:00.000-07:00",
     "directSponsorName": "The William & Flora Hewlett Foundation",
-    "piEmployeeId": "12345678"
+    "piFullName": "Giarlo, Michael J.",
+    "piSunetId": "mjgiarlo"
   }
 JSON
 
@@ -68,7 +73,8 @@ STANFORD_GRANTS_UPDATE2 = <<~JSON
     "projectStartDate": "2017-08-15T00:00:00.000-07:00",
     "projectEndDate": "2018-10-01T00:00:00.000-07:00",
     "directSponsorName": "The Foundation for Generous Funding",
-    "piEmployeeId": "87654321"
+    "piFullName": "Collier, Aaron M.",
+    "piSunetId": "amcollie"
   }
 JSON
 
@@ -95,6 +101,18 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
     RDF::URI('http://sul.stanford.edu/rialto/agents/orgs/the_william_flora_hewlett_foundation')
   end
 
+  let(:mjgiarlo_uri) do
+    RDF::URI('http://sul.stanford.edu/rialto/agents/people/71484')
+  end
+
+  let(:amcollie_uri) do
+    RDF::URI('http://sul.stanford.edu/rialto/agents/people/182682')
+  end
+
+  let(:jcoyne_uri) do
+    RDF::URI('http://sul.stanford.edu/rialto/agents/people/74784')
+  end
+
   before do
     Settings.entity_resolver.api_key = 'abc123'
     Settings.entity_resolver.url = 'http://127.0.0.1:3001'
@@ -119,6 +137,21 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
     stub_request(:get, 'http://127.0.0.1:3001/organization?name=The%20William%20%26%20Flora%20Hewlett%20Foundation')
       .to_return(status: 200,
                  body: updated_organization_uri.to_s,
+                 headers: {})
+
+    stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Michael%20J.&last_name=Giarlo&sunetid=mjgiarlo')
+      .to_return(status: 200,
+                 body: mjgiarlo_uri.to_s,
+                 headers: {})
+
+    stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Aaron%20M.&last_name=Collier&sunetid=amcollie')
+      .to_return(status: 200,
+                 body: amcollie_uri.to_s,
+                 headers: {})
+
+    stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Justin%20M.&last_name=Coyne&sunetid=jcoyne85')
+      .to_return(status: 200,
+                 body: jcoyne_uri.to_s,
                  headers: {})
   end
 
@@ -217,21 +250,21 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
                      .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::VIVO.relates,
-                               RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678')])
+                               mjgiarlo_uri])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678'),
+                     .whether([mjgiarlo_uri,
                                Rialto::Etl::Vocabs::VIVO.relatedBy,
                                Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A']])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678'),
+                     .whether([mjgiarlo_uri,
                                Rialto::Etl::Vocabs::OBO.RO_0000053,
-                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678')])
+                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_mjgiarlo')])
                      .true?
       expect(result).to be true
 
@@ -240,26 +273,26 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
                      .whether([Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A'],
                                Rialto::Etl::Vocabs::VIVO.relates,
-                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678')])
+                               RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_mjgiarlo')])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678'),
+                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_mjgiarlo'),
                                Rialto::Etl::Vocabs::VIVO.relatedBy,
                                Rialto::Etl::Vocabs::RIALTO_GRANTS['12345-A']])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678'),
+                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_mjgiarlo'),
                                Rialto::Etl::Vocabs::OBO.RO_0000052,
-                               RDF::URI('http://sul.stanford.edu/rialto/agents/people/12345678')])
+                               mjgiarlo_uri])
                      .true?
       expect(result).to be true
       result = client.ask
                      .from(Rialto::Etl::NamedGraphs::STANFORD_GRANTS_GRAPH)
-                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_12345678'),
+                     .whether([RDF::URI('http://sul.stanford.edu/rialto/context/roles/12345-A_mjgiarlo'),
                                RDF.type,
                                Rialto::Etl::Vocabs::VIVO.PrincipalInvestigatorRole])
                      .true?
@@ -276,7 +309,8 @@ RSpec.describe 'stanford_grants_to_sparql_statements' do
           "projectStartDate": null,
           "projectEndDate": null,
           "directSponsorName": "The William and Flora Hewlett Foundation",
-          "piEmployeeId": "12345678"
+          "piFullName": "Giarlo, Michael J.",
+          "piSunetId": "mjgiarlo"
         }
       JSON
     end

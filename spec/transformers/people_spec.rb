@@ -260,6 +260,7 @@ RSpec.describe Rialto::Etl::Transformers::People do
       )
     end
   end
+
   describe '.resolve_or_construct_person' do
     subject(:person) do
       described_class.resolve_or_construct_person(given_name: given_name,
@@ -272,21 +273,23 @@ RSpec.describe Rialto::Etl::Transformers::People do
     let(:family_name) { 'Littman' }
 
     context 'when organization resolved' do
-      let(:addl_params) { nil }
+      let(:addl_params) { {} }
 
       before do
         stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Justin&last_name=Littman')
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/123')
       end
+
       it 'returns resolved person' do
         expect(person).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123']
         )
       end
     end
+
     context 'when person resolved' do
-      let(:addl_params) { nil }
+      let(:addl_params) { {} }
 
       before do
         stub_request(:get, 'http://127.0.0.1:3001/person?first_name=Justin&last_name=Littman')
@@ -321,6 +324,7 @@ RSpec.describe Rialto::Etl::Transformers::People do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/people/123')
       end
+
       it 'returns resolved person' do
         expect(person).to eq(
           '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE['123']
