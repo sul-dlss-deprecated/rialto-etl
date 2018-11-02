@@ -63,7 +63,7 @@ end
 def fetch_grant_identifiers(json)
   Array.wrap(
     JsonPath.on(json, '$.static_data.fullrecord_metadata.fund_ack.grants.grant[*].grant_ids.grant_id').flatten
-  ).reject { |id| id.empty? || id.nil? }
+  ).reject { |id| id.to_s.empty? || id.nil? }.map(&:to_s)
 end
 
 # Return the names of the publishers
