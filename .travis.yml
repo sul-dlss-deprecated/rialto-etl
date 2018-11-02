@@ -12,7 +12,7 @@ bundler_args: --without debug
 
 env:
   global:
-    - CC_TEST_REPORTER_ID=a4d38091b68203a6cff44ff22c58cba78bc62e8207b16112d03e8c1fd345b3c5
+    - CC_TEST_REPORTER_ID=ca075549329bb91a4e26b08cbd823b834e9f34ac89fa7ac5d7f9f6ba3c042c3f
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
