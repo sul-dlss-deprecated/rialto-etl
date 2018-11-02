@@ -694,4 +694,92 @@ RSpec.describe Rialto::Etl::Transformer do
       it { is_expected.to eq(['National Institute of Diabetes and Digestive and Kidney Diseases']) }
     end
   end
+  describe '#fetch_grant_identifiers' do
+    subject { indexer.fetch_grant_identifiers(json) }
+
+    let(:indexer) do
+      Traject::Indexer.new.tap do |indexer|
+        indexer.load_config_file(config_file_path)
+      end
+    end
+
+    context 'with an string grant identifiers' do
+      let(:json) do
+        <<~JSON
+          {
+          	"UID": "WOS:000359895400001",
+          	"static_data": {
+          		"fullrecord_metadata": {
+                "fund_ack": {
+                  "grants": {
+                    "count": 3,
+                    "grant": [{
+                      "grant_ids": {
+                        "grant_id": ["U01DK073983", "U01DK073983"],
+                        "count": 6
+                      }
+                    }, {
+                      "grant_ids": {
+                        "grant_id": "DK57061",
+                        "count": 1
+                      }
+                    }, {
+                      "grant_ids": {
+                        "grant_id": "PO1 DK68055",
+                        "count": 1
+                      }
+                    }]
+                  }
+                }
+          		}
+          	}
+          }
+        JSON
+      end
+
+      it {
+        is_expected.to eq(['U01DK073983', 'U01DK073983', 'DK57061', 'PO1 DK68055'])
+      }
+    end
+    context 'with an integer grant identifiers' do
+      let(:json) do
+        <<~JSON
+          {
+          	"UID": "WOS:000359895400001",
+          	"static_data": {
+          		"fullrecord_metadata": {
+                "fund_ack": {
+                  "grants": {
+                    "count": 3,
+                    "grant": [{
+                      "grant_ids": {
+                        "grant_id": [1019921, 1019922],
+                        "count": 6
+                      }
+                    }, {
+                      "grant_ids": {
+                        "grant_id": 1019923,
+                        "count": 1
+                      }
+                    }, {
+                      "grant_ids": {
+                        "grant_id": 1019924,
+                        "count": 1
+                      }
+                    }]
+                  }
+                }
+          		}
+          	}
+          }
+        JSON
+      end
+
+      it {
+        # rubocop:disable Style/WordArray
+        is_expected.to eq(['1019921', '1019922', '1019923', '1019924'])
+        # rubocop:enable Style/WordArray
+      }
+    end
+  end
 end
