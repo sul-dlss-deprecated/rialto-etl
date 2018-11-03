@@ -120,7 +120,7 @@ to_field "!#{RDF::Vocab::BIBO.doi}", literal(true), single: true
 to_field RDF::Vocab::BIBO.doi.to_s, lambda { |json, accumulator|
   doi = JsonPath.on(json, '$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=="doi")].value').first ||
         JsonPath.on(json, '$.dynamic_data.cluster_related.identifiers.identifier[?(@.type=="xref_doi")].value').first
-  accumulator << RDF::URI("http://dx.doi.org/#{doi}") if doi
+  accumulator << RDF::URI("https://doi.org/#{doi}") if doi
 }, single: true
 
 to_field "!#{VIVO.relatedBy}", literal(true), single: true
