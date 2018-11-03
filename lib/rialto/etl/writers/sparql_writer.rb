@@ -132,7 +132,7 @@ module Rialto
         def connection_headers
           {
             'X-Api-Key' => Settings.sparql_writer.api_key,
-            'Content-Type' => 'application/sparql-update'
+            'Content-Type' => 'application/sparql-update; charset=utf-8'
           }
         end
       end
