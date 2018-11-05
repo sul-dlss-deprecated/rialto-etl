@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
-  subject(:client) { described_class.new(firstname: 'Tom', lastname: 'Cramer', institution: 'Stanford University') }
+  subject(:client) { described_class.new(first_name: 'Tom', last_name: 'Cramer', institution: 'Stanford University') }
 
   let(:api_response) { '{}' }
   let(:records_found) { 1 }

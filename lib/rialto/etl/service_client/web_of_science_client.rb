@@ -13,13 +13,13 @@ module Rialto
         DEFAULT_QUERY_ID = 0
         NO_RECORDS_FOUND = 0
 
-        def initialize(firstname:, lastname:, institution:)
-          @lastname = lastname
-          @firstname = firstname
+        def initialize(first_name:, last_name:, institution:)
+          @last_name = last_name
+          @first_name = first_name
           @institution = institution
         end
 
-        attr_reader :lastname, :firstname, :institution
+        attr_reader :last_name, :first_name, :institution
 
         # Hit the API endpoint and iterate over resulting records
         def each
@@ -64,7 +64,7 @@ module Rialto
 
         # @return [String] path for the user query
         def user_query_path
-          usr_query = "AU=\"#{lastname},#{firstname}\" AND OG=#{institution}"
+          usr_query = "AU=\"#{last_name},#{first_name}\" AND OG=#{institution}"
           params = USER_QUERY_PARAMS.merge(firstRecord: 1, count: 1, usrQuery: usr_query)
           build_uri(path: USER_QUERY_PATH, params: params)
         end

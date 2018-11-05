@@ -16,6 +16,7 @@ end
 
 require 'rialto/etl'
 require 'rialto/etl/cli'
+require 'sidekiq/testing'
 require 'webmock/rspec'
 
 RSpec.configure do |config|
@@ -23,6 +24,9 @@ RSpec.configure do |config|
   config.order = :random
   Kernel.srand config.seed
 end
+
+# Do not queue jobs; run them synchronously
+Sidekiq::Testing.inline!
 
 # Require supporting ruby files from spec/support/ and subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }

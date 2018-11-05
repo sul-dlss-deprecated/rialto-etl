@@ -12,6 +12,7 @@ RIALTO-ETL is a set of ETL tools for RIALTO, Stanford Libraries' research intell
 ## Dependencies
 
 - Ruby >= 2.5.0
+- Redis
 
 ## Usage
 
@@ -38,29 +39,38 @@ exe/transform call StanfordPeople -i researchers.ndj > researchers.sparql
 exe/load call Sparql -i researchers.sparql
 ```
 
+### Composite ETL
 
-### Pipeline to harvest Grants from Stanford SeRA API
+The composite ETL tools take a single CSV file as input and work in batches, allowing you to run extracts, transforms, and loads. To run the composite ETL command-line tools, you will need the following:
 
-Notes:
-* The transform step depends on `researchers.ndj` from the researcher pipeline
-* Extracting will be sped up by setting a batch size with `-s`.
-* The following steps are a way to streamline doing full ETL. If you need to run the transform and load on already extracted  grant data, you can run them independently via `exe/transform call StanfordGrants -i my_extracted_grant_file.json > my_transformed_grant_file.sparql` and `exe/load call Sparql -i my_transformed_grant_file.sparql`.
+* A running Redis instance
+* A running Sidekiq instance (use `sidekiq -r ./lib/rialto/etl/workers/composite_etl_handler.rb`)
+* The `researchers.ndj` file from the researcher pipeline above
+* A CSV file representing all the researchers (use `exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv` to generate the CSV)
+
+Note the following:
+
+* Extracting and transforming will be sped up by setting a batch size with `-s`.
+* The extract step can be skipped with the `--skip-extract` flag.
+* The load step can be skipped with the `--skip-load` flag.
+* The extract and transform steps will be skipped if the files already exist. Use the `--force`/`-f` flag to overwrite files.
+
+See the output of `exe/grants help load` to see more of the available CLI options.
+
+#### Pipeline to harvest Grants from Stanford SeRA API
+
+Note that the composite grant CLI is a way to streamline doing full grant ETL. If you need to run the transform and load on already extracted grant data, you can run them independently via `exe/transform call StanfordGrants -i my_extracted_grant_file.json > my_transformed_grant_file.sparql` and `exe/load call Sparql -i my_transformed_grant_file.sparql`.
 
 ```
-exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
 exe/grants load -s 3 -i researchers.csv
 ```
 
-### Pipeline to harvest Publications from Web of Science
-Notes:
-* The transform step depends on `researchers.ndj` from researcher pipeline.
-* The load step can be skipped with the `--skip-load` flag.
-* The extract and transform steps will be skipped if the files already exist. Use the `--force`/`-f` flag to overwrite files.
-* The following steps are a way to streamline doing full ETL. If you need to run the transform and load on already extracted  publication data, you can run them independently via `exe/transform call WebOfScience -i my_extracted_publication_file.ndj > my_transformed_publication_file.sparql` and `exe/load call Sparql -i my_transformed_publication_file.sparql`.
+#### Pipeline to harvest Publications from Web of Science
+
+Note that the composite publication CLI is a way to streamline doing full ETL. If you need to run the transform and load on already extracted  publication data, you can run them independently via `exe/transform call WebOfScience -i my_extracted_publication_file.ndj > my_transformed_publication_file.sparql` and `exe/load call Sparql -i my_transformed_publication_file.sparql`.
 
 ```
-exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
-exe/publications load -i researchers.csv \
+exe/publications load -s 6 -i researchers.csv \
   --input-directory ../rialto-sample-data/raw/pubs/via_publications_cli \
   --output-directory ../rialto-sample-data/mapped/pubs
 ```

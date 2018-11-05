@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Rialto::Etl::CLI::Grants do
+RSpec.describe Rialto::Etl::CLI::Publications do
   subject(:loader) { described_class.new([], args, conf) }
 
   let(:command) { described_class.all_commands['load'] }
@@ -34,18 +34,18 @@ RSpec.describe Rialto::Etl::CLI::Grants do
     before do
       allow(Rialto::Etl::Loaders::Sparql).to receive(:new).and_return(double(load: true))
       allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
-      allow(Rialto::Etl::Extractors::Sera).to receive(:new).and_return(['foo'])
+      allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return(['foo'])
       allow(File).to receive(:exist?).and_return(true)
       allow(File).to receive(:empty?).and_return(false)
     end
 
     it 'calls extract, transform, and load' do
       loader.invoke_command(command)
-      expect(Rialto::Etl::Extractors::Sera).to have_received(:new)
-        .with(sunetid: 'vjarrett')
+      expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new)
+        .with(first_name: 'Valerie', last_name: 'Jarrett')
       expect(Rialto::Etl::Transformer).to have_received(:new).once
       expect(Rialto::Etl::Loaders::Sparql).to have_received(:new)
-        .with(input: "#{dir}/sera-123.sparql")
+        .with(input: "#{dir}/wos-123.sparql")
     end
     # rubocop:enable RSpec/VerifiedDoubles
   end

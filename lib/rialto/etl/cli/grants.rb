@@ -10,23 +10,18 @@ module Rialto
       # Grants iterates over the people in the input file CSV and for each
       # calls extract, transform, and load.
       class Grants < CompositeEtl
-        protected
+        private
 
         def file_prefix
           'sera'
         end
 
-        def perform_extract(row)
-          results = []
-          if (sunetid = row[:sunetid])
-            Rialto::Etl::Extractors::Sera.new(sunetid: sunetid).each do |result|
-              results << result
-            end
-          end
-          results
-        rescue StandardError => exception
-          say "aborting #{sunetid}, failed with #{exception.class}: #{exception.message}"
-          []
+        def extractor_class
+          'Rialto::Etl::Extractors::Sera'
+        end
+
+        def extractor_args
+          ['sunetid']
         end
 
         def transformer_config

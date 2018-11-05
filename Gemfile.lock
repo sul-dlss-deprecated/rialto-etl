@@ -101,7 +101,7 @@ GEM
     json-ld (3.0.2)
       multi_json (~> 1.12)
       rdf (>= 2.2.8, < 4.0)
-    jsonpath (0.9.5)
+    jsonpath (0.9.6)
       multi_json
       to_regexp (~> 0.2.1)
     jwt (2.1.0)
@@ -135,6 +135,8 @@ GEM
       pry (~> 0.10)
     public_suffix (3.0.3)
     rack (2.0.5)
+    rack-protection (2.0.4)
+      rack
     rainbow (3.0.0)
     rake (12.3.1)
     rdf-aggregate-repo (2.2.1)
@@ -143,6 +145,7 @@ GEM
       rdf (~> 3.0)
     rdf-xsd (3.0.1)
       rdf (~> 3.0)
+    redis (4.0.3)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -169,6 +172,10 @@ GEM
     ruby-progressbar (1.10.0)
     safe_yaml (1.0.4)
     scrub_rb (1.0.1)
+    sidekiq (5.2.2)
+      connection_pool (~> 2.2, >= 2.2.2)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.5, < 5)
     simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
@@ -242,6 +249,7 @@ DEPENDENCIES
   rubocop (~> 0.58.0)
   rubocop-rspec (~> 1.21.0)
   ruby-progressbar
+  sidekiq
   simplecov
   sparql
   sparql-client (~> 3.0)

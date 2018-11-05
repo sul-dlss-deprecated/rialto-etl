@@ -10,18 +10,18 @@ module Rialto
       # Publications iterates over the people in the input file CSV and for each
       # calls extract, transform, and load.
       class Publications < CompositeEtl
-        protected
+        private
 
         def file_prefix
           'wos'
         end
 
-        def perform_extract(row)
-          results = []
-          Rialto::Etl::Extractors::WebOfScience.new(firstname: row[:first_name], lastname: row[:last_name]).each do |result|
-            results << result
-          end
-          results
+        def extractor_class
+          'Rialto::Etl::Extractors::WebOfScience'
+        end
+
+        def extractor_args
+          %w[first_name last_name]
         end
 
         def transformer_config
