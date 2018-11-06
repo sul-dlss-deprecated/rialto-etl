@@ -35,6 +35,11 @@ group :development, :test do
   gem 'webmock'
 end
 
+group :development do
+  gem 'capistrano-bundler', '~> 1.4'
+  gem 'dlss-capistrano', '~> 3.4'
+end
+
 # These dependencies are excluded on Travis-CI
 group :debug do
   gem 'pry'
