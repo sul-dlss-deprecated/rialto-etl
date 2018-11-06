@@ -17,7 +17,7 @@ gem 'faraday_middleware'
 gem 'httpclient'
 gem 'json-ld'
 gem 'parallel'
-gem 'rdf', github: 'ruby-rdf/rdf', branch: 'develop'
+gem 'rdf', '>= 3.0.6' # this version has a mutex around URI minting.
 gem 'rdf-vocab'
 gem 'ruby-progressbar'
 gem 'sparql'

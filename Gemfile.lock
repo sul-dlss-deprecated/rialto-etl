@@ -9,15 +9,6 @@ GIT
       multi_xml (~> 0.5)
       rack (>= 1.2, < 3)
 
-GIT
-  remote: https://github.com/ruby-rdf/rdf.git
-  revision: f8e0726b6287843bfb15c277d7324c6630674b53
-  branch: develop
-  specs:
-    rdf (3.0.5)
-      hamster (~> 3.0)
-      link_header (~> 0.0, >= 0.0.8)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -137,6 +128,9 @@ GEM
     rack (2.0.5)
     rainbow (3.0.0)
     rake (12.3.1)
+    rdf (3.0.6)
+      hamster (~> 3.0)
+      link_header (~> 0.0, >= 0.0.8)
     rdf-aggregate-repo (2.2.1)
       rdf (>= 2.2, < 4.0)
     rdf-vocab (3.0.3)
@@ -236,7 +230,7 @@ DEPENDENCIES
   pry
   pry-byebug
   rake (~> 12.0)
-  rdf!
+  rdf (>= 3.0.6)
   rdf-vocab
   rspec (~> 3.0)
   rubocop (~> 0.58.0)
