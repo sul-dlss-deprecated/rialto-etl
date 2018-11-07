@@ -2,13 +2,13 @@
 
 require 'csv'
 require 'fileutils'
-require 'parallel'
+require 'time'
 
 module Rialto
   module Etl
     module CLI
       # Superclass for iterating over the people in the input file CSV and performing extract, transform, and load.
-      # rubocop:disable Metrics/ClassLength
+      # rubocop: disable Metrics/ClassLength
       class CompositeEtl < Thor
         option :input_file,
                required: true,
@@ -36,12 +36,12 @@ module Rialto
                type: :boolean,
                banner: 'SKIP_LOAD',
                desc: 'Skip load step'
-        option :batch_size,
+        option :threads,
                default: 1,
                type: :numeric,
-               banner: 'BATCH_SIZE',
-               desc: 'Size of batch for parallel processing',
-               aliases: '-s'
+               banner: 'THREADS',
+               desc: 'Number of threads',
+               aliases: '-t'
         option :offset,
                default: 0,
                type: :numeric,
@@ -51,20 +51,43 @@ module Rialto
 
         desc 'load', 'Extract, load, and transform for all researchers in the CSV file'
 
+        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable Metrics/AbcSize
         def load
+          start = Time.now
           FileUtils.mkdir_p(input_directory)
-          csv_path = options[:input_file]
-          count = 0
-          CSV.foreach(csv_path, headers: true, header_converters: :symbol).each_slice(batch_size) do |rows|
-            count += rows.length
-            next if offset > count + rows.length
-            Parallel.each_with_index(rows, in_processes: rows.length) do |row, index|
-              handle_row(row, count - batch_size + index + 1)
+          queue = Queue.new
+          threads = Array.new(options[:threads]) { handle_row_thread(queue) }
+          CSV.foreach(options[:input_file], headers: true, header_converters: :symbol).each_with_index do |row, count|
+            if offset && count < offset - 1
+              puts "Skipping #{count + 1}"
+              next
             end
+            queue.push([row, count + 1])
           end
+          queue.close
+          threads.each(&:join)
+          puts "Completed in #{Time.now - start} seconds"
         end
+        # rubocop:enable Metrics/MethodLength
+        # rubocop:enable Metrics/AbcSize
 
         no_commands do
+          def handle_row_thread(queue)
+            Thread.new do
+              until queue.empty? && queue.closed?
+                begin
+                  row, count = queue.pop(true)
+                  handle_row(row, count)
+                # rubocop:disable Lint/HandleExceptions
+                rescue ThreadError
+                  # Ignore it
+                end
+                # rubocop:enable Lint/HandleExceptions
+              end
+            end
+          end
+
           # rubocop:disable Metrics/AbcSize
           # Performs ETL on a single row
           def handle_row(row, count)
@@ -89,10 +112,6 @@ module Rialto
 
         def offset
           options.fetch(:offset)
-        end
-
-        def batch_size
-          options.fetch(:batch_size).to_i
         end
 
         def input_directory
