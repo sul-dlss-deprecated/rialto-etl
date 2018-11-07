@@ -139,6 +139,32 @@ RSpec.describe Rialto::Etl::CLI::DummyEtl do
         expect(Rialto::Etl::Loaders::Sparql).not_to have_received(:new)
       end
     end
-    # rubocop:enable RSpec/VerifiedDoubles
   end
+  describe '#extract' do
+    let(:dir) do
+      Dir.mktmpdir
+    end
+
+    context 'when extract error occurs' do
+      let(:args) do
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir]
+      end
+
+      before do
+        # allow(Rialto::Etl::Transformer).to receive(:new).and_raise(StandardError)
+        allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_raise(StandardError)
+      end
+
+      it 'handles error and does not write an ndj file' do
+        ndj_file = File.join(dir, 'dummy-1234.ndj')
+        File.open(ndj_file, 'w') { |file| file.write('test') }
+        expect(File).to be_exist(ndj_file)
+        expect(loader.send(:extract, row, '1234', true)).to eq(ndj_file)
+        expect(File).not_to be_exist(ndj_file)
+        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new)
+          .with(firstname: 'Valerie', lastname: 'Jarrett')
+      end
+    end
+  end
+  # rubocop:enable RSpec/VerifiedDoubles
 end

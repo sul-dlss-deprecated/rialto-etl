@@ -28,8 +28,8 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
           .to_return(status: 500, body: error_message, headers: {})
       end
 
-      it 'prints out the exception' do
-        expect { client.each {} }.to output(/#{error_message}/).to_stderr
+      it 'raises an exception' do
+        expect { client.each {} }.to raise_error(RuntimeError)
       end
     end
 
@@ -51,7 +51,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       end
 
       it 'retries and writes to stderr multiple times' do
-        expect { client.each {} }.to output(expected_output_regex).to_stderr
+        expect { client.each {} }.to output(expected_output_regex).to_stderr.and raise_error(RuntimeError)
       end
     end
 
