@@ -56,10 +56,12 @@ module Rialto
 
         def connect_with_retries(path:)
           response = client.get(path)
+          raise "#{response.reason_phrase}: #{response.status}  (#{response.body})" unless response.success?
           JSON.parse(response.body)
         rescue StandardError => exception
-          logger.warn "Error fetching #{path}: #{exception.message} (#{exception.class})"
-          {}
+          msg = "Error fetching #{path}: #{exception.message} (#{exception.class})"
+          logger.warn msg
+          raise msg
         end
 
         # @return [String] path for the user query

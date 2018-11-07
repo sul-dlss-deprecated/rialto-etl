@@ -139,6 +139,26 @@ RSpec.describe Rialto::Etl::CLI::DummyEtl do
         expect(Rialto::Etl::Loaders::Sparql).not_to have_received(:new)
       end
     end
+    context 'when an extract error occurs' do
+      let(:args) do
+        ['--input-file', 'data/researchers.csv', '--force', '--input-directory', dir, '--output-directory', dir]
+      end
+
+      before do
+        allow(Rialto::Etl::Loaders::Sparql).to receive(:new).and_return(double(load: true))
+        allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
+        allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_raise(StandardError)
+        allow(File).to receive(:exist?).and_return(false)
+      end
+
+      it 'calls extract' do
+        loader.handle_row(row, 1)
+        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new)
+          .with(firstname: 'Valerie', lastname: 'Jarrett')
+        expect(Rialto::Etl::Transformer).not_to have_received(:new)
+        expect(Rialto::Etl::Loaders::Sparql).not_to have_received(:new)
+      end
+    end
     # rubocop:enable RSpec/VerifiedDoubles
   end
 end

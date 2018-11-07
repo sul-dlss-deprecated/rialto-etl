@@ -8,6 +8,7 @@ module Rialto
   module Etl
     module CLI
       # Superclass for iterating over the people in the input file CSV and performing extract, transform, and load.
+      # rubocop:disable Metrics/ClassLength
       class CompositeEtl < Thor
         option :input_file,
                required: true,
@@ -106,18 +107,27 @@ module Rialto
           raise NotImplementedError
         end
 
+        # rubocop:disable Metrics/MethodLength
         def extract(row, profile_id, force)
           extract_file = File.join(input_directory, "#{file_prefix}-#{profile_id}.ndj")
           if File.exist?(extract_file) && !force
             say "file #{extract_file} already exists, skipping. use -f to force overwrite"
             return extract_file
           end
-          results = perform_extract(row)
+          # Don't write file if an exception occurs
+          begin
+            results = perform_extract(row)
+          rescue StandardError
+            say "Skipping #{extract_file} because an error occurred while extracting"
+            return extract_file
+          end
+
           File.open(extract_file, 'w') do |f|
             f.write(results.join("\n"))
           end
           extract_file
         end
+        # rubocop:enable Metrics/MethodLength
 
         def perform_extract(_row)
           raise NotImplementedError
@@ -141,6 +151,7 @@ module Rialto
           raise NotImplementedError
         end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
