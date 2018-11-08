@@ -2,12 +2,15 @@
 
 require 'faraday_middleware'
 require 'oauth2'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
     module Extractors
       # Documentation: https://asconfluence.stanford.edu/confluence/display/MaIS/SeRA+API+-+User+Documentation
       class Sera
+        include Rialto::Etl::Logging
+
         def initialize(options = {})
           @sunetid = options.fetch(:sunetid)
         end
@@ -32,17 +35,22 @@ module Rialto
         end
 
         # @return[Array<Hash>] the results of the API call
+        # rubocop:disable Metrics/MethodLength
         def body
           case response.status
           when 404
             []
           when 400..499, 500..599
-            raise "There was a problem with the request to `#{url}` (#{response.status}): #{response.body}"
+            raise "#{response.reason_phrase}: #{response.status}  (#{response.body})"
           else
             hash = JSON.parse(response.body)
             hash['SeRARecord']
           end
+        rescue StandardError => exception
+          logger.warn "Error in extracting from SERA. #{exception.message} (#{exception.class})"
+          raise
         end
+        # rubocop:enable Metrics/MethodLength
 
         # @return [String] the path for the API request for the given sunetid
         def url

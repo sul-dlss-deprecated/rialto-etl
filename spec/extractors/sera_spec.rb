@@ -25,8 +25,7 @@ RSpec.describe Rialto::Etl::Extractors::Sera do
       end
 
       it 'raises the exception' do
-        expect { extractor.each {} }.to raise_error(RuntimeError,
-                                                    /There was a problem with the request/)
+        expect { extractor.each {} }.to raise_error(RuntimeError)
       end
     end
 
