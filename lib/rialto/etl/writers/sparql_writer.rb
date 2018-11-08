@@ -102,11 +102,13 @@ module Rialto
         # Post the statements to the SPARQL endpoint
         # @param [String] SPARQL statements to send
         def post(statements)
-          client.post do |req|
+          response = client.post do |req|
             req.body = statements
           end
+          raise "#{response.reason_phrase}: #{response.status}  (#{response.body})" unless response.success?
         rescue StandardError => exception
-          logger.error "Error in SPARQL update. #{exception.message} (#{exception.class})"
+          logger.warn "Error in SPARQL update. #{exception.message} (#{exception.class})"
+          raise
         end
 
         # Get the logger from the settings, or default to an effectively null logger
