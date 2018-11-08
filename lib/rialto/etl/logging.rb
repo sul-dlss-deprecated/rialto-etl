@@ -7,6 +7,8 @@ module Rialto
   module Etl
     # A module to hold a logger
     module Logging
+      attr_writer :logger
+
       def logger
         @logger ||= Yell::Logger.new(:null).tap do |logger|
           # Everything to stderr

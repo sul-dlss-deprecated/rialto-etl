@@ -140,6 +140,33 @@ RSpec.describe Rialto::Etl::CLI::DummyEtl do
       end
     end
   end
+  describe '#transform' do
+    let(:dir) do
+      Dir.mktmpdir
+    end
+
+    context 'when transform error occurs' do
+      let(:args) do
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir]
+      end
+
+      before do
+        allow(Rialto::Etl::Transformer).to receive(:new).and_raise(StandardError)
+      end
+
+      it 'handles error and does not write a sparql file' do
+        sparql_file = File.join(dir, 'dummy-1234.sparql')
+        File.open(sparql_file, 'w') { |file| file.write('test') }
+        # expect(File.exist?(sparql_file)).to be_truthy
+        expect(File).to be_exist(sparql_file)
+        # Using the SPARQL file has source file as a shortcut.
+        expect(loader.send(:transform, sparql_file, '1234', true)).to eq(sparql_file)
+        expect(File).not_to be_exist(sparql_file)
+        expect(Rialto::Etl::Transformer).to have_received(:new).once
+      end
+    end
+    # rubocop:enable RSpec/VerifiedDoubles
+  end
   describe '#extract' do
     let(:dir) do
       Dir.mktmpdir
@@ -166,5 +193,4 @@ RSpec.describe Rialto::Etl::CLI::DummyEtl do
       end
     end
   end
-  # rubocop:enable RSpec/VerifiedDoubles
 end

@@ -2,6 +2,7 @@
 
 require 'rdf'
 require 'singleton'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
@@ -9,7 +10,7 @@ module Rialto
       # Client for hitting the RIALTO Entity Resolver
       class EntityResolver
         include Singleton
-
+        include Rialto::Etl::Logging
         # @param type [String] the entity type to search for
         # @param params [Hash<String,String>] the entity attributes to search with
         def self.resolve(type, params)
@@ -39,7 +40,8 @@ module Rialto
             raise "Entity resolver returned #{resp.status} for #{type} type and #{params} params."
           end
         rescue StandardError => exception
-          warn "Error resolving with path #{path}: #{exception.message}"
+          logger.warn "Error resolving with path #{path}: #{exception.message}"
+          raise
         end
         # rubocop:enable Metrics/MethodLength
 

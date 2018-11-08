@@ -134,19 +134,27 @@ module Rialto
           raise NotImplementedError
         end
 
+        # rubocop:disable Metrics/MethodLength
         def transform(source_file, profile_id, force)
           sparql_file = File.join(output_directory, "#{file_prefix}-#{profile_id}.sparql")
           if File.exist?(sparql_file) && !force
             say "file #{sparql_file} already exists, skipping. use -f to force overwrite"
             return sparql_file
           end
-          Rialto::Etl::Transformer.new(
-            input_stream: File.open(source_file, 'r'),
-            config_file_path: transformer_config,
-            output_file_path: sparql_file
-          ).transform
+          begin
+            Rialto::Etl::Transformer.new(
+              input_stream: File.open(source_file, 'r'),
+              config_file_path: transformer_config,
+              output_file_path: sparql_file
+            ).transform
+          rescue StandardError => exception
+            say "Skipping #{sparql_file} because an error occurred while transforming: #{exception.message} (#{exception.class})"
+            FileUtils.rm(sparql_file, force: true)
+            return sparql_file
+          end
           sparql_file
         end
+        # rubocop:enable Metrics/MethodLength
 
         def transformer_config
           raise NotImplementedError
