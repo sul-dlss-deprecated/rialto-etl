@@ -65,7 +65,6 @@ module Rialto
         end
 
         no_commands do
-          # rubocop:disable Metrics/AbcSize
           # Performs ETL on a single row
           def handle_row(row, count)
             profile_id = row[:profileid]
@@ -80,9 +79,8 @@ module Rialto
             return if options[:skip_load] || !File.exist?(sparql_file) || File.empty?(sparql_file)
 
             puts "Loading sparql for #{profile_id}: #{row[:uri]}"
-            Rialto::Etl::Loaders::Sparql.new(input: sparql_file).load
+            load_sparql(sparql_file)
           end
-          # rubocop:enable Metrics/AbcSize
         end
 
         protected
@@ -158,6 +156,12 @@ module Rialto
 
         def transformer_config
           raise NotImplementedError
+        end
+
+        def load_sparql(sparql_file)
+          Rialto::Etl::Loaders::Sparql.new(input: sparql_file).load
+        rescue StandardError => exception
+          say "An error occurred loading #{sparql_file} but continuing: #{exception.message} (#{exception.class})"
         end
       end
       # rubocop:enable Metrics/ClassLength
