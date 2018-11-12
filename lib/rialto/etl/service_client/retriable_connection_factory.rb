@@ -12,11 +12,15 @@ module Rialto
 
         class_attribute :logger
 
+        # rubocop:disable Metrics/MethodLength
         def self.build(uri:, headers:, logger: default_logger)
           self.logger = logger
 
           Faraday.new(uri, headers: headers) do |connection|
-            connection.request :retry, max: MAX_RETRIES, interval: 0.5, interval_randomness: 0.3, backoff_factor: 1.5,
+            connection.request :retry, max: MAX_RETRIES,
+                                       interval: 5.0,
+                                       interval_randomness: 0.3,
+                                       backoff_factor: 2.0,
                                        methods: retriable_methods, exceptions: retriable_exceptions, retry_block: retry_block,
                                        retry_statuses: retry_statuses
 
@@ -26,6 +30,7 @@ module Rialto
             connection.options.open_timeout = 10
           end
         end
+        # rubocop:enable Metrics/MethodLength
 
         def self.retriable_methods
           Faraday::Request::Retry::IDEMPOTENT_METHODS + [:post]
