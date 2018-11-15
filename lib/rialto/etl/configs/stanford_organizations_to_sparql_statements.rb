@@ -10,9 +10,18 @@ extend TrajectPlus::Macros::JSON
 extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
 
+ORGS_NEEDING_CONTEXT = ['External Relations',
+                        'Administration',
+                        "Dean's Office",
+                        'Financial Aid',
+                        'Financial Aid Office',
+                        'Research Centers'].freeze
+
 def contextualized_org_name(organization)
-  return organization['name'] if organization['parent'].nil? || organization['parent']['name'] == 'Stanford University'
-  "#{organization['name']} (#{organization['parent']['name']})"
+  if ORGS_NEEDING_CONTEXT.include?(organization['name']) && !organization['parent'].nil?
+    return "#{organization['name']} (#{organization['parent']['name']})"
+  end
+  organization['name']
 end
 
 settings do
