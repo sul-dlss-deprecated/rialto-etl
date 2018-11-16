@@ -7,18 +7,6 @@ module Rialto
     module CLI
       # Extract subcommand
       class Extract < Thor
-        option :firstname,
-               required: false,
-               banner: 'FIRSTNAME',
-               desc: 'First name of the researcher (for WebOfScience)',
-               aliases: '-f'
-
-        option :lastname,
-               required: false,
-               banner: 'LASTNAME',
-               desc: 'Last name of the researcher (for WebOfScience)',
-               aliases: '-l'
-
         option :institution,
                required: false,
                banner: 'INSTITUTION',

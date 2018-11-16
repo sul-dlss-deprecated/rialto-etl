@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
 RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
-  subject(:client) { described_class.new(firstname: 'Tom', lastname: 'Cramer', institution: 'Stanford University') }
+  subject(:client) { described_class.new(institution: 'Stanford University') }
 
   let(:api_response) { '{}' }
+  let(:publication_ranges) { ['1700-01-01+1700-12-31'] }
   let(:records_found) { 1 }
 
   # rubocop:disable RSpec/AnyInstance
   before do
     stub_request(:get, 'https://api.clarivate.com/api/wos?count=1&databaseId=WOS&firstRecord=1' \
-      '&usrQuery=AU=%22Cramer,Tom%22%20AND%20OG=Stanford%20University')
+      '&usrQuery=OG=Stanford%20University&publishTimeSpan=1700-01-01%2B1700-12-31')
       .to_return(status: 200, body: api_response, headers: {})
 
     allow(client).to receive(:query_id).and_return(123)
     allow(client).to receive(:records_found).and_return(records_found)
+    allow(client).to receive(:publication_ranges).and_return(publication_ranges)
     allow_any_instance_of(Faraday::Request::Retry).to receive(:sleep)
   end
   # rubocop:enable RSpec/AnyInstance
@@ -64,11 +66,8 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       end
 
       it 'calls the block on single result' do
-        results = []
-        client.each do |records|
-          results << records
-        end
-        expect(results).to eq ['one']
+        results = client.each.to_a
+        expect(results).to eq [['one']]
       end
     end
 
@@ -88,11 +87,9 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       end
 
       it 'calls the block on each result' do
-        results = []
-        client.each do |records|
-          results << records
-        end
-        expect(results).to eq %w[one two three]
+        results = client.each.to_a
+
+        expect(results).to eq [%w[one two], ['three']]
       end
     end
   end

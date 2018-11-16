@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'rialto/etl/loaders/sparql'
 require 'yell'
 
 module Rialto

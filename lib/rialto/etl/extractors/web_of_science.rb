@@ -14,10 +14,8 @@ module Rialto
         # @param [Hash] options
         # @option options [String] :client a preconfigured client.  May be used for testing, all other
         #                                  options will be ignored.
-        # @option options [String] :firstname The first name of the person to search for
-        # @option options [String] :lastname The last name of the person to search for
         # @option options [String] :institution ('Stanford University') The institution to search for
-        def initialize(options)
+        def initialize(**options)
           @client = options.fetch(:client) { build_client(options) }
         end
 
@@ -32,9 +30,7 @@ module Rialto
         private
 
         def build_client(options)
-          ServiceClient::WebOfScienceClient.new(firstname: options[:firstname],
-                                                lastname: options[:lastname],
-                                                institution: options.fetch(:institution, DEFAULT_INSTITUTION))
+          ServiceClient::WebOfScienceClient.new(institution: options.fetch(:institution, DEFAULT_INSTITUTION))
         end
       end
     end
