@@ -119,6 +119,34 @@ STANFORD_INSTITUTE_DIV = <<~JSON
 JSON
 
 RSpec.describe Rialto::Etl::Transformer do
+  describe '#contextualized_org_names' do
+    let(:contextualized_org_name) { indexer.contextualized_org_name(org_name) }
+
+    let(:indexer) do
+      Traject::Indexer.new.tap do |indexer|
+        indexer.load_config_file('lib/rialto/etl/configs/stanford_organizations_to_sparql_statements.rb')
+      end
+    end
+
+    context 'when not contextualized' do
+      let(:org_name) { { 'name' => 'Digital Library Support and Services' } }
+
+      it 'returns non-contextualized name' do
+        expect(contextualized_org_name).to eq('Digital Library Support and Services')
+      end
+    end
+
+    context 'when contextualized' do
+      let(:org_name) do
+        { 'name' => 'Financial Aid',
+          'parent' => { 'name' => 'School of Business' } }
+      end
+
+      it 'returns contextualized name' do
+        expect(contextualized_org_name).to eq('Financial Aid (School of Business)')
+      end
+    end
+  end
   describe 'stanford_organizations_to_sparql_statements' do
     let(:repository) do
       RDF::Repository.new.tap do |repo|
@@ -175,7 +203,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                          'education-and-recreation/other-daper-administration'],
                                  RDF::Vocab::SKOS.prefLabel,
-                                 'Other DAPER Administration (Physical Education and Recreation)'])
+                                 'Other DAPER Administration'])
                        .true?
         expect(result).to be true
 
@@ -286,7 +314,7 @@ RSpec.describe Rialto::Etl::Transformer do
                        .whether([Rialto::Etl::Vocabs::RIALTO_ORGANIZATIONS['department-of-athletics-physical-'\
                           'education-and-recreation'],
                                  RDF::Vocab::SKOS.prefLabel,
-                                 'Physical Education and Recreational Lounging (Amherst College)'])
+                                 'Physical Education and Recreational Lounging'])
                        .true?
         expect(result).to be true
 
