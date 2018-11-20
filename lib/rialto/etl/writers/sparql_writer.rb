@@ -105,7 +105,7 @@ module Rialto
           response = client.post do |req|
             req.body = statements
           end
-          raise "#{response.reason_phrase}: #{response.status}  (#{response.body})" unless response.success?
+          raise ErrorResponse, "#{response.reason_phrase}: #{response.status}  (#{response.body})" unless response.success?
         rescue StandardError => exception
           logger.warn "Error in SPARQL update. #{exception.message} (#{exception.class})"
           raise

@@ -38,7 +38,7 @@ module Rialto
         private_class_method :retriable_methods
 
         def self.retriable_exceptions
-          Faraday::Request::Retry::DEFAULT_EXCEPTIONS + [Faraday::ConnectionFailed]
+          Faraday::Request::Retry::DEFAULT_EXCEPTIONS + [Faraday::ConnectionFailed, ErrorResponse]
         end
         private_class_method :retriable_exceptions
 

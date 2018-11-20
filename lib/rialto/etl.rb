@@ -38,5 +38,8 @@ module Rialto
     Config.load_and_set_settings(
       Config.setting_files('config', ENV.fetch('ENV', 'production'))
     )
+
+    # Used so that error responses can be retried
+    class ErrorResponse < StandardError; end
   end
 end
