@@ -1,9 +1,9 @@
 # RIALTO-ETL
 
-[![Travis](https://img.shields.io/travis/sul-dlss-labs/rialto-etl.svg)](https://travis-ci.org/sul-dlss-labs/rialto-etl)
-[![Maintainability](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/maintainability)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/test_coverage)](https://codeclimate.com/github/sul-dlss-labs/rialto-etl/test_coverage)
-[![Documentation](https://inch-ci.org/github/sul-dlss-labs/rialto-etl.svg?branch=master)](https://inch-ci.org/github/sul-dlss-labs/rialto-etl)
+[![Travis](https://img.shields.io/travis/sul-dlss/rialto-etl.svg)](https://travis-ci.org/sul-dlss/rialto-etl)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/maintainability)](https://codeclimate.com/github/sul-dlss/rialto-etl/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ada551c43bfa26ab534d/test_coverage)](https://codeclimate.com/github/sul-dlss/rialto-etl/test_coverage)
+[![Documentation](https://inch-ci.org/github/sul-dlss/rialto-etl.svg?branch=master)](https://inch-ci.org/github/sul-dlss/rialto-etl)
 [![API](http://img.shields.io/badge/API-docs-blue.svg)](http://rubydoc.info/gems/rialto-etl)
 [![Apache 2.0 License](http://img.shields.io/badge/APACHE2-license-blue.svg)](./LICENSE)
 
@@ -152,4 +152,4 @@ The sample data we use to work with Rialto::Etl is contained in a [private GitHu
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/sul-dlss-labs/rialto-etl.
+Bug reports and pull requests are welcome on GitHub at https://github.com/sul-dlss/rialto-etl.
