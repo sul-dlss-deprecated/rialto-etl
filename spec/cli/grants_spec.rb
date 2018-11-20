@@ -124,6 +124,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
       end
 
       before do
+        allow(Rialto::Etl::CLI::ErrorReporter).to receive(:log_exception)
         allow(Rialto::Etl::Transformer).to receive(:new).and_raise(StandardError)
       end
 
@@ -135,6 +136,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         expect(loader.send(:transform, sparql_file, '1234', true)).to eq(sparql_file)
         expect(File).not_to exist(sparql_file)
         expect(Rialto::Etl::Transformer).to have_received(:new).once
+        expect(Rialto::Etl::CLI::ErrorReporter).to have_received(:log_exception)
       end
     end
     # rubocop:enable RSpec/VerifiedDoubles
@@ -147,6 +149,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
       end
 
       before do
+        allow(Rialto::Etl::CLI::ErrorReporter).to receive(:log_exception)
         allow(Rialto::Etl::Extractors::Sera).to receive(:new).and_raise(StandardError)
       end
 
@@ -158,6 +161,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         expect(Rialto::Etl::Extractors::Sera).to have_received(:new)
           .with(sunetid: 'vjarrett')
         expect(File).not_to exist(ndj_file)
+        expect(Rialto::Etl::CLI::ErrorReporter).to have_received(:log_exception)
       end
     end
   end

@@ -100,6 +100,7 @@ GEM
       concurrent-ruby (~> 1.0)
     hashdiff (0.3.7)
     hashie (3.6.0)
+    honeybadger (4.1.0)
     http (3.3.0)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -258,6 +259,7 @@ DEPENDENCIES
   dlss-capistrano (~> 3.4)
   faraday (~> 0.15.0)
   faraday_middleware
+  honeybadger (~> 4.1)
   httpclient
   json-ld
   oauth2!

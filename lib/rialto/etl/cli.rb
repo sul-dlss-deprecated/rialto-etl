@@ -2,11 +2,6 @@
 
 require 'thor'
 require 'rialto/etl'
-require 'rialto/etl/cli/extract'
-require 'rialto/etl/cli/transform'
-require 'rialto/etl/cli/load'
-require 'rialto/etl/cli/grants'
-require 'rialto/etl/cli/publications'
 
 module Rialto
   module Etl
@@ -14,3 +9,10 @@ module Rialto
     module CLI; end
   end
 end
+require 'active_support/core_ext/module/delegation'
+require 'rialto/etl/cli/extract'
+require 'rialto/etl/cli/transform'
+require 'rialto/etl/cli/load'
+require 'rialto/etl/cli/error_reporter'
+require 'rialto/etl/cli/grants'
+require 'rialto/etl/cli/publications'

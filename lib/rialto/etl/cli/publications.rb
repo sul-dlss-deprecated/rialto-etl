@@ -52,6 +52,10 @@ module Rialto
 
         private
 
+        no_commands do
+          delegate :log_exception, to: ErrorReporter
+        end
+
         def passthrough_options
           # @note Thor options hashes may be accessed "indifferently" w/r/t
           #       whether their keys are strings or symbols, but this does *not* work
