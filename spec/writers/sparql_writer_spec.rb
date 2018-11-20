@@ -48,8 +48,8 @@ RSpec.describe Rialto::Etl::Writers::SparqlWriter do
       let(:status) { 500 }
 
       it 'raises an error' do
-        expect { writer.put(batch) }.to raise_error(RuntimeError)
-        expect(logger).to have_received(:warn).with('Error in SPARQL update. : 500  () (RuntimeError)')
+        expect { writer.put(batch) }.to raise_error(Rialto::Etl::ErrorResponse)
+        expect(logger).to have_received(:warn).with('Error in SPARQL update. : 500  () (Rialto::Etl::ErrorResponse)')
       end
     end
   end
