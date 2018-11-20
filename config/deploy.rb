@@ -7,10 +7,10 @@ set :application, 'rialto-etl'
 set :repo_url, 'https://github.com/sul-dlss/rialto-etl.git'
 
 # Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '/opt/app/vitro/rialto/rialto-etl'
+set :deploy_to, '/opt/app/rialto'
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -23,10 +23,10 @@ set :deploy_to, '/opt/app/vitro/rialto/rialto-etl'
 # set :pty, true
 
 # Default value for :linked_files is []
-append :linked_files, 'config/settings.local.yml'
+append :linked_files, 'config/honeybadger.yml'
 
 # Default value for linked_dirs is []
-# append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"
+append :linked_dirs, 'data', 'config/settings'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -39,3 +39,5 @@ append :linked_files, 'config/settings.local.yml'
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+
+set :whenever_roles, [:app]
