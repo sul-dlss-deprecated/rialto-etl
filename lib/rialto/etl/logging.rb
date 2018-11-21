@@ -10,7 +10,7 @@ module Rialto
       attr_writer :logger
 
       def logger
-        @logger ||= Yell::Logger.new do |logger|
+        @logger ||= Yell.new do |logger|
           logger.adapter :datefile, 'rialto_etl.log', level: 'lte.warn' # anything lower or equal to :warn
           logger.adapter :datefile, 'rialto_etl_error.log', level: 'gte.error' # anything greater or equal to :error
         end
