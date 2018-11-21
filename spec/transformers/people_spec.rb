@@ -17,6 +17,12 @@ RSpec.describe Rialto::Etl::Transformers::People do
     subject(:positions) { described_class.construct_stanford_positions(titles: titles, profile_id: id) }
 
     let(:id) { '123' }
+    let(:logger) { instance_double('Yell::Logger') }
+
+    before do
+      allow_any_instance_of(Rialto::Etl::Transformers::People::Positions).to receive(:logger).and_return(logger)
+      allow(logger).to receive(:warn)
+    end
 
     context 'when titles are present' do
       let(:titles) do
@@ -49,7 +55,8 @@ RSpec.describe Rialto::Etl::Transformers::People do
         expect(positions).to eq []
       end
       it 'logs a warning' do
-        expect { positions.each {} }.to output(/has no Stanford positions because no titles/).to_stderr
+        positions.each {}
+        expect(logger).to have_received(:warn)
       end
     end
 
@@ -77,7 +84,8 @@ RSpec.describe Rialto::Etl::Transformers::People do
       end
 
       it 'logs a warning for organization' do
-        expect { positions.each {} }.to output(/Unmapped organization/).to_stderr
+        positions.each {}
+        expect(logger).to have_received(:warn)
       end
 
       it 'adds a dummy department' do

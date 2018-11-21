@@ -8,7 +8,7 @@ RSpec.describe Rialto::Etl::ServiceClient::EntityResolver do
     # Makes sure Entity Resolver is using above settings.
     described_class.instance.initialize_connection
     described_class.instance.logger = logger
-    allow(logger).to receive(:warn)
+    allow(logger).to receive(:error)
   end
 
   describe '.resolve' do
@@ -43,7 +43,7 @@ RSpec.describe Rialto::Etl::ServiceClient::EntityResolver do
       end
       it 'raises error' do
         expect { resolve }.to raise_error(RuntimeError)
-        expect(logger).to have_received(:warn).with('Error resolving with path person?' \
+        expect(logger).to have_received(:error).with('Error resolving with path person?' \
           'orcid_id=0000-0002-2328-2018&full_name=Wilson%2C+Jennifer+L.: Entity resolver returned 500 for person type ' \
           'and {"orcid_id"=>"0000-0002-2328-2018", "full_name"=>"Wilson, Jennifer L."} params.')
       end

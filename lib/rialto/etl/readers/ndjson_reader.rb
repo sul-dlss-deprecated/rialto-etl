@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rialto/etl/logging'
+
 module Rialto
   module Etl
     module Readers
@@ -7,15 +9,16 @@ module Rialto
       # UTF-8 encoding is required.
       class NDJsonReader
         include Enumerable
+        include Rialto::Etl::Logging
 
         def initialize(input_stream, settings)
           @settings = settings
           @input_stream = input_stream
         end
 
-        def logger
-          @logger ||= (@settings[:logger] || Yell.new(STDERR, level: 'gt.fatal')) # null logger)
-        end
+        # def logger
+        #   @logger ||= (@settings[:logger] || Yell.new(STDERR, level: 'gt.fatal')) # null logger)
+        # end
 
         def each
           return enum_for(:each) unless block_given?

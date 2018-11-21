@@ -2,6 +2,11 @@
 
 require 'rialto/etl/readers/sparql_statement_reader'
 require 'rialto/etl/writers/sparql_writer'
+
+extend Rialto::Etl::Logging
+
+self.logger = logger
+
 settings do
   provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlWriter'
   provide 'reader_class_name', 'Rialto::Etl::Readers::SparqlStatementReader'

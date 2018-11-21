@@ -3,35 +3,29 @@
 require 'rialto/etl/readers/sparql_statement_reader'
 
 RSpec.describe Rialto::Etl::Readers::SparqlStatementReader do
-  let(:reader) { described_class.new('', settings) }
+  let(:reader) { described_class.new('', '') }
 
   describe '#logger' do
-    let(:logger) { double }
+    let(:logger) { instance_double('Yell::Logger') }
     let(:message) { 'Did a thing!' }
 
     before do
+      allow_any_instance_of(described_class).to receive(:logger).and_return(logger)
       allow(logger).to receive(:info)
     end
 
     context 'when specified in settings' do
-      let(:settings) { { 'logger' => logger } }
-
       it 'uses the given logger' do
         reader.logger.info(message)
-        expect(logger).to have_received(:info).with(message)
+        expect(logger).to have_received(:info)
       end
     end
 
     context 'when not specified in settings' do
       let(:settings) { {} }
 
-      before do
-        allow(Yell).to receive(:new).and_return(logger)
-      end
-
       it 'uses a null logger' do
         reader.logger.info(message)
-        expect(Yell).to have_received(:new)
         expect(logger).to have_received(:info).with(message)
       end
     end

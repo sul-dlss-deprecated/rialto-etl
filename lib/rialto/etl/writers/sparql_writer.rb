@@ -8,6 +8,7 @@ require 'traject/thread_pool'
 
 require 'concurrent' # for atomic_fixnum
 require 'rialto/etl/service_client/retriable_connection_factory'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
@@ -30,6 +31,7 @@ module Rialto
       #   or mock object to be used for SPARQL.
       class SparqlWriter
         include Traject::QualifiedConstGet
+        include Rialto::Etl::Logging
 
         DEFAULT_BATCH_SIZE = 100
 
@@ -107,13 +109,8 @@ module Rialto
           end
           raise ErrorResponse, "#{response.reason_phrase}: #{response.status}  (#{response.body})" unless response.success?
         rescue StandardError => exception
-          logger.warn "Error in SPARQL update. #{exception.message} (#{exception.class})"
+          logger.error "Error in SPARQL update. #{exception.message} (#{exception.class})"
           raise
-        end
-
-        # Get the logger from the settings, or default to an effectively null logger
-        def logger
-          settings['logger'] ||= Yell.new(STDERR, level: 'gt.fatal') # null logger
         end
 
         # How many threads to use for the writer?

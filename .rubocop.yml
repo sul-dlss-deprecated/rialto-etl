@@ -9,6 +9,14 @@ Metrics/BlockLength:
     - spec/**/*.rb
     - rialto-etl.gemspec
 
+RSpec/AnyInstance:
+  Exclude:
+  - spec/extractors/stanford_organizations_spec.rb
+  - spec/extractors/stanford_researchers_spec.rb
+  - spec/readers/ndjson_reader_spec.rb
+  - spec/readers/sparql_statement_reader_spec.rb
+  - spec/transformers/people_spec.rb
+  - spec/writers/sparql_writer_spec.rb
 
 RSpec/ExampleLength:
   Enabled: false

@@ -8,8 +8,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlWriter do
     described_class.new(
       'sparql_writer.update_url' => 'http://127.0.0.1:9999/sparql',
       'sparql_writer.thread_pool' => 0,
-      'sparql_writer.batch_size' => batch_size,
-      'logger': logger
+      'sparql_writer.batch_size' => batch_size
     )
   end
 
@@ -24,7 +23,8 @@ RSpec.describe Rialto::Etl::Writers::SparqlWriter do
   let(:status) { 200 }
 
   before do
-    allow(logger).to receive(:warn)
+    allow_any_instance_of(described_class).to receive(:logger).and_return(logger)
+    allow(logger).to receive(:error)
     allow(logger).to receive(:info)
     allow(logger).to receive(:debug)
 
@@ -49,7 +49,7 @@ RSpec.describe Rialto::Etl::Writers::SparqlWriter do
 
       it 'raises an error' do
         expect { writer.put(batch) }.to raise_error(Rialto::Etl::ErrorResponse)
-        expect(logger).to have_received(:warn).with('Error in SPARQL update. : 500  () (Rialto::Etl::ErrorResponse)')
+        expect(logger).to have_received(:error).with('Error in SPARQL update. : 500  () (Rialto::Etl::ErrorResponse)')
       end
     end
   end

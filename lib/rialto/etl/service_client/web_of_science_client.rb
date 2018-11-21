@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
+require 'rialto/etl/logging'
+
 module Rialto
   module Etl
     module ServiceClient
       # Client for hitting Stanford APIs using Stanford authz
       class WebOfScienceClient
+        include Rialto::Etl::Logging
+
         HOST = 'api.clarivate.com'
         USER_QUERY_PATH = '/api/wos'
         USER_QUERY_PARAMS = { 'databaseId' => 'WOS' }.freeze
@@ -59,7 +63,7 @@ module Rialto
           raise "#{response.reason_phrase}: #{response.status}  (#{response.body})" unless response.success?
           JSON.parse(response.body)
         rescue StandardError => exception
-          logger.warn "Error fetching #{path}: #{exception.message} (#{exception.class})"
+          logger.error "Error fetching #{path}: #{exception.message} (#{exception.class})"
           raise
         end
 
@@ -101,10 +105,6 @@ module Rialto
           {
             'X-ApiKey' => Settings.wos.api_key
           }
-        end
-
-        def logger
-          @logger ||= Yell.new(STDERR)
         end
       end
     end
