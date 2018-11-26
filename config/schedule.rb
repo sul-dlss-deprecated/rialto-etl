@@ -15,7 +15,5 @@ every :tuesday, at: '01:05pm' do
           '&& exe/load call Sparql -i data/researchers.sparql ' \
           '&& exe/transform call StanfordPeopleList -i data/researchers.ndj > data/researchers.csv ' \
           '&& exe/grants load -s 3 -i data/researchers.csv ' \
-          '&& exe/publications load -i data/researchers.csv ' \
-          ' --input-directory data/raw/pubs ' \
-          ' --output-directory data/pubs'
+          '&& exe/publications load -d data/raw/pubs -o data/pubs'
 end
