@@ -3,6 +3,7 @@
 require 'yell'
 require 'active_support'
 require 'active_support/core_ext/numeric/conversions'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
@@ -13,6 +14,7 @@ module Rialto
       # UTF-8 encoding is required.
       class SparqlStatementReader
         include Enumerable
+        include Rialto::Etl::Logging
 
         attr_reader :settings, :input_stream
         attr_accessor :insert_count
@@ -21,11 +23,6 @@ module Rialto
           @settings = settings
           @input_stream = input_stream
           @insert_count = 0
-        end
-
-        # Get the logger from the settings, or default to an effectively null logger
-        def logger
-          settings['logger'] ||= Yell.new(STDERR, level: 'gt.fatal') # null logger
         end
 
         # rubocop:disable Metrics/MethodLength

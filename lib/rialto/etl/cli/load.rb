@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 require 'rialto/etl/loaders'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
     module CLI
       # Load subcommand
       class Load < Thor
+        include Rialto::Etl::Logging
+
         option :input_file,
                required: true,
                banner: 'FILENAME',

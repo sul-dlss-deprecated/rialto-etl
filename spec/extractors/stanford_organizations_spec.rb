@@ -11,6 +11,8 @@ RSpec.describe Rialto::Etl::Extractors::StanfordOrganizations do
       }.to_json
     end
 
+    let(:logger) { instance_double('Yell::Logger') }
+
     before do
       stub_request(:get, /authz.stanford.edu/)
         .to_return(status: 200, body: authz_json, headers: {})
@@ -29,10 +31,13 @@ RSpec.describe Rialto::Etl::Extractors::StanfordOrganizations do
 
       before do
         allow(extractor).to receive(:client).and_raise(error_message)
+        allow_any_instance_of(described_class).to receive(:logger).and_return(logger)
+        allow(logger).to receive(:error)
       end
 
       it 'prints out the exception' do
-        expect { extractor.each {} }.to output(/Uh oh!/).to_stderr
+        extractor.each {}
+        expect(logger).to have_received(:error)
       end
     end
   end

@@ -40,7 +40,7 @@ module Rialto
             raise "Entity resolver returned #{resp.status} for #{type} type and #{params} params."
           end
         rescue StandardError => exception
-          logger.warn "Error resolving with path #{path}: #{exception.message}"
+          logger.error "Error resolving with path #{path}: #{exception.message}"
           raise
         end
         # rubocop:enable Metrics/MethodLength

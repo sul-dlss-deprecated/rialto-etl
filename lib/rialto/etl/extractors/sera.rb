@@ -47,7 +47,7 @@ module Rialto
             hash['SeRARecord']
           end
         rescue StandardError => exception
-          logger.warn "Error in extracting from SERA. #{exception.message} (#{exception.class})"
+          logger.error "Error in extracting from SERA. #{exception.message} (#{exception.class})"
           raise
         end
         # rubocop:enable Metrics/MethodLength

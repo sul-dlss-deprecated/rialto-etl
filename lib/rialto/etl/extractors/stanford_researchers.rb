@@ -1,12 +1,15 @@
 # frozen_string_literal: true
 
 require 'ruby-progressbar'
+require 'rialto/etl/logging'
 
 module Rialto
   module Etl
     module Extractors
       # Stanford Profiles API
       class StanfordResearchers
+        include Rialto::Etl::Logging
+
         def initialize(client: ServiceClient::StanfordClient.new, per_page: 100, start_page: 1)
           @client = client
           @per_page = per_page # 100 seems to be the max the API allows
@@ -26,7 +29,7 @@ module Rialto
             end
           end
         rescue StandardError => exception
-          warn "Error: #{exception.message}"
+          logger.error "Error: #{exception.message}"
         end
 
         attr_reader :total_pages

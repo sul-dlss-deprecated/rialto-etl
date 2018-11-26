@@ -8,6 +8,8 @@ RSpec.describe Rialto::Etl::Readers::NDJsonReader do
   let(:reader) { File.open('spec/fixtures/organizations.ndj', 'r') }
   let(:settings) { {} }
 
+  let(:logger) { instance_double('Yell::Logger') }
+
   describe '#each' do
     it 'calls each once for each line in the file' do
       count = 0
@@ -33,13 +35,10 @@ RSpec.describe Rialto::Etl::Readers::NDJsonReader do
     it { is_expected.to be_kind_of Hash }
 
     context 'when an error occurs' do
-      # rubocop:disable RSpec/VerifiedDoubles
-      let(:logger) { double(Yell) }
-      # rubocop:enable RSpec/VerifiedDoubles
       let(:row) { '{' }
 
       before do
-        allow(Yell).to receive(:new).and_return(logger)
+        allow_any_instance_of(described_class).to receive(:logger).and_return(logger)
         allow(logger).to receive(:error)
       end
 

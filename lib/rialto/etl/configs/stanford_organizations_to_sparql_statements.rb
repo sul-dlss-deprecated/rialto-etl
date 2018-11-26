@@ -9,6 +9,7 @@ extend TrajectPlus::Macros
 extend TrajectPlus::Macros::JSON
 extend Rialto::Etl::NamedGraphs
 extend Rialto::Etl::Vocabs
+extend Rialto::Etl::Logging
 
 ORGS_NEEDING_CONTEXT = ['External Relations',
                         'Administration',
@@ -23,6 +24,8 @@ def contextualized_org_name(organization)
   end
   organization['name']
 end
+
+self.logger = logger
 
 settings do
   provide 'writer_class_name', 'Rialto::Etl::Writers::SparqlStatementWriter'
