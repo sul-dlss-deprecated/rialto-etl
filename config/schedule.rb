@@ -12,6 +12,7 @@ job_type :exe, 'cd :path && :task'
 every :tuesday, at: '01:05pm' do
   exe 'exe/extract call StanfordOrganizations > data/organizations.json ' \
     '&& exe/transform call StanfordOrganizations -i data/organizations.json > data/organizations.sparql ' \
+    '&& aws s3 cp organizations.json s3://rialto-data-load/organizations-$(date \'+%Y-%m-%d\').json ' \
     '&& exe/load call Sparql -i data/organizations.sparql ' \
     '&& exe/extract call StanfordResearchers > data/researchers.ndj ' \
     '&& exe/transform call StanfordPeople -i data/researchers.ndj > data/researchers.sparql ' \
