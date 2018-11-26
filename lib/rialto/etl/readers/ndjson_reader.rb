@@ -16,10 +16,6 @@ module Rialto
           @input_stream = input_stream
         end
 
-        # def logger
-        #   @logger ||= (@settings[:logger] || Yell.new(STDERR, level: 'gt.fatal')) # null logger)
-        # end
-
         def each
           return enum_for(:each) unless block_given?
 

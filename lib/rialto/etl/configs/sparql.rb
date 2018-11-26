@@ -2,6 +2,7 @@
 
 require 'rialto/etl/readers/sparql_statement_reader'
 require 'rialto/etl/writers/sparql_writer'
+require 'rialto/etl/logging'
 
 extend Rialto::Etl::Logging
 
