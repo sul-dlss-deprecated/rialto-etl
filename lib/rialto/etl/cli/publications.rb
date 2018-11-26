@@ -24,6 +24,10 @@ module Rialto
                banner: 'FORCE',
                desc: 'Overwrite files that already exist',
                aliases: '-f'
+        option :since,
+               required: false,
+               banner: 'SINCE',
+               desc: 'Load records since...'
         option :skip_extract,
                default: false,
                type: :boolean,
@@ -48,6 +52,13 @@ module Rialto
 
         private
 
+        def passthrough_options
+          # @note Thor options hashes may be accessed "indifferently" w/r/t
+          #       whether their keys are strings or symbols, but this does *not* work
+          #       with the `Hash#slice` method
+          options.slice('since')
+        end
+
         def cached_files(&_block)
           Dir.glob("#{input_directory}/WOS*.json").each { |file_path| yield file_path }
         end
@@ -55,7 +66,7 @@ module Rialto
         # rubocop:disable Metrics/MethodLength
         def extract(&block)
           return cached_files(&block) if options[:skip_extract]
-          Rialto::Etl::Extractors::WebOfScience.new.each do |record_list|
+          Rialto::Etl::Extractors::WebOfScience.new(passthrough_options).each do |record_list|
             JSON.parse(record_list).each do |record|
               extract_file = File.join(input_directory, "#{record['UID']}.json")
 

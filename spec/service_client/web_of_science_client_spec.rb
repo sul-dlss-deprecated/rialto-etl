@@ -7,20 +7,45 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
   let(:publication_ranges) { ['1700-01-01+1700-12-31'] }
   let(:records_found) { 1 }
 
-  # rubocop:disable RSpec/AnyInstance
-  before do
-    stub_request(:get, 'https://api.clarivate.com/api/wos?count=1&databaseId=WOS&firstRecord=1' \
-      '&usrQuery=OG=Stanford%20University&publishTimeSpan=1700-01-01%2B1700-12-31')
-      .to_return(status: 200, body: api_response, headers: {})
+  describe '#initialize' do
+    context 'when since value is supplied' do
+      subject(:client) { described_class.new(institution: 'Stanford University', since: since_value) }
 
-    allow(client).to receive(:query_id).and_return(123)
-    allow(client).to receive(:records_found).and_return(records_found)
-    allow(client).to receive(:publication_ranges).and_return(publication_ranges)
-    allow_any_instance_of(Faraday::Request::Retry).to receive(:sleep)
+      let(:since_value) { '4D' }
+
+      before do
+        client.send(:publication_range=, since_value)
+      end
+
+      it 'sets the since value' do
+        expect(client.since).to eq since_value
+      end
+
+      it 'short-circuits the publication ranges' do
+        expect(client.send(:publication_ranges)).to eq Array(since_value)
+      end
+
+      it 'uses the loadTimeSpan param instead of the publishTimeSpan param' do
+        expect(client.send(:user_query_path)).to eq '/api/wos?databaseId=WOS&firstRecord=1&count=1' \
+          '&usrQuery=OG%3DStanford+University&loadTimeSpan=4D'
+      end
+    end
   end
-  # rubocop:enable RSpec/AnyInstance
 
   describe '#each' do
+    # rubocop:disable RSpec/AnyInstance
+    before do
+      stub_request(:get, 'https://api.clarivate.com/api/wos?count=1&databaseId=WOS&firstRecord=1' \
+        '&usrQuery=OG=Stanford%20University&publishTimeSpan=1700-01-01%2B1700-12-31')
+        .to_return(status: 200, body: api_response, headers: {})
+
+      allow(client).to receive(:query_id).and_return(123)
+      allow(client).to receive(:records_found).and_return(records_found)
+      allow(client).to receive(:publication_ranges).and_return(publication_ranges)
+      allow_any_instance_of(Faraday::Request::Retry).to receive(:sleep)
+    end
+    # rubocop:enable RSpec/AnyInstance
+
     context 'when connection raises an exception' do
       let(:error_message) { 'Uh oh!' }
       let(:path) { '/api/wos/query/123?firstRecord=1&count=100' }
@@ -31,7 +56,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       end
 
       it 'raises an exception' do
-        expect { client.each {} }.to raise_error(RuntimeError)
+        expect { client.each.to_a }.to raise_error(RuntimeError)
       end
     end
 
@@ -53,7 +78,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       end
 
       it 'retries and writes to stderr multiple times' do
-        expect { client.each {} }.to output(expected_output_regex).to_stderr.and raise_error(RuntimeError)
+        expect { client.each.to_a }.to output(expected_output_regex).to_stderr.and raise_error(RuntimeError)
       end
     end
 

@@ -17,11 +17,12 @@ module Rialto
         DEFAULT_QUERY_ID = 0
         NO_RECORDS_FOUND = 0
 
-        def initialize(institution:)
+        def initialize(institution:, since: nil)
           @institution = institution
+          @since = since
         end
 
-        attr_reader :institution
+        attr_reader :institution, :since
 
         # Hit the API endpoint and iterate over resulting records
         def each
@@ -46,12 +47,11 @@ module Rialto
         attr_accessor :records_found, :query_id, :publication_range
 
         def publication_ranges
+          # Short-circuit publication ranges if `since` was supplied
+          return Array.wrap(since) if since
           [
             '1800-01-01+1989-12-31', '1990-01-01+1999-12-31', '2000-01-01+2009-12-31',
-            '2010-01-01+2010-12-31', '2011-01-01+2011-12-31', '2012-01-01+2012-12-31',
-            '2013-01-01+2013-12-31', '2014-01-01+2014-12-31', '2015-01-01+2015-12-31',
-            '2016-01-01+2016-12-31', '2017-01-01+2017-12-31', '2018-01-01+2018-12-31',
-            '2019-01-01+2019-12-31', '2020-01-01+2021-12-31'
+            '2010-01-01+2013-12-31', '2014-01-01+2017-12-31', '2018-01-01+2021-12-31'
           ]
         end
 
@@ -80,12 +80,14 @@ module Rialto
         # @return [String] path for the user query
         def user_query_path
           usr_query = "OG=#{institution}"
-          params = USER_QUERY_PARAMS.merge(
-            firstRecord: 1,
-            count: 1,
-            usrQuery: usr_query,
-            publishTimeSpan: publication_range
-          )
+          params = USER_QUERY_PARAMS.merge(firstRecord: 1,
+                                           count: 1,
+                                           usrQuery: usr_query)
+          if since
+            params['loadTimeSpan'] = publication_range
+          else
+            params['publishTimeSpan'] = publication_range
+          end
           build_uri(path: USER_QUERY_PATH, params: params)
         end
 
