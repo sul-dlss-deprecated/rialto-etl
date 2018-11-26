@@ -15,7 +15,7 @@ RIALTO-ETL is a set of ETL tools for RIALTO, Stanford Libraries' research intell
 
 ## Usage
 
-### Pipeline to ingest organizations into RIALTO Core
+### Pipeline to harvest organizations from Stanford Profiles API into RIALTO Core
 
 ```
 exe/extract call StanfordOrganizations > organizations.json
@@ -23,7 +23,7 @@ exe/transform call StanfordOrganizations -i organizations.json > organizations.s
 exe/load call Sparql -i organizations.sparql
 ```
 
-### Pipeline to harvest Researchers from Stanford Profiles API
+### Pipeline to harvest researchers from Stanford Profiles API into RIALTO Core
 
 Notes:
 * The extract step takes about 20 min as it has to make ~796 requests to get the full
@@ -38,32 +38,39 @@ exe/transform call StanfordPeople -i researchers.ndj > researchers.sparql
 exe/load call Sparql -i researchers.sparql
 ```
 
+### Composite ETL
 
-### Pipeline to harvest Grants from Stanford SeRA API
+The composite ETL tools allow you to streamline operations by running extracts, transforms, and loads on batches of data. These tools are available for grants and publications, currently.
+
+#### Pipeline to harvest grants from Stanford SeRA API into RIALTO Core
 
 Notes:
 * The transform step depends on `researchers.ndj` from the researcher pipeline
-* Extracting will be sped up by setting a batch size with `-s`.
-* The following steps are a way to streamline doing full ETL. If you need to run the transform and load on already extracted  grant data, you can run them independently via `exe/transform call StanfordGrants -i my_extracted_grant_file.json > my_transformed_grant_file.sparql` and `exe/load call Sparql -i my_transformed_grant_file.sparql`.
+* Extracting and transforming will be sped up by setting a batch size with `-s`.
+* The load step can be skipped with the `--skip-load` flag.
+* The extract and transform steps will be skipped if the files already exist. Use the `--force`/`-f` flag to overwrite files.
+* If you need to run the transform and load on already extracted grant data, you can run them independently via `exe/transform call StanfordGrants -i my_extracted_grant_file.json > my_transformed_grant_file.sparql` and `exe/load call Sparql -i my_transformed_grant_file.sparql`.
 
 ```
 exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
 exe/grants load -s 3 -i researchers.csv
 ```
 
-### Pipeline to harvest Publications from Web of Science
+See the output of `exe/grants help load` to see more of the available CLI options
+
+#### Pipeline to harvest publications from Web of Science API into RIALTO Core
+
 Notes:
-* The transform step depends on `researchers.ndj` from researcher pipeline.
+* The extract step can be skipped with the `--skip-extract` flag, in which case cached files in the input directory (`--input-directory`/`-d` flag) will be used for transformation and loading.
 * The load step can be skipped with the `--skip-load` flag.
 * The extract and transform steps will be skipped if the files already exist. Use the `--force`/`-f` flag to overwrite files.
-* The following steps are a way to streamline doing full ETL. If you need to run the transform and load on already extracted  publication data, you can run them independently via `exe/transform call WebOfScience -i my_extracted_publication_file.ndj > my_transformed_publication_file.sparql` and `exe/load call Sparql -i my_transformed_publication_file.sparql`.
+* If you need to run the transform and load on already extracted publication data, you can run them independently via `exe/transform call WebOfScience -i my_extracted_publication_file.ndj > my_transformed_publication_file.sparql` and `exe/load call Sparql -i my_transformed_publication_file.sparql`.
 
 ```
-exe/transform call StanfordPeopleList -i researchers.ndj > researchers.csv
-exe/publications load -i researchers.csv \
-  --input-directory ../rialto-sample-data/raw/pubs/via_publications_cli \
-  --output-directory ../rialto-sample-data/mapped/pubs
+exe/publications load -d ../rialto-sample-data/publications -o data/transformed_publications
 ```
+
+See the output of `exe/publications help load` to see more of the available CLI options
 
 #### Authentication
 

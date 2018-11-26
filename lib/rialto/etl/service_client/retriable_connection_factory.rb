@@ -25,7 +25,8 @@ module Rialto
                                        retry_statuses: retry_statuses
 
             connection.ssl.update(verify: true, verify_mode: OpenSSL::SSL::VERIFY_PEER)
-            connection.adapter :net_http_persistent
+            # Use :net_http instead of :net_http_persistent to avoid getaddrbyinfo errors with DNS resolution
+            connection.adapter :net_http
             connection.options.timeout = 500
             connection.options.open_timeout = 10
           end

@@ -93,7 +93,7 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/sage_publications')
 
-        transform('spec/fixtures/wos/000424386600014.json')
+        transform('spec/fixtures/wos/WOS:000424386600014.json')
       end
 
       let(:id) { Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'] }
@@ -298,7 +298,7 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/sage_publications')
 
-        transform('spec/fixtures/wos/000424386600014.json')
+        transform('spec/fixtures/wos/WOS:000424386600014.json')
       end
 
       let(:id) { Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'] }
@@ -381,8 +381,8 @@ RSpec.describe Rialto::Etl::Transformer do
           .with(headers: { 'X-Api-Key' => 'abc123' })
           .to_return(status: 200, body: 'http://sul.stanford.edu/rialto/agents/orgs/sage_publications')
 
-        transform('spec/fixtures/wos/000424386600014.json')
-        transform('spec/fixtures/wos/000424386600014-2.json')
+        transform('spec/fixtures/wos/WOS:000424386600014.json')
+        transform('spec/fixtures/wos/WOS:000424386600014-2.json')
       end
 
       let(:id) { Rialto::Etl::Vocabs::RIALTO_PUBLICATIONS['1361324f8ff0b8ef1ed408a1f0b58107'] }

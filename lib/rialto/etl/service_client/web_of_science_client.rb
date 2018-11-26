@@ -17,34 +17,43 @@ module Rialto
         DEFAULT_QUERY_ID = 0
         NO_RECORDS_FOUND = 0
 
-        def initialize(firstname:, lastname:, institution:)
-          @lastname = lastname
-          @firstname = firstname
+        def initialize(institution:)
           @institution = institution
         end
 
-        attr_reader :lastname, :firstname, :institution
+        attr_reader :institution
 
         # Hit the API endpoint and iterate over resulting records
         def each
           return to_enum(:each) unless block_given?
 
-          # Run the initial query to get a query ID (for pagination)
-          perform_initial_query!
+          publication_ranges.each do |publication_range|
+            self.publication_range = publication_range
 
-          records = []
-          first_record_values.each do |first_record|
-            records += query_by_id(first_record: first_record)
-          end
-          # Yield the block for each result on the page
-          records.each do |val|
-            yield val
+            # Run the initial query to get a query ID (for pagination)
+            perform_initial_query!
+
+            logger.info "records found: #{records_found}"
+
+            first_record_values.each do |first_record|
+              yield query_by_id(first_record: first_record)
+            end
           end
         end
 
         private
 
-        attr_reader :records_found, :query_id
+        attr_accessor :records_found, :query_id, :publication_range
+
+        def publication_ranges
+          [
+            '1800-01-01+1989-12-31', '1990-01-01+1999-12-31', '2000-01-01+2009-12-31',
+            '2010-01-01+2010-12-31', '2011-01-01+2011-12-31', '2012-01-01+2012-12-31',
+            '2013-01-01+2013-12-31', '2014-01-01+2014-12-31', '2015-01-01+2015-12-31',
+            '2016-01-01+2016-12-31', '2017-01-01+2017-12-31', '2018-01-01+2018-12-31',
+            '2019-01-01+2019-12-31', '2020-01-01+2021-12-31'
+          ]
+        end
 
         def query_by_id(first_record:)
           path = query_by_id_path(first_record: first_record)
@@ -59,6 +68,7 @@ module Rialto
         end
 
         def connect_with_retries(path:)
+          logger.info "making request to #{path}"
           response = client.get(path)
           raise "#{response.reason_phrase}: #{response.status}  (#{response.body})" unless response.success?
           JSON.parse(response.body)
@@ -69,8 +79,13 @@ module Rialto
 
         # @return [String] path for the user query
         def user_query_path
-          usr_query = "AU=\"#{lastname},#{firstname}\" AND OG=#{institution}"
-          params = USER_QUERY_PARAMS.merge(firstRecord: 1, count: 1, usrQuery: usr_query)
+          usr_query = "OG=#{institution}"
+          params = USER_QUERY_PARAMS.merge(
+            firstRecord: 1,
+            count: 1,
+            usrQuery: usr_query,
+            publishTimeSpan: publication_range
+          )
           build_uri(path: USER_QUERY_PATH, params: params)
         end
 
