@@ -52,6 +52,17 @@ RSpec.describe Rialto::Etl::CLI::Publications do
       end
     end
 
+    context 'with --since flag' do
+      let(:args) do
+        ['--force', '--input-directory', 'spec/fixtures/wos', '--output-directory', dir, '--since', '2W']
+      end
+
+      it 'invokes the extractor with the `since` option supplied' do
+        loader.invoke_command(command)
+        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new).once.with('since' => '2W')
+      end
+    end
+
     context 'with --skip-load flag' do
       let(:args) do
         ['--force', '--input-directory', 'spec/fixtures/wos', '--output-directory', dir, '--skip-load']

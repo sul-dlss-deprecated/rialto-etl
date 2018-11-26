@@ -15,6 +15,7 @@ module Rialto
         # @option options [String] :client a preconfigured client.  May be used for testing, all other
         #                                  options will be ignored.
         # @option options [String] :institution ('Stanford University') The institution to search for
+        # @option options [String] :since (nil) How far back to retrieve records. If not provided, extract all records.
         def initialize(**options)
           @client = options.fetch(:client) { build_client(options) }
         end
@@ -30,7 +31,10 @@ module Rialto
         private
 
         def build_client(options)
-          ServiceClient::WebOfScienceClient.new(institution: options.fetch(:institution, DEFAULT_INSTITUTION))
+          ServiceClient::WebOfScienceClient.new(
+            institution: options.fetch(:institution, DEFAULT_INSTITUTION),
+            since: options[:since]
+          )
         end
       end
     end

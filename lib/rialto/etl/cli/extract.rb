@@ -13,6 +13,11 @@ module Rialto
                desc: 'Institution name (for WebOfScience)',
                aliases: '-i'
 
+        option :since,
+               required: false,
+               banner: 'SINCE',
+               desc: 'Load records since... (for WebOfScience)'
+
         option :sunetid,
                required: false,
                banner: 'SUNETID',

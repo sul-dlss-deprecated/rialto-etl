@@ -8,6 +8,16 @@ cap:
 
 wos:
   api_key: 'evendumbervalue'
+  # From WoS API docs: https://developer.clarivate.com/swagger-ui/?url=/apis/wos/swagger
+  #
+  # Load time span (otherwise described as symbolic time span) defines a range
+  # of load dates. The load date is the date a record was added to the database.
+  # If load date is specified, the publishTimeSpan parameter must be omitted. If
+  # both publishTimeSpan and loadTimeSpan are omitted, the maximum publication
+  # date will be inferred from the editions data. Any of D/W/M/Y prefixed with a
+  # number where D-Day, M-Month, W-Week, Y-Year allowed. Acceptable value range
+  # for Day(0-6), Week(1-52), Month(1-12) and Year(0-10), ex: 5D,30W,10M,8Y
+  load_timespan: '8W'
 
 sera:
   clientid: placeholderid
