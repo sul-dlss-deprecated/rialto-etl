@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/hash/keys'
 require 'rialto/etl/extractors'
 
 module Rialto
@@ -42,7 +43,7 @@ module Rialto
         private
 
         def extractor(name)
-          Rialto::Etl::Extractors.const_get(name).new(options)
+          Rialto::Etl::Extractors.const_get(name).new(options.symbolize_keys)
         end
       end
     end
