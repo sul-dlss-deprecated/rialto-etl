@@ -9,7 +9,7 @@ set :output, 'log/etl_cron.log'
 
 job_type :exe, 'cd :path && :task'
 
-every :tuesday, at: '01:05pm' do
+every :tuesday, at: '01:45pm' do
   exe 'exe/extract call StanfordOrganizations > data/organizations.json ' \
     '&& exe/transform call StanfordOrganizations -i data/organizations.json > data/organizations.sparql ' \
     '&& exe/load call Sparql -i data/organizations.sparql ' \
