@@ -11,8 +11,8 @@ module Rialto
       class Sera
         include Rialto::Etl::Logging
 
-        def initialize(options = {})
-          @sunetid = options.fetch(:sunetid)
+        def initialize(sunetid:)
+          @sunetid = sunetid
         end
 
         # Hit an API endpoint and return the results
