@@ -19,7 +19,7 @@ end
 # Researcher ETL
 every :wednesday, at: '09:30am' do
   exe 'exe/extract call StanfordResearchers > data/researchers.ndj ' \
-    '&& exe/transform call StanfordPeople -i data/researchers.ndj > data/researchers.sparql ' \
+    '&& exe/transform call StanfordPeople -o data/organizations.json -i data/researchers.ndj > data/researchers.sparql ' \
     '&& exe/load call Sparql -i data/researchers.sparql '
 end
 
