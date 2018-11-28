@@ -10,6 +10,7 @@
 /spec/sensitive-fixtures/
 .ruby-gemset
 .ruby-version
+config/honeybadger.yml
 config/settings.local.yml
 config/settings/*.local.yml
 warnings*.log

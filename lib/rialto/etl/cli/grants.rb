@@ -67,6 +67,10 @@ module Rialto
 
         private
 
+        no_commands do
+          delegate :log_exception, to: ErrorReporter
+        end
+
         # Performs ETL on a single row
         def handle_row(row, count)
           profile_id = row[:profileid]
@@ -95,7 +99,8 @@ module Rialto
           begin
             results = perform_extract(row)
           rescue StandardError => exception
-            say "Skipping #{extract_file} because an error occurred while extracting: #{exception.message} (#{exception.class})"
+            log_exception "Skipping #{extract_file} because an error occurred while extracting: " \
+                          "#{exception.message} (#{exception.class})"
             FileUtils.rm(extract_file, force: true)
             return extract_file
           end
@@ -121,7 +126,8 @@ module Rialto
               output_file_path: sparql_file
             ).transform
           rescue StandardError => exception
-            say "Skipping #{sparql_file} because an error occurred while transforming: #{exception.message} (#{exception.class})"
+            log_exception "Skipping #{sparql_file} because an error occurred while transforming: "\
+                          "#{exception.message} (#{exception.class})"
             FileUtils.rm(sparql_file, force: true)
             return sparql_file
           end
@@ -132,7 +138,8 @@ module Rialto
         def load_sparql(sparql_file)
           Rialto::Etl::Loaders::Sparql.new(input: sparql_file).load
         rescue StandardError => exception
-          say "An error occurred loading #{sparql_file} but continuing: #{exception.message} (#{exception.class})"
+          log_exception "An error occurred loading #{sparql_file} but continuing: "\
+                        "#{exception.message} (#{exception.class})"
         end
 
         def perform_extract(row)

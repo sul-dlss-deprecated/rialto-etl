@@ -9,15 +9,16 @@ module Rialto
       class WebOfScience
         DEFAULT_INSTITUTION = 'Stanford University'
 
-        attr_reader :client
+        attr_reader :client, :institution, :since
 
-        # @param [Hash] options
-        # @option options [String] :client a preconfigured client.  May be used for testing, all other
-        #                                  options will be ignored.
-        # @option options [String] :institution ('Stanford University') The institution to search for
-        # @option options [String] :since (nil) How far back to retrieve records. If not provided, extract all records.
-        def initialize(**options)
-          @client = options.fetch(:client) { build_client(options) }
+        # @param client [String] a preconfigured client. May be used for testing, all other options will be ignored.
+        # @param institution [String] The institution to search for (default: 'Stanford University')
+        # @param since [String] How far back to retrieve records. If not provided, extract all records. (default: nil)
+        def initialize(client: nil, institution: DEFAULT_INSTITUTION, since: nil)
+          @institution = institution
+          @since = since
+          # Must appear after other ivars because `#build_client` depends on the `#institution` and `#since` getters
+          @client = client || build_client
         end
 
         # Use the client to iterate over records and yield them as JSON
@@ -30,10 +31,10 @@ module Rialto
 
         private
 
-        def build_client(options)
+        def build_client
           ServiceClient::WebOfScienceClient.new(
-            institution: options.fetch(:institution, DEFAULT_INSTITUTION),
-            since: options[:since]
+            institution: institution,
+            since: since
           )
         end
       end
