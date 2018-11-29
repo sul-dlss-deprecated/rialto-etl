@@ -14,5 +14,9 @@ config/honeybadger.yml
 config/settings.local.yml
 config/settings/*.local.yml
 warnings*.log
-!/data/.keep
+/data/
+!/data/grants/.keep
+!/data/pubs/.keep
+!/data/raw/grants/.keep
+!/data/raw/pubs/.keep
 log
