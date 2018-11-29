@@ -12,7 +12,7 @@ job_type :exe, 'cd :path && :task'
 # Organization ETL
 every :tuesday, at: '01:45pm' do
   exe 'exe/extract call StanfordOrganizations > data/organizations.json ' \
-    '&& aws s3 cp data/organizations.json s3://rialto-data-load/organizations-$(date \'+%Y-%m-%d\').json ' \
+    '&& aws s3 cp data/organizations.json s3://rialto-data-load-production/organizations-$(date \'+%Y-%m-%d\').json ' \
     '&& exe/transform call StanfordOrganizations -i data/organizations.json > data/organizations.sparql ' \
     '&& exe/load call Sparql -i data/organizations.sparql'
 end
@@ -20,7 +20,7 @@ end
 # Researcher ETL
 every :wednesday, at: '09:30am' do
   exe 'exe/extract call StanfordResearchers > data/researchers.ndj ' \
-    '&& aws s3 cp data/researchers.ndj s3://rialto-data-load/researchers-$(date \'+%Y-%m-%d\').ndj ' \
+    '&& aws s3 cp data/researchers.ndj s3://rialto-data-load-production/researchers-$(date \'+%Y-%m-%d\').ndj ' \
     '&& exe/transform call StanfordPeople -o data/organizations.json -i data/researchers.ndj > data/researchers.sparql ' \
     '&& exe/load call Sparql -i data/researchers.sparql '
 end
