@@ -10,7 +10,7 @@ set :repo_url, 'https://github.com/sul-dlss/rialto-etl.git'
 ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '/opt/app/rialto'
+set :deploy_to, '/opt/app/rialto/rialto'
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -41,3 +41,6 @@ append :linked_dirs, 'data', 'config/settings'
 # set :ssh_options, verify_host_key: :secure
 
 set :whenever_roles, [:app]
+
+# update shared_configs
+before 'bundler:install', 'shared_configs:update'
