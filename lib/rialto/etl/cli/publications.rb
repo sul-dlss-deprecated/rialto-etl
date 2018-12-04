@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/hash/keys'
 require 'fileutils'
 
 module Rialto
@@ -59,8 +60,8 @@ module Rialto
         def passthrough_options
           # @note Thor options hashes may be accessed "indifferently" w/r/t
           #       whether their keys are strings or symbols, but this does *not* work
-          #       with the `Hash#slice` method
-          options.slice('since')
+          #       with the `Hash#slice` method, so we coerce the keys to symbols
+          options.symbolize_keys.slice(:since)
         end
 
         def cached_files(&_block)

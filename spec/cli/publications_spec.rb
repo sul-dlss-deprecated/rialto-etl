@@ -59,7 +59,7 @@ RSpec.describe Rialto::Etl::CLI::Publications do
 
       it 'invokes the extractor with the `since` option supplied' do
         loader.invoke_command(command)
-        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new).once.with('since' => '2W')
+        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new).once.with(since: '2W')
       end
     end
 
