@@ -41,3 +41,6 @@ append :linked_dirs, 'data', 'config/settings'
 # set :ssh_options, verify_host_key: :secure
 
 set :whenever_roles, [:app]
+
+# update shared_configs
+before 'deploy', 'shared_configs:update'
