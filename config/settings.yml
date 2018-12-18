@@ -18,6 +18,13 @@ wos:
   # number where D-Day, M-Month, W-Week, Y-Year allowed. Acceptable value range
   # for Day(0-6), Week(1-52), Month(1-12) and Year(0-10), ex: 5D,30W,10M,8Y
   load_timespan: '8W'
+  publication_ranges:
+    - '1800-01-01+1989-12-31'
+    - '1990-01-01+1999-12-31'
+    - '2000-01-01+2009-12-31'
+    - '2010-01-01+2013-12-31'
+    - '2014-01-01+2017-12-31'
+    - '2018-01-01+2021-12-31'
 
 sera:
   clientid: placeholderid

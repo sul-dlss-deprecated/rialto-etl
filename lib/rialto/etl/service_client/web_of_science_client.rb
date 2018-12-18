@@ -49,10 +49,7 @@ module Rialto
         def publication_ranges
           # Short-circuit publication ranges if `since` was supplied
           return Array.wrap(since) if since
-          [
-            '1800-01-01+1989-12-31', '1990-01-01+1999-12-31', '2000-01-01+2009-12-31',
-            '2010-01-01+2013-12-31', '2014-01-01+2017-12-31', '2018-01-01+2021-12-31'
-          ]
+          Settings.wos.publication_ranges
         end
 
         def query_by_id(first_record:)

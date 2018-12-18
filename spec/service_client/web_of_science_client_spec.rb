@@ -7,6 +7,10 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
   let(:publication_ranges) { ['1700-01-01+1700-12-31'] }
   let(:records_found) { 1 }
 
+  before do
+    Settings.wos.publication_ranges = publication_ranges
+  end
+
   describe '#initialize' do
     context 'when since value is supplied' do
       subject(:client) { described_class.new(institution: 'Stanford University', since: since_value) }
@@ -41,7 +45,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
 
       allow(client).to receive(:query_id).and_return(123)
       allow(client).to receive(:records_found).and_return(records_found)
-      allow(client).to receive(:publication_ranges).and_return(publication_ranges)
+      # allow(client).to receive(:publication_ranges).and_return(publication_ranges)
       allow_any_instance_of(Faraday::Request::Retry).to receive(:sleep)
     end
     # rubocop:enable RSpec/AnyInstance
