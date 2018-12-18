@@ -19,6 +19,11 @@ module Rialto
                banner: 'SINCE',
                desc: 'Load records since... (for WebOfScience)'
 
+        option :range,
+               required: false,
+               banner: 'RANGE',
+               desc: 'Publication range, e.g., 2018-01-01+2021-12-31... (for WebOfScience)'
+
         option :sunetid,
                required: false,
                banner: 'SUNETID',
