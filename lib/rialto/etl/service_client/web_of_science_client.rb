@@ -114,7 +114,10 @@ module Rialto
         end
 
         def client
-          RetriableConnectionFactory.build(uri: "https://#{HOST}", headers: connection_headers)
+          RetriableConnectionFactory.build(uri: "https://#{HOST}",
+                                           headers: connection_headers,
+                                           max_retries: Settings.wos.max_retries,
+                                           max_interval: Settings.wos.max_interval)
         end
 
         def connection_headers

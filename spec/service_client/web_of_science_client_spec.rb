@@ -62,33 +62,33 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
     end
     # rubocop:enable RSpec/AnyInstance
 
+    RSpec::Matchers.define_negated_matcher :not_output, :output
+
     context 'when connection raises an exception' do
       let(:error_message) { 'Uh oh!' }
       let(:path) { '/api/wos/query/123?firstRecord=1&count=100' }
+      let(:unexpected_output_regex) { /retrying connection/ }
 
       before do
         stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=100&firstRecord=1')
-          .to_return(status: 500, body: error_message, headers: {})
+          .to_return(status: 501, body: error_message, headers: {})
       end
 
-      it 'raises an exception' do
-        expect { client.each.to_a }.to raise_error(RuntimeError)
+      it 'raises an exception and does not retry' do
+        expect { client.each.to_a }.to raise_error(RuntimeError).and not_output(unexpected_output_regex).to_stderr
       end
     end
 
     context 'when connection is throttled' do
       let(:expected_output_regex) do
         /
-        retrying\ connection\ \(5\ remaining\).+
-        retrying\ connection\ \(4\ remaining\).+
-        retrying\ connection\ \(3\ remaining\).+
-        retrying\ connection\ \(2\ remaining\).+
         retrying\ connection\ \(1\ remaining\).+
         retrying\ connection\ \(0\ remaining\)
         /mx
       end
 
       before do
+        Settings.wos.max_retries = 2
         stub_request(:get, 'https://api.clarivate.com/api/wos/query/123?count=100&firstRecord=1')
           .to_return(status: 429, body: '', headers: {})
       end

@@ -8,18 +8,19 @@ module Rialto
     module ServiceClient
       # Builds Faraday connections with retry and long timeouts
       class RetriableConnectionFactory
-        MAX_RETRIES = 6
-
+        DEFAULT_MAX_RETRIES = 6
+        DEFAULT_MAX_INTERVAL = Float::MAX
         class_attribute :logger
 
         # rubocop:disable Metrics/MethodLength
-        def self.build(uri:, headers:, logger: default_logger)
+        def self.build(uri:, headers:, logger: default_logger, max_retries: nil, max_interval: nil)
           self.logger = logger
 
           Faraday.new(uri, headers: headers) do |connection|
-            connection.request :retry, max: MAX_RETRIES,
+            connection.request :retry, max: max_retries || DEFAULT_MAX_RETRIES,
+                                       max_interval: max_interval || DEFAULT_MAX_INTERVAL,
                                        interval: 5.0,
-                                       interval_randomness: 0.3,
+                                       interval_randomness: 0.01,
                                        backoff_factor: 2.0,
                                        methods: retriable_methods, exceptions: retriable_exceptions, retry_block: retry_block,
                                        retry_statuses: retry_statuses
@@ -56,7 +57,7 @@ module Rialto
         private_class_method :default_logger
 
         def self.retry_statuses
-          [429]
+          [429, 500, 502, 503, 504, 599]
         end
         private_class_method :retry_statuses
       end

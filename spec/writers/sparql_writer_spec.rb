@@ -44,12 +44,13 @@ RSpec.describe Rialto::Etl::Writers::SparqlWriter do
         expect { writer.put(batch) }.not_to raise_error
       end
     end
-    context 'when returns 500' do
-      let(:status) { 500 }
+    # Using 501 in test (instead of 500) to avoid retrying
+    context 'when returns 501' do
+      let(:status) { 501 }
 
       it 'raises an error' do
         expect { writer.put(batch) }.to raise_error(Rialto::Etl::ErrorResponse)
-        expect(logger).to have_received(:error).with('Error in SPARQL update. : 500  () (Rialto::Etl::ErrorResponse)')
+        expect(logger).to have_received(:error).with('Error in SPARQL update. : 501  () (Rialto::Etl::ErrorResponse)')
       end
     end
   end
