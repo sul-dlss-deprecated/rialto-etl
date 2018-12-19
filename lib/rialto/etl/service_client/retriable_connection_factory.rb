@@ -46,7 +46,7 @@ module Rialto
 
         def self.retry_block
           lambda { |env, _opts, retries, exception|
-            logger.warn "retrying connection (#{retries} remaining) to #{env.url}: (#{exception.class}) #{exception.message}"
+            logger.warn "retrying connection (#{retries} remaining) to #{env.url}: (#{exception.class}) #{exception.message} #{env.status}"
           }
         end
         private_class_method :retry_block
