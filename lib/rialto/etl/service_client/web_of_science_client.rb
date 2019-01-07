@@ -38,7 +38,9 @@ module Rialto
             logger.info "records found: #{records_found}"
 
             first_record_values.each do |first_record|
-              yield query_by_id(first_record: first_record)
+              query_by_id(first_record: first_record).each do |record|
+                yield record
+              end
             end
           end
         end

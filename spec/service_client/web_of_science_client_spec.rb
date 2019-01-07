@@ -108,7 +108,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
 
       it 'calls the block on single result' do
         results = client.each.to_a
-        expect(results).to eq [['one']]
+        expect(results).to eq ['one']
       end
     end
 
@@ -130,7 +130,7 @@ RSpec.describe Rialto::Etl::ServiceClient::WebOfScienceClient do
       it 'calls the block on each result' do
         results = client.each.to_a
 
-        expect(results).to eq [%w[one two], ['three']]
+        expect(results).to eq %w[one two three]
       end
     end
   end

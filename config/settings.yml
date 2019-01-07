@@ -8,7 +8,7 @@ cap:
 
 wos:
   api_key: 'evendumbervalue'
-  # From WoS API docs: https://developer.clarivate.com/swagger-ui/?url=/apis/wos/swagger
+  # From WoS API docs: https://api.clarivate.com/swagger-ui/?url=https%3A%2F%2Fdeveloper.clarivate.com%2Fapis%2Fwos%2Fswagger
   #
   # Load time span (otherwise described as symbolic time span) defines a range
   # of load dates. The load date is the date a record was added to the database.
@@ -18,13 +18,35 @@ wos:
   # number where D-Day, M-Month, W-Week, Y-Year allowed. Acceptable value range
   # for Day(0-6), Week(1-52), Month(1-12) and Year(0-10), ex: 5D,30W,10M,8Y
   load_timespan: '8W'
+  # These ranges work as of Jan. 2019.
+  # If ranges are too large, the WoS API fails.
   publication_ranges:
     - '1800-01-01+1989-12-31'
     - '1990-01-01+1999-12-31'
     - '2000-01-01+2009-12-31'
-    - '2010-01-01+2013-12-31'
-    - '2014-01-01+2017-12-31'
-    - '2018-01-01+2021-12-31'
+    - '2010-01-01+2010-12-31'
+    - '2011-01-01+2011-12-31'
+    - '2012-01-01+2012-06-30'
+    - '2012-07-01+2012-12-31'
+    - '2013-01-01+2013-06-30'
+    - '2013-07-01+2013-12-31'
+    - '2014-01-01+2014-06-30'
+    - '2014-07-01+2014-12-31'
+    - '2015-01-01+2015-06-30'
+    - '2015-07-01+2015-09-30'
+    - '2015-10-01+2015-12-31'
+    - '2016-01-01+2016-03-31'
+    - '2016-04-01+2016-06-30'
+    - '2016-07-01+2016-09-30'
+    - '2016-10-01+2016-12-31'
+    - '2017-01-01+2017-03-31'
+    - '2017-04-01+2017-06-30'
+    - '2017-07-01+2017-09-30'
+    - '2017-10-01+2017-12-31'
+    - '2018-01-01+2018-03-31'
+    - '2018-04-01+2018-06-30'
+    - '2018-07-01+2018-09-30'
+    - '2018-10-01+2018-12-31'
   # About 1 day
   max_retries: 96
   # 15 minutes
