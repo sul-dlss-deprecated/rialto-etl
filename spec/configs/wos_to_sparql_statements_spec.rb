@@ -143,7 +143,7 @@ RSpec.describe Rialto::Etl::Transformer do
         # DOI
         expect(repository).to have_quad([id,
                                          RDF::Vocab::BIBO.doi,
-                                         RDF::URI('https://doi.org/10.1177/1535370217744775'),
+                                         RDF::URI('https://doi.org/10.1177%2F1535370217744%3C775%3E'),
                                          graph])
         # Identifier
         expect(repository).to has_quads([[id,
@@ -156,7 +156,7 @@ RSpec.describe Rialto::Etl::Transformer do
                                           graph],
                                          [id,
                                           RDF::Vocab::BIBO.identifier,
-                                          '10.1177/1535370217744775',
+                                          '10.1177/1535370217744<775>',
                                           graph],
                                          [id,
                                           RDF::Vocab::BIBO.identifier,
@@ -443,7 +443,7 @@ RSpec.describe Rialto::Etl::Transformer do
         # DOI
         expect(repository).to have_quad([id,
                                          RDF::Vocab::BIBO.doi,
-                                         RDF::URI('https://doi.org/10.1177/1535370217744774'),
+                                         RDF::URI('https://doi.org/10.1177%2F1535370217744774'),
                                          graph])
         expect(repository).not_to have_quad([id,
                                              RDF::Vocab::BIBO.doi,
