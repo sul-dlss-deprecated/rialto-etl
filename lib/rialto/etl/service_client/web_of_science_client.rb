@@ -17,19 +17,20 @@ module Rialto
         DEFAULT_QUERY_ID = 0
         NO_RECORDS_FOUND = 0
 
-        def initialize(institution:, since: nil)
+        def initialize(institution:, since: nil, publication_range: nil)
           @institution = institution
           @since = since
+          @publication_range = publication_range
         end
 
-        attr_reader :institution, :since
+        attr_reader :institution, :since, :publication_range
 
         # Hit the API endpoint and iterate over resulting records
         def each
           return to_enum(:each) unless block_given?
 
-          publication_ranges.each do |publication_range|
-            self.publication_range = publication_range
+          publication_ranges.each do |pub_range|
+            self.pub_range = pub_range
 
             # Run the initial query to get a query ID (for pagination)
             perform_initial_query!
@@ -37,22 +38,22 @@ module Rialto
             logger.info "records found: #{records_found}"
 
             first_record_values.each do |first_record|
-              yield query_by_id(first_record: first_record)
+              query_by_id(first_record: first_record).each do |record|
+                yield record
+              end
             end
           end
         end
 
         private
 
-        attr_accessor :records_found, :query_id, :publication_range
+        attr_accessor :records_found, :query_id, :pub_range
 
         def publication_ranges
           # Short-circuit publication ranges if `since` was supplied
           return Array.wrap(since) if since
-          [
-            '1800-01-01+1989-12-31', '1990-01-01+1999-12-31', '2000-01-01+2009-12-31',
-            '2010-01-01+2013-12-31', '2014-01-01+2017-12-31', '2018-01-01+2021-12-31'
-          ]
+          return Array.wrap(publication_range) if publication_range
+          Settings.wos.publication_ranges
         end
 
         def query_by_id(first_record:)
@@ -84,9 +85,9 @@ module Rialto
                                            count: 1,
                                            usrQuery: usr_query)
           if since
-            params['loadTimeSpan'] = publication_range
+            params['loadTimeSpan'] = pub_range
           else
-            params['publishTimeSpan'] = publication_range
+            params['publishTimeSpan'] = pub_range
           end
           build_uri(path: USER_QUERY_PATH, params: params)
         end
@@ -115,7 +116,10 @@ module Rialto
         end
 
         def client
-          RetriableConnectionFactory.build(uri: "https://#{HOST}", headers: connection_headers)
+          RetriableConnectionFactory.build(uri: "https://#{HOST}",
+                                           headers: connection_headers,
+                                           max_retries: Settings.wos.max_retries,
+                                           max_interval: Settings.wos.max_interval)
         end
 
         def connection_headers

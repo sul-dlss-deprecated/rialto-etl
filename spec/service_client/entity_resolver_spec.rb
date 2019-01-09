@@ -38,13 +38,14 @@ RSpec.describe Rialto::Etl::ServiceClient::EntityResolver do
 
     context 'when resolver behaves unexpectedly' do
       before do
+        # Using a 501 instead of 500 to avoid retries in the test.
         stub_request(:get, 'http://127.0.0.1:3001/person?full_name=Wilson,%20Jennifer%20L.&orcid_id=0000-0002-2328-2018')
-          .to_return(status: 500, body: '')
+          .to_return(status: 501, body: '')
       end
       it 'raises error' do
         expect { resolve }.to raise_error(RuntimeError)
         expect(logger).to have_received(:error).with('Error resolving with path person?' \
-          'orcid_id=0000-0002-2328-2018&full_name=Wilson%2C+Jennifer+L.: Entity resolver returned 500 for person type ' \
+          'orcid_id=0000-0002-2328-2018&full_name=Wilson%2C+Jennifer+L.: Entity resolver returned 501 for person type ' \
           'and {"orcid_id"=>"0000-0002-2328-2018", "full_name"=>"Wilson, Jennifer L."} params.')
       end
     end
