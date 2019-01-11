@@ -340,4 +340,30 @@ RSpec.describe Rialto::Etl::Transformers::People do
       end
     end
   end
+  describe '.name_variations_from_name' do
+    subject(:variations) do
+      described_class.name_variations_from_names(given_name: given_name, middle_name: middle_name, family_name: family_name)
+    end
+
+    let(:family_name) { 'Littman' }
+
+    # Due to issues with WoS data.
+    context 'when given name is True' do
+      let(:given_name) { true }
+      let(:middle_name) { nil }
+
+      it 'returns the correct fullname' do
+        expect(variations).to be_empty
+      end
+    end
+
+    context 'when middle name is True' do
+      let(:middle_name) { true }
+      let(:given_name) { 'Justin' }
+
+      it 'returns the correct fullname' do
+        expect(variations).not_to be_empty
+      end
+    end
+  end
 end
