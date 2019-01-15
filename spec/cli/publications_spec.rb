@@ -22,7 +22,7 @@ RSpec.describe Rialto::Etl::CLI::Publications do
   before do
     allow(Rialto::Etl::Loaders::Sparql).to receive(:new).and_return(double(load: true))
     allow(Rialto::Etl::Transformer).to receive(:new).and_return(double('t', transform: nil))
-    allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return(["[#{record}]"])
+    allow(Rialto::Etl::Extractors::WebOfScience).to receive(:new).and_return([record.to_s])
     allow(File).to receive(:exist?).and_return(true)
     allow(File).to receive(:empty?).and_return(false)
   end

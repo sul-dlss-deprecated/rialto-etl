@@ -68,24 +68,21 @@ module Rialto
           Dir.glob("#{input_directory}/WOS*.json").each { |file_path| yield file_path }
         end
 
-        # rubocop:disable Metrics/MethodLength
         def extract(&block)
           return cached_files(&block) if options[:skip_extract]
-          Rialto::Etl::Extractors::WebOfScience.new(passthrough_options).each do |record_list|
-            JSON.parse(record_list).each do |record|
-              extract_file = File.join(input_directory, "#{record['UID']}.json")
+          Rialto::Etl::Extractors::WebOfScience.new(passthrough_options).each do |unparsed_record|
+            record = JSON.parse(unparsed_record)
+            extract_file = File.join(input_directory, "#{record['UID']}.json")
 
-              if File.exist?(extract_file) && !options[:force]
-                say "file #{extract_file} already exists, skipping. use -f to force overwrite"
-              else
-                File.open(extract_file, 'w') { |f| f.write(record.to_json) }
-              end
-
-              yield extract_file
+            if File.exist?(extract_file) && !options[:force]
+              say "file #{extract_file} already exists, skipping. use -f to force overwrite"
+            else
+              File.open(extract_file, 'w') { |f| f.write(record.to_json) }
             end
+
+            yield extract_file
           end
         end
-        # rubocop:enable Metrics/MethodLength
 
         # rubocop:disable Metrics/MethodLength
         def transform(source_file)
