@@ -97,7 +97,8 @@ module Rialto
           end
           # Don't write file if an exception occurs
           begin
-            results = perform_extract(row)
+            return extract_file if row[:sunetid].empty? # return from extract without calling SERA API
+            results = perform_extract(row[:sunetid])
           rescue StandardError => exception
             log_exception "Skipping #{extract_file} because an error occurred while extracting: " \
                           "#{exception.message} (#{exception.class})"
@@ -144,12 +145,10 @@ module Rialto
                         "#{exception.message} (#{exception.class})"
         end
 
-        def perform_extract(row)
+        def perform_extract(sunetid)
           results = []
-          if (sunetid = row[:sunetid])
-            Rialto::Etl::Extractors::Sera.new(sunetid: sunetid).each do |result|
-              results << result
-            end
+          Rialto::Etl::Extractors::Sera.new(sunetid: sunetid).each do |result|
+            results << result
           end
           results
         end

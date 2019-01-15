@@ -32,6 +32,16 @@ RSpec.describe Rialto::Etl::CLI::Grants do
     }
   end
 
+  let(:empty_sunet_row) do
+    {
+      sunetid: '',
+      first_name: 'Empty',
+      last_name: 'Sunet',
+      uri: 'http://example.com/record2',
+      profileid: '321'
+    }
+  end
+
   describe '#load' do
     context 'with a valid transformer' do
       let(:args) do
@@ -179,6 +189,23 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         expect(loader.send(:extract, row, '1234', true)).to eq(ndj_file)
         expect(Rialto::Etl::Extractors::Sera).to have_received(:new)
           .with(sunetid: 'vjarrett')
+        expect(File).not_to exist(ndj_file)
+      end
+    end
+
+    context 'when the sunetid is blank' do
+      let(:args) do
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir]
+      end
+
+      before do
+        allow(Rialto::Etl::Extractors::Sera).to receive(:new).and_return([])
+      end
+
+      it 'does not create the ndj file' do
+        ndj_file = File.join(dir, 'sera-321.ndj')
+        expect(loader.send(:extract, empty_sunet_row, '321', true)).to eq(ndj_file)
+        expect(Rialto::Etl::Extractors::Sera).not_to have_received(:new)
         expect(File).not_to exist(ndj_file)
       end
     end
