@@ -97,6 +97,7 @@ module Rialto
           end
           # Don't write file if an exception occurs
           begin
+            return extract_file if row[:sunetid].empty? # return from extract without calling SERA API
             results = perform_extract(row)
           rescue StandardError => exception
             log_exception "Skipping #{extract_file} because an error occurred while extracting: " \
