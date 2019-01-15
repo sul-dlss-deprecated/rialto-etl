@@ -164,5 +164,23 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         expect(Rialto::Etl::CLI::ErrorReporter).to have_received(:log_exception)
       end
     end
+
+    context 'when extract results are empty' do
+      let(:args) do
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir]
+      end
+
+      before do
+        allow(Rialto::Etl::Extractors::Sera).to receive(:new).and_return([])
+      end
+
+      it 'does not create the ndj file' do
+        ndj_file = File.join(dir, 'sera-1234.ndj')
+        expect(loader.send(:extract, row, '1234', true)).to eq(ndj_file)
+        expect(Rialto::Etl::Extractors::Sera).to have_received(:new)
+          .with(sunetid: 'vjarrett')
+        expect(File).not_to exist(ndj_file)
+      end
+    end
   end
 end
