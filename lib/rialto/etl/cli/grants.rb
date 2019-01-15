@@ -105,7 +105,7 @@ module Rialto
             return extract_file
           end
 
-          return extract_file unless results.any? # this will avoid creating an emtpy file
+          return extract_file if results.empty? # this will avoid creating an empty file
 
           File.open(extract_file, 'w') do |f|
             f.write(results.join("\n"))
