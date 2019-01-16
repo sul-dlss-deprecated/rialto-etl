@@ -10,20 +10,32 @@ module Rialto
       class RetriableConnectionFactory
         DEFAULT_MAX_RETRIES = 6
         DEFAULT_MAX_INTERVAL = Float::MAX
-        class_attribute :logger
+        class_attribute :logger, :max_retries, :max_interval
+
+        # rubocop:disable Metrics/ParameterLists
+        def self.build(uri:, headers: nil, oath_token: nil, logger: default_logger, max_retries: nil, max_interval: nil)
+          self.logger = logger
+          self.max_retries = max_retries || DEFAULT_MAX_RETRIES
+          self.max_interval = max_interval || DEFAULT_MAX_INTERVAL
+
+          return retriable_connection(uri: uri, headers: headers) if oath_token.nil?
+          retriable_oath_connection(uri: uri, oath_token: oath_token)
+        end
+        # rubocop:enable Metrics/ParameterLists
 
         # rubocop:disable Metrics/MethodLength
-        def self.build(uri:, headers:, logger: default_logger, max_retries: nil, max_interval: nil)
-          self.logger = logger
-
+        def self.retriable_connection(uri:, headers:)
           Faraday.new(uri, headers: headers) do |connection|
-            connection.request :retry, max: max_retries || DEFAULT_MAX_RETRIES,
-                                       max_interval: max_interval || DEFAULT_MAX_INTERVAL,
-                                       interval: 5.0,
-                                       interval_randomness: 0.01,
-                                       backoff_factor: 2.0,
-                                       methods: retriable_methods, exceptions: retriable_exceptions, retry_block: retry_block,
-                                       retry_statuses: retry_statuses
+            connection.request :retry,
+                               max: max_retries,
+                               max_interval: max_interval,
+                               interval: 5.0,
+                               interval_randomness: 0.01,
+                               backoff_factor: 2.0,
+                               methods: retriable_methods,
+                               exceptions: retriable_exceptions,
+                               retry_block: retry_block,
+                               retry_statuses: retry_statuses
 
             connection.ssl.update(verify: true, verify_mode: OpenSSL::SSL::VERIFY_PEER)
             # Use :net_http instead of :net_http_persistent to avoid getaddrbyinfo errors with DNS resolution
@@ -32,6 +44,26 @@ module Rialto
             connection.options.open_timeout = 10
           end
         end
+        private_class_method :retriable_connection
+
+        def self.retriable_oath_connection(uri:, oath_token:)
+          Faraday.new(uri) do |connection|
+            connection.request :oauth2,
+                               oath_token,
+                               token_type: :bearer,
+                               max: max_retries,
+                               max_interval: max_interval,
+                               interval: 5.0,
+                               interval_randomness: 0.01,
+                               backoff_factor: 2.0,
+                               methods: retriable_methods,
+                               exceptions: retriable_exceptions,
+                               retry_block: retry_block,
+                               retry_statuses: retry_statuses
+            connection.adapter Faraday.default_adapter
+          end
+        end
+        private_class_method :retriable_oath_connection
         # rubocop:enable Metrics/MethodLength
 
         def self.retriable_methods
