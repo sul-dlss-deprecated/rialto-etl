@@ -2,6 +2,7 @@
 
 require 'rialto/etl/namespaces'
 require 'digest'
+require 'set'
 
 module Rialto
   module Etl
@@ -53,8 +54,9 @@ module Rialto
           # @param family_name [String] last name
           # @return [Array(String)] array of name variations
           # rubocop:disable Metrics/MethodLength
+          # rubocop:disable Metrics/AbcSize
           def name_variations_from_names(given_name:, middle_name: nil, family_name:)
-            name_variations = []
+            name_variations = Set.new
             # Check that a string because WoS sometimes return True
             return name_variations unless given_name&.is_a?(String)
             name_variations << "#{family_name}, #{given_name}"
@@ -65,22 +67,25 @@ module Rialto
             name_variations << "#{given_initial} #{family_name}"
             name_variations << "#{given_initial}. #{family_name}"
 
-            return name_variations unless middle_name&.is_a?(String)
-
-            name_variations << "#{family_name}, #{given_name} #{middle_name}"
-            name_variations << "#{given_name} #{middle_name} #{family_name}"
-            middle_initial = middle_name[0]
-            name_variations << "#{family_name}, #{given_name} #{middle_initial}"
-            name_variations << "#{family_name}, #{given_name} #{middle_initial}."
-            name_variations << "#{given_name} #{middle_initial} #{family_name}"
-            name_variations << "#{given_name} #{middle_initial}. #{family_name}"
-            name_variations << "#{family_name}, #{given_initial}#{middle_initial}"
-            name_variations << "#{family_name}, #{given_initial}.#{middle_initial}."
-            name_variations << "#{given_initial}#{middle_initial} #{family_name}"
-            name_variations << "#{given_initial}.#{middle_initial}. #{family_name}"
-            name_variations
+            if middle_name&.is_a?(String)
+              name_variations << "#{family_name}, #{given_name} #{middle_name}"
+              name_variations << "#{given_name} #{middle_name} #{family_name}"
+              middle_initial = middle_name[0]
+              name_variations << "#{family_name}, #{given_name} #{middle_initial}"
+              name_variations << "#{family_name}, #{given_name} #{middle_initial}."
+              name_variations << "#{given_name} #{middle_initial} #{family_name}"
+              name_variations << "#{given_name} #{middle_initial}. #{family_name}"
+              name_variations << "#{family_name}, #{given_initial}#{middle_initial}"
+              name_variations << "#{family_name}, #{given_initial}.#{middle_initial}."
+              name_variations << "#{given_initial}#{middle_initial} #{family_name}"
+              name_variations << "#{given_initial}.#{middle_initial}. #{family_name}"
+            end
+            # Add downcased
+            name_variations.merge(name_variations.map(&:downcase))
+            name_variations.to_a
           end
           # rubocop:enable Metrics/MethodLength
+          # rubocop:enable Metrics/AbcSize
         end
       end
     end
