@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/class/attribute'
 require 'faraday_middleware'
 require 'oauth2'
 require 'rialto/etl/logging'
