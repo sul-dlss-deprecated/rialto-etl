@@ -11,7 +11,7 @@ module Rialto
       # Documentation: https://asconfluence.stanford.edu/confluence/display/MaIS/SeRA+API+-+User+Documentation
       class Sera
         include Rialto::Etl::Logging
-        class_attribute :oath_client
+        class_attribute :oauth_client
 
         def initialize(sunetid:)
           @sunetid = sunetid
@@ -30,12 +30,12 @@ module Rialto
         attr_reader :sunetid
 
         def client
-          self.oath_client ||= ServiceClient::OauthClientFactory.build(client_id: ::Settings.sera.clientid,
-                                                                       client_secret: ::Settings.sera.secret,
-                                                                       token_url: ::Settings.sera.token_url)
+          self.oauth_client ||= ServiceClient::OauthClientFactory.build(client_id: ::Settings.sera.clientid,
+                                                                        client_secret: ::Settings.sera.secret,
+                                                                        token_url: ::Settings.sera.token_url)
 
           @client || ServiceClient::RetriableConnectionFactory.build(uri: ::Settings.sera.service_url,
-                                                                     oath_token: oath_client.client_credentials.get_token.token,
+                                                                     oauth_token: oauth_client.client_credentials.get_token.token,
                                                                      max_retries: 100,
                                                                      max_interval: 4000)
         end
