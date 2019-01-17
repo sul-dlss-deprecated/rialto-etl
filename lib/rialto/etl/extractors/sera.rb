@@ -36,8 +36,8 @@ module Rialto
 
           @client || ServiceClient::RetriableConnectionFactory.build(uri: ::Settings.sera.service_url,
                                                                      oauth_token: oauth_client.client_credentials.get_token.token,
-                                                                     max_retries: 100,
-                                                                     max_interval: 4000)
+                                                                     max_retries: ::Settings.sera.max_retries,
+                                                                     max_interval: ::Settings.sera.max_interval)
         end
 
         # @return[Array<Hash>] the results of the API call
