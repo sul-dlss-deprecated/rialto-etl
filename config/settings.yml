@@ -57,6 +57,9 @@ sera:
   secret: sekret1!
   token_url: https://aswsuat.stanford.edu/api/oauth/token
   service_url: https://aswsuat.stanford.edu
+  max_retries: 96
+  # 30 minutes
+  max_interval: 1800
 
 sparql_writer:
   update_url: http://127.0.0.1:9999/blazegraph/namespace/kb/sparql

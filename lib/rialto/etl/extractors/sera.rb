@@ -28,10 +28,18 @@ module Rialto
         attr_reader :sunetid
 
         def client
-          @client ||= ServiceClient::OauthConnectionFactory.build(service_url: ::Settings.sera.service_url,
-                                                                  client_id: ::Settings.sera.clientid,
-                                                                  client_secret: ::Settings.sera.secret,
-                                                                  token_url: ::Settings.sera.token_url)
+          @client ||= begin
+            oauth_client = OAuth2::Client.new(::Settings.sera.clientid,
+                                              ::Settings.sera.secret,
+                                              token_url: ::Settings.sera.token_url,
+                                              auth_scheme: :request_body)
+
+            ServiceClient::RetriableConnectionFactory.build(uri: ::Settings.sera.service_url,
+                                                            headers: connection_headers,
+                                                            oauth_token: oauth_client.client_credentials.get_token.token,
+                                                            max_retries: ::Settings.sera.max_retries,
+                                                            max_interval: ::Settings.sera.max_interval)
+          end
         end
 
         # @return[Array<Hash>] the results of the API call
@@ -60,6 +68,13 @@ module Rialto
         # @return [Faraday::Response]
         def response
           client.get(url)
+        end
+
+        def connection_headers
+          {
+            accept: 'application/json',
+            content_type: 'application/json'
+          }
         end
       end
     end
