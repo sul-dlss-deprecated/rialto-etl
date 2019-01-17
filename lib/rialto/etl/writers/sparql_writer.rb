@@ -121,11 +121,22 @@ module Rialto
         end
 
         def client
-          @client ||= ServiceClient::RetriableConnectionFactory.build(uri: sparql_update_url, headers: connection_headers)
+          @client ||= ServiceClient::RetriableConnectionFactory.build(uri: sparql_update_url,
+                                                                      headers: connection_headers,
+                                                                      max_retries: max_retries,
+                                                                      max_interval: max_interval)
         end
 
         def sparql_update_url
           settings['sparql_writer.update_url']
+        end
+
+        def max_retries
+          settings['sparql_writer.max_retries']
+        end
+
+        def max_interval
+          settings['sparql_writer.max_interval']
         end
 
         def connection_headers

@@ -63,6 +63,10 @@ sera:
 
 sparql_writer:
   update_url: http://127.0.0.1:9999/blazegraph/namespace/kb/sparql
+  # A few hours
+  max_retries: 20
+  # 15 minutes
+  max_interval: 900
 
 entity_resolver:
   url: http://127.0.0.1:3001/
