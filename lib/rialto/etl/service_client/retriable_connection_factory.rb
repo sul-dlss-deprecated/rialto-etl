@@ -18,11 +18,6 @@ module Rialto
           self.max_retries = max_retries || DEFAULT_MAX_RETRIES
           self.max_interval = max_interval || DEFAULT_MAX_INTERVAL
 
-          retriable_connection(uri: uri, headers: headers, oauth_token: oauth_token)
-        end
-        # rubocop:enable Metrics/ParameterLists
-
-        def self.retriable_connection(uri:, headers:, oauth_token:)
           Faraday.new(uri, headers: headers) do |connection|
             build_request(oauth_token: oauth_token, connection: connection)
             connection.ssl.update(verify: true, verify_mode: OpenSSL::SSL::VERIFY_PEER)
@@ -32,7 +27,7 @@ module Rialto
             connection.options.open_timeout = 10
           end
         end
-        private_class_method :retriable_connection
+        # rubocop:enable Metrics/ParameterLists
 
         def self.build_request(oauth_token:, connection:)
           connection.request :oauth2, oauth_token, token_type: :bearer if oauth_token
