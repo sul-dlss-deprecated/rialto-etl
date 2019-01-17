@@ -35,6 +35,7 @@ module Rialto
                                             auth_scheme: :request_body)
 
           @client ||= ServiceClient::RetriableConnectionFactory.build(uri: ::Settings.sera.service_url,
+                                                                      headers: connection_headers,
                                                                       oauth_token: oauth_client.client_credentials.get_token.token,
                                                                       max_retries: ::Settings.sera.max_retries,
                                                                       max_interval: ::Settings.sera.max_interval)
@@ -66,6 +67,13 @@ module Rialto
         # @return [Faraday::Response]
         def response
           client.get(url)
+        end
+
+        def connection_headers
+          {
+            accept: 'application/json',
+            content_type: 'application/json'
+          }
         end
       end
     end

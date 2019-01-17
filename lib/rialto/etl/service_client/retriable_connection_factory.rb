@@ -13,7 +13,7 @@ module Rialto
         class_attribute :logger, :max_retries, :max_interval
 
         # rubocop:disable Metrics/ParameterLists
-        def self.build(uri:, headers: nil, oauth_token: nil, logger: default_logger, max_retries: nil, max_interval: nil)
+        def self.build(uri:, headers:, oauth_token: nil, logger: default_logger, max_retries: nil, max_interval: nil)
           self.logger = logger
           self.max_retries = max_retries || DEFAULT_MAX_RETRIES
           self.max_interval = max_interval || DEFAULT_MAX_INTERVAL
