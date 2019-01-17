@@ -28,16 +28,18 @@ module Rialto
         attr_reader :sunetid
 
         def client
-          oauth_client = OAuth2::Client.new(::Settings.sera.clientid,
-                                            ::Settings.sera.secret,
-                                            token_url: ::Settings.sera.token_url,
-                                            auth_scheme: :request_body)
+          @client ||= begin
+            oauth_client = OAuth2::Client.new(::Settings.sera.clientid,
+                                              ::Settings.sera.secret,
+                                              token_url: ::Settings.sera.token_url,
+                                              auth_scheme: :request_body)
 
-          @client ||= ServiceClient::RetriableConnectionFactory.build(uri: ::Settings.sera.service_url,
-                                                                      headers: connection_headers,
-                                                                      oauth_token: oauth_client.client_credentials.get_token.token,
-                                                                      max_retries: ::Settings.sera.max_retries,
-                                                                      max_interval: ::Settings.sera.max_interval)
+            ServiceClient::RetriableConnectionFactory.build(uri: ::Settings.sera.service_url,
+                                                            headers: connection_headers,
+                                                            oauth_token: oauth_client.client_credentials.get_token.token,
+                                                            max_retries: ::Settings.sera.max_retries,
+                                                            max_interval: ::Settings.sera.max_interval)
+          end
         end
 
         # @return[Array<Hash>] the results of the API call
