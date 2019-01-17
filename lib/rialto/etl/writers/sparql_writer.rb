@@ -33,7 +33,7 @@ module Rialto
         include Traject::QualifiedConstGet
         include Rialto::Etl::Logging
 
-        DEFAULT_BATCH_SIZE = 100
+        DEFAULT_BATCH_SIZE = 50
 
         # The passed-in settings
         attr_reader :settings
