@@ -100,10 +100,10 @@ module Rialto
             return extract_file if row[:sunetid].empty? # return from extract without calling SERA API
             results = perform_extract(row[:sunetid])
           rescue StandardError => exception
-            log_exception "Skipping #{extract_file} because an error occurred while extracting: " \
+            log_exception "Failing on #{profile_id} because an error occurred while extracting: " \
                           "#{exception.message} (#{exception.class})"
             FileUtils.rm(extract_file, force: true)
-            return extract_file
+            raise
           end
 
           return extract_file if results.empty? # this will avoid creating an empty file
@@ -129,10 +129,10 @@ module Rialto
               output_file_path: sparql_file
             ).transform
           rescue StandardError => exception
-            log_exception "Skipping #{sparql_file} because an error occurred while transforming: "\
+            log_exception "Failing on #{source_file} because an error occurred while transforming: "\
                           "#{exception.message} (#{exception.class})"
             FileUtils.rm(sparql_file, force: true)
-            return sparql_file
+            raise
           end
           sparql_file
         end

@@ -122,20 +122,38 @@ RSpec.describe Rialto::Etl::CLI::Publications do
       end
     end
 
-    context 'when exception is raised during transform' do
+    context 'when exception raised during transform' do
       before do
         allow(Rialto::Etl::Transformer).to receive(:new).and_raise(StandardError)
         # Want source file to exist and sparql file not to exist. This mimics
         # the transformation removing the sparql file.
         allow(File).to receive(:exist?).and_return(true, false, false)
+        allow(Rialto::Etl::CLI::ErrorReporter).to receive(:log_exception)
       end
 
-      it 'does not attempt a load' do
-        loader.invoke_command(command)
+      it 'raises an error' do
+        expect { loader.invoke_command(command) }.to raise_error(StandardError)
         expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new).once
         expect(Rialto::Etl::Transformer).to have_received(:new).once
         expect(Rialto::Etl::Loaders::Sparql).not_to have_received(:new)
           .with(input: "#{dir}/WOS:000424386600014.sparql")
+        expect(Rialto::Etl::CLI::ErrorReporter).to have_received(:log_exception)
+      end
+    end
+
+    context 'when exception raised during load' do
+      before do
+        allow(Rialto::Etl::Loaders::Sparql).to receive(:new).and_raise(StandardError)
+        allow(Rialto::Etl::CLI::ErrorReporter).to receive(:log_exception)
+      end
+
+      it 'raises an error' do
+        expect { loader.invoke_command(command) }.to raise_error(StandardError)
+        expect(Rialto::Etl::Extractors::WebOfScience).to have_received(:new).once
+        expect(Rialto::Etl::Transformer).to have_received(:new).once
+        expect(Rialto::Etl::Loaders::Sparql).to have_received(:new)
+          .with(input: "#{dir}/WOS:000424386600014.sparql")
+        expect(Rialto::Etl::CLI::ErrorReporter).to have_received(:log_exception)
       end
     end
   end

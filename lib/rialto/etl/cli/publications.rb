@@ -100,8 +100,10 @@ module Rialto
               output_file_path: sparql_file
             ).transform
           rescue StandardError => exception
-            say "Skipping #{sparql_file} because an error occurred while transforming: #{exception.message} (#{exception.class})"
+            log_exception "Failing on #{source_file} because an error occurred while transforming: " \
+              "#{exception.message} (#{exception.class})"
             FileUtils.rm(sparql_file, force: true)
+            raise
           end
           sparql_file
         end
@@ -112,7 +114,9 @@ module Rialto
           say "Loading sparql from #{sparql_file}"
           Rialto::Etl::Loaders::Sparql.new(input: sparql_file).load
         rescue StandardError => exception
-          say "An error occurred loading #{sparql_file} but continuing: #{exception.message} (#{exception.class})"
+          log_exception "Failing on #{sparql_file} because an error occurred while loading: " \
+            "#{exception.message} (#{exception.class})"
+          raise
         end
 
         def input_directory
