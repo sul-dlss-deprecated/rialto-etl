@@ -52,9 +52,9 @@ module Rialto
                        else
                          [subject, RDF::URI.new(field), this_value]
                        end
-              statements << handle_delete_fields(subject, field, graph_name, hash)
-              statements << graph_to_insert(graph, graph_name) if graph.any?
             end
+            statements << handle_delete_fields(subject, field, graph_name, hash)
+            statements << graph_to_insert(graph, graph_name) if graph.any?
           end
 
           statements
