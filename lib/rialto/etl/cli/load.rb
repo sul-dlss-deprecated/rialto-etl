@@ -21,7 +21,8 @@ module Rialto
         def call(name)
           Dir["#{options[:input_file]}/*"].each do |file|
             next if File.directory? file
-            return Rialto::Etl::Loaders.const_get(name).new(input: file).load
+            say "Loading sparql file: #{file}"
+            Rialto::Etl::Loaders.const_get(name).new(input: file).load
           end
 
           Rialto::Etl::Loaders.const_get(name).new(input: options[:input_file]).load
