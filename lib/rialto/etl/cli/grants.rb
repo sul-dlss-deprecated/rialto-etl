@@ -33,11 +33,21 @@ module Rialto
                banner: 'FORCE',
                desc: 'Overwrite files that already exist',
                aliases: '-f'
+        option :skip_extract,
+               default: false,
+               type: :boolean,
+               banner: 'SKIP_EXTRACT',
+               desc: 'Skip load step'
         option :skip_load,
                default: false,
                type: :boolean,
                banner: 'SKIP_LOAD',
                desc: 'Skip load step'
+        option :skip_tranform,
+               default: false,
+               type: :boolean,
+               banner: 'SKIP_TRANSFORM',
+               desc: 'Skip tranform step'
         option :batch_size,
                default: 1,
                type: :numeric,
@@ -72,21 +82,36 @@ module Rialto
         end
 
         # Performs ETL on a single row
+        # rubocop:disable Metrics/MethodLength
+        # rubocop:disable Metrics/AbcSize
+        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/PerceivedComplexity
         def handle_row(row, count)
           profile_id = row[:profileid]
           say "Extracting for #{profile_id} (row: #{count})"
 
-          source_file = extract(row, profile_id, options[:force])
-          return if !File.exist?(source_file) || File.empty?(source_file)
+          unless options[:skip_extract]
+            source_file = extract(row, profile_id, options[:force])
+            return if !File.exist?(source_file) || File.empty?(source_file)
+          end
 
-          say "Transforming for #{profile_id} (row: #{count})"
+          unless options[:skip_tranform]
+            source_file = File.join(input_directory, "#{file_prefix}-#{profile_id}.ndj") if options[:skip_extract]
 
-          sparql_file = transform(source_file, profile_id, options[:force])
-          return if options[:skip_load] || !File.exist?(sparql_file) || File.empty?(sparql_file)
+            say "Transforming for #{profile_id} (row: #{count})"
+            sparql_file = transform(source_file, profile_id, options[:force])
+            return if options[:skip_load] || !File.exist?(sparql_file) || File.empty?(sparql_file)
+          end
+
+          sparql_file = File.join(output_directory, "#{file_prefix}-#{profile_id}.sparql") if options[:skip_tranform]
 
           say "Loading sparql for #{profile_id}: #{row[:uri]}"
           load_sparql(sparql_file)
         end
+        # rubocop:enable Metrics/MethodLength
+        # rubocop:enable Metrics/AbcSize
+        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/PerceivedComplexity
 
         # rubocop:disable Metrics/MethodLength
         def extract(row, profile_id, force)
