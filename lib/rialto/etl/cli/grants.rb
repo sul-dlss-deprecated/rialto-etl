@@ -74,14 +74,17 @@ module Rialto
         # Performs ETL on a single row
         def handle_row(row, count)
           profile_id = row[:profileid]
+          source_file = source_file(profile_id)
+          sparql_file = sparql_file(profile_id)
+
           say "Extracting for #{profile_id} (row: #{count})"
 
-          source_file = extract(row, profile_id, options[:force])
+          extract(row, profile_id)
           return if !File.exist?(source_file) || File.empty?(source_file)
 
           say "Transforming for #{profile_id} (row: #{count})"
 
-          sparql_file = transform(source_file, profile_id, options[:force])
+          transform(source_file, profile_id)
           return if options[:skip_load] || !File.exist?(sparql_file) || File.empty?(sparql_file)
 
           say "Loading sparql for #{profile_id}: #{row[:uri]}"
@@ -89,7 +92,7 @@ module Rialto
         end
 
         # rubocop:disable Metrics/MethodLength
-        def extract(row, profile_id, force)
+        def extract(row, profile_id)
           extract_file = File.join(input_directory, "#{file_prefix}-#{profile_id}.ndj")
           if File.exist?(extract_file) && !force
             say "file #{extract_file} already exists, skipping. use -f to force overwrite"
@@ -116,7 +119,7 @@ module Rialto
         # rubocop:enable Metrics/MethodLength
 
         # rubocop:disable Metrics/MethodLength
-        def transform(source_file, profile_id, force)
+        def transform(source_file, profile_id)
           sparql_file = File.join(output_directory, "#{file_prefix}-#{profile_id}.sparql")
           if File.exist?(sparql_file) && !force
             say "file #{sparql_file} already exists, skipping. use -f to force overwrite"
@@ -171,6 +174,18 @@ module Rialto
 
         def file_prefix
           'sera'
+        end
+
+        def force
+          options.fetch(:force)
+        end
+
+        def source_file(profile_id)
+          File.join(input_directory, "#{file_prefix}-#{profile_id}.ndj")
+        end
+
+        def sparql_file(profile_id)
+          File.join(output_directory, "#{file_prefix}-#{profile_id}.sparql")
         end
 
         def transformer_config

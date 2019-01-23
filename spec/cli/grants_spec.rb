@@ -130,7 +130,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
   describe '#transform' do
     context 'when transform error occurs' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--output-directory', dir]
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--force']
       end
 
       before do
@@ -143,7 +143,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         File.open(sparql_file, 'w') { |file| file.write('test') }
         expect(File).to exist(sparql_file)
         # Using the SPARQL file has source file as a shortcut.
-        expect(loader.send(:transform, sparql_file, '1234', true)).to eq(sparql_file)
+        expect(loader.send(:transform, sparql_file, '1234')).to eq(sparql_file)
         expect(File).not_to exist(sparql_file)
         expect(Rialto::Etl::Transformer).to have_received(:new).once
         expect(Rialto::Etl::CLI::ErrorReporter).to have_received(:log_exception)
@@ -155,7 +155,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
   describe '#extract' do
     context 'when extract error occurs' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir]
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir, '--force']
       end
 
       before do
@@ -167,7 +167,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         ndj_file = File.join(dir, 'sera-1234.ndj')
         File.open(ndj_file, 'w') { |file| file.write('test') }
         expect(File).to exist(ndj_file)
-        expect(loader.send(:extract, row, '1234', true)).to eq(ndj_file)
+        expect(loader.send(:extract, row, '1234')).to eq(ndj_file)
         expect(Rialto::Etl::Extractors::Sera).to have_received(:new)
           .with(sunetid: 'vjarrett')
         expect(File).not_to exist(ndj_file)
@@ -177,7 +177,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
 
     context 'when extract results are empty' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir]
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir, '--force']
       end
 
       before do
@@ -186,7 +186,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
 
       it 'does not create the ndj file' do
         ndj_file = File.join(dir, 'sera-1234.ndj')
-        expect(loader.send(:extract, row, '1234', true)).to eq(ndj_file)
+        expect(loader.send(:extract, row, '1234')).to eq(ndj_file)
         expect(Rialto::Etl::Extractors::Sera).to have_received(:new)
           .with(sunetid: 'vjarrett')
         expect(File).not_to exist(ndj_file)
@@ -195,7 +195,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
 
     context 'when the sunetid is blank' do
       let(:args) do
-        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir]
+        ['--input-file', 'data/researchers.csv', '--output-directory', dir, '--input-directory', dir, '--force']
       end
 
       before do
@@ -204,7 +204,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
 
       it 'does not create the ndj file' do
         ndj_file = File.join(dir, 'sera-321.ndj')
-        expect(loader.send(:extract, empty_sunet_row, '321', true)).to eq(ndj_file)
+        expect(loader.send(:extract, empty_sunet_row, '321')).to eq(ndj_file)
         expect(Rialto::Etl::Extractors::Sera).not_to have_received(:new)
         expect(File).not_to exist(ndj_file)
       end
