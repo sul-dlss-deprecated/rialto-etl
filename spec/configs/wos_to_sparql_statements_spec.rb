@@ -186,6 +186,16 @@ RSpec.describe Rialto::Etl::Transformer do
             graph]]
         )
 
+        # Ignores corporate authorships
+        query = client.select(count: { auth_rel: :c })
+                      .from(Rialto::Etl::NamedGraphs::WOS_GRAPH)
+                      .where([:auth_rel, RDF.type, Rialto::Etl::Vocabs::VIVO.Authorship])
+        expect(query.solutions.first[:c].to_i).to eq(1)
+        query = client.select(count: { auth_rel: :c })
+                      .from(Rialto::Etl::NamedGraphs::WOS_GRAPH)
+                      .where([:auth_rel, RDF.type, Rialto::Etl::Vocabs::VIVO.Editorship])
+        expect(query.solutions.first[:c].to_i).to eq(1)
+
         # Editorships
         expect(repository).to has_quads(
           [[id,
