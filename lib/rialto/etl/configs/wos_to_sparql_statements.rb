@@ -156,6 +156,7 @@ to_field VIVO.relatedBy.to_s, lambda { |json, accumulator|
   # Lookup all the contributors in the entity resolution service to find their URIs.
   contributor_names = Array.wrap(JsonPath.on(json, '$.static_data.summary.names.name').first)
   accumulator << contributor_names.map do |name|
+    next if name['role'] == 'corp'
     person = construct_contributor(name, addresses)
     {
       '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{remove_vocab_from_uri(RIALTO_PEOPLE, person['@id'])}"],
