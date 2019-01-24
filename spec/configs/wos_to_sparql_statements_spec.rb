@@ -6,6 +6,7 @@ require 'sparql'
 require 'sparql/client'
 require 'rialto/etl/readers/sparql_statement_reader'
 require 'rialto/etl/namespaces'
+require 'json'
 
 RSpec.describe Rialto::Etl::Transformer do
   let(:config_file_path) { 'lib/rialto/etl/configs/wos_to_sparql_statements.rb' }
@@ -780,6 +781,68 @@ RSpec.describe Rialto::Etl::Transformer do
         is_expected.to eq(['1019921', '1019922', '1019923', '1019924'])
         # rubocop:enable Style/WordArray
       }
+    end
+  end
+  describe '#construct_contributor' do
+    subject(:contributor) { indexer.construct_contributor(json, []) }
+
+    before do
+      stub_request(:get, 'http://127.0.0.1:3001/person?first_name=JM&full_name=Yamartino,%20JM&last_name=Yamartino')
+        .to_return(status: 404, body: '', headers: {})
+    end
+
+    let(:indexer) do
+      Traject::Indexer.new.tap do |indexer|
+        indexer.load_config_file(config_file_path)
+      end
+    end
+
+    context 'with a plain-old name' do
+      let(:json) do
+        JSON.parse(
+          <<~JSON
+                  {
+                    "seq_no": 2503,
+                    "role": "author",
+                    "full_name": "Yamartino, JM",
+                    "last_name": "Yamartino",
+                    "display_name": "Yamartino, JM",
+                    "wos_standard": "Yamartino, JM",
+                    "daisng_id": 27906250,
+                    "first_name": "JM"
+            }
+          JSON
+        )
+      end
+
+      it 'parses out the name correctly' do
+        expect(contributor[RDF::Vocab::VCARD.hasName.to_s][RDF::Vocab::VCARD['family-name'].to_s]).to eq('Yamartino')
+        expect(contributor[RDF::Vocab::VCARD.hasName.to_s][RDF::Vocab::VCARD['given-name'].to_s]).to eq('JM')
+      end
+    end
+
+    context 'with a name with a suffix' do
+      let(:json) do
+        JSON.parse(
+          <<~JSON
+                  {
+                    "seq_no": 2503,
+                    "role": "author",
+                    "full_name": "Yamartino, JM",
+                    "last_name": "Yamartino",
+                    "display_name": "Yamartino, JM",
+                    "wos_standard": "Yamartino, JM",
+                    "daisng_id": 27906250,
+                    "suffix": "JM"
+            }
+          JSON
+        )
+      end
+
+      it 'parses out the name correctly' do
+        expect(contributor[RDF::Vocab::VCARD.hasName.to_s][RDF::Vocab::VCARD['family-name'].to_s]).to eq('Yamartino')
+        expect(contributor[RDF::Vocab::VCARD.hasName.to_s][RDF::Vocab::VCARD['given-name'].to_s]).to eq('JM')
+      end
     end
   end
 end

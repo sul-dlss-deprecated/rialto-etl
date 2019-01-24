@@ -359,8 +359,9 @@ RSpec.describe Rialto::Etl::Transformers::People do
       let(:given_name) { true }
       let(:middle_name) { nil }
 
-      it 'returns the correct fullname' do
+      it 'returns empty array' do
         expect(variations).to be_empty
+        expect(variations).to be_a(Array)
       end
     end
 
@@ -368,8 +369,20 @@ RSpec.describe Rialto::Etl::Transformers::People do
       let(:middle_name) { true }
       let(:given_name) { 'Justin' }
 
-      it 'returns the correct fullname' do
+      it 'returns non-empty array' do
         expect(variations).not_to be_empty
+        expect(variations).to be_a(Array)
+      end
+    end
+
+    context 'when family name is True' do
+      let(:family_name) { true }
+      let(:given_name) { 'Justin' }
+      let(:middle_name) { nil }
+
+      it 'returns empty array' do
+        expect(variations).not_to be_empty
+        expect(variations).to be_a(Array)
       end
     end
   end
