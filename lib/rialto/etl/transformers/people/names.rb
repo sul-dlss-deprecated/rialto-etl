@@ -58,7 +58,7 @@ module Rialto
           def name_variations_from_names(given_name:, middle_name: nil, family_name:)
             name_variations = Set.new
             # Check that a string because WoS sometimes return True
-            return name_variations unless given_name&.is_a?(String)
+            return [] unless given_name&.is_a?(String)
             name_variations << "#{family_name}, #{given_name}"
             name_variations << "#{given_name} #{family_name}"
             given_initial = given_name[0]

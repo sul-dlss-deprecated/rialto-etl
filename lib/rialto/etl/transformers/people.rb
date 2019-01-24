@@ -66,20 +66,20 @@ module Rialto
           full_name = names_constructor.fullname_from_names(given_name: given_name,
                                                             middle_name: middle_name,
                                                             family_name: family_name)
-          {
+          person = {
             '@id' => Rialto::Etl::Vocabs::RIALTO_PEOPLE[id],
             '@type' => [RDF::Vocab::FOAF.Agent, RDF::Vocab::FOAF.Person],
             RDF::Vocab::SKOS.prefLabel.to_s => full_name,
             RDF::Vocab::RDFS.label.to_s => full_name,
-            RDF::Vocab::SKOS.altLabel.to_s => name_variations_from_names(given_name: given_name,
-                                                                         middle_name: middle_name,
-                                                                         family_name: family_name),
             # Name VCard
             RDF::Vocab::VCARD.hasName.to_s => names_constructor.construct_name_vcard(id: id,
                                                                                      given_name: given_name,
                                                                                      middle_name: middle_name,
                                                                                      family_name: family_name)
           }
+          name_variations = name_variations_from_names(given_name: given_name, middle_name: middle_name, family_name: family_name)
+          person[RDF::Vocab::SKOS.altLabel.to_s] = name_variations if name_variations
+          person
         end
         # rubocop:enable Metrics/MethodLength
 

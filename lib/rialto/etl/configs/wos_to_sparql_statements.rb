@@ -72,6 +72,32 @@ def fetch_publishers(json)
   JsonPath.on(json, '$.static_data.summary.publishers.publisher.names.name.display_name')
 end
 
+# Returns a person for a contributor
+# rubocop:disable Metrics/MethodLength
+def construct_contributor(name, addresses)
+  address = lookup_address(addresses, name['addr_no'])
+  person_params = name.slice('orcid_id', 'first_name', 'last_name', 'full_name')
+  person_params.merge!(address) if address
+  person = Rialto::Etl::Transformers::People.resolve_or_construct_person(given_name: name['first_name'] || name['suffix'],
+                                                                         family_name: name['last_name'],
+                                                                         addl_params: person_params)
+
+  # Note: Adding a country for each publication, so person may have many countries.
+  if address&.key?('country') &&
+     (country = Rialto::Etl::Transformers::Addresses.construct_country(country: address['country']))
+    person[RDF::Vocab::DC.spatial.to_s] = country
+  end
+
+  # If there is an organization, add a position for the person
+  if address&.key?('organization')
+    person_id = remove_vocab_from_uri(RIALTO_PEOPLE, person['@id'])
+    person['#organization'] = Rialto::Etl::Transformers::People.construct_position(org_name: address['organization'],
+                                                                                   person_id: person_id)
+  end
+  person
+end
+# rubocop:enable Metrics/MethodLength
+
 # Lookup the address from this document by the internal (to the document) addr_id
 # @param addresses [Hash] a lookup between the addr_no and the data
 # @param addr_id [Integer,String,NilClass] the address identifier to lookup
@@ -125,45 +151,22 @@ to_field RDF::Vocab::BIBO.doi.to_s, lambda { |json, accumulator|
 }, single: true
 
 to_field "!#{VIVO.relatedBy}", literal(true), single: true
-# rubocop:disable Metrics/BlockLength
 to_field VIVO.relatedBy.to_s, lambda { |json, accumulator|
   addresses = fetch_addresses(json)
   # Lookup all the contributors in the entity resolution service to find their URIs.
-  contributors = Array.wrap(JsonPath.on(json, '$.static_data.summary.names.name').first)
-  authorships = contributors.map do |c|
-    address = lookup_address(addresses, c['addr_no'])
-    person_params = c.slice('orcid_id', 'first_name', 'last_name', 'full_name')
-    person_params.merge!(address) if address
-
-    person = Rialto::Etl::Transformers::People.resolve_or_construct_person(given_name: c['first_name'],
-                                                                           family_name: c['last_name'],
-                                                                           addl_params: person_params)
-    person_id = remove_vocab_from_uri(RIALTO_PEOPLE, person['@id'])
-    # Note: Adding a country for each publication, so person may have many countries.
-    if address &&
-       address.key?('country') &&
-       (country = Rialto::Etl::Transformers::Addresses.construct_country(country: address['country']))
-      person[RDF::Vocab::DC.spatial.to_s] = country
-    end
-
-    # If there is an organization, add a position for the person
-    if address && address.key?('organization')
-      person['#organization'] = Rialto::Etl::Transformers::People.construct_position(org_name: address['organization'],
-                                                                                     person_id: person_id)
-    end
-
+  contributor_names = Array.wrap(JsonPath.on(json, '$.static_data.summary.names.name').first)
+  accumulator << contributor_names.map do |name|
+    person = construct_contributor(name, addresses)
     {
-      '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{person_id}"],
-      '@type' => c['role'] == 'book_editor' ? VIVO.Editorship : VIVO.Authorship,
+      '@id' => RIALTO_CONTEXT_RELATIONSHIPS["#{json['UID']}_#{remove_vocab_from_uri(RIALTO_PEOPLE, person['@id'])}"],
+      '@type' => name['role'] == 'book_editor' ? VIVO.Editorship : VIVO.Authorship,
       "!#{VIVO.relates}" => true,
       VIVO.relates.to_s => person['@id'],
       # Always add with # since always adding country for all people.
       '#person' => person
     }
   end
-  accumulator << authorships
 }, single: true
-# rubocop:enable Metrics/BlockLength
 
 to_field "!#{RDF::Vocab::DC.subject}", literal(true), single: true
 to_field RDF::Vocab::DC.subject.to_s, lambda { |json, accumulator|
