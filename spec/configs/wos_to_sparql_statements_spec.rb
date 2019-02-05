@@ -704,6 +704,33 @@ RSpec.describe Rialto::Etl::Transformer do
 
       it { is_expected.to eq(['National Institute of Diabetes and Digestive and Kidney Diseases']) }
     end
+
+    context 'with no grant agency' do
+      let(:json) do
+        <<~JSON
+          {
+          	"UID": "WOS:000359895400001",
+          	"static_data": {
+          		"fullrecord_metadata": {
+                "fund_ack": {
+                  "grants": {
+                    "count": 3,
+                    "grant": {
+                      "grant_ids": {
+                        "grant_id": ["U01DK073983", "U01DK073975", "U01DK073985", "U01DK074007", "U01DK073974", "U01DK074008"],
+                        "count": 6
+                      }
+                    }
+                  }
+                }
+          		}
+          	}
+          }
+        JSON
+      end
+
+      it { is_expected.to eq([]) }
+    end
   end
   describe '#fetch_grant_identifiers' do
     subject { indexer.fetch_grant_identifiers(json) }

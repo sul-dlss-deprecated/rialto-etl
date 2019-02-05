@@ -54,7 +54,7 @@ end
 # Find the grant agencies
 def fetch_grant_agencies(json)
   agencies = Array.wrap(JsonPath.on(json, '$.static_data.fullrecord_metadata.fund_ack.grants.grant').first).map do |grant|
-    next if grant['grant_agency'].empty?
+    next if grant.fetch('grant_agency', []).empty?
     grant['grant_agency']
   end
   agencies.compact
