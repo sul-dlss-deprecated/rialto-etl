@@ -705,7 +705,7 @@ RSpec.describe Rialto::Etl::Transformer do
       it { is_expected.to eq(['National Institute of Diabetes and Digestive and Kidney Diseases']) }
     end
 
-    context 'with no grant agency' do
+    context 'with null grant agency' do
       let(:json) do
         <<~JSON
           {
@@ -719,7 +719,8 @@ RSpec.describe Rialto::Etl::Transformer do
                       "grant_ids": {
                         "grant_id": ["U01DK073983", "U01DK073975", "U01DK073985", "U01DK074007", "U01DK073974", "U01DK074008"],
                         "count": 6
-                      }
+                      },
+                      "grant_agency": null
                     }
                   }
                 }
