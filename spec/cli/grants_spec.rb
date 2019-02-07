@@ -143,7 +143,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         File.open(sparql_file, 'w') { |file| file.write('test') }
         expect(File).to exist(sparql_file)
         # Using the SPARQL file has source file as a shortcut.
-        expect(loader.send(:transform, sparql_file, '1234', true)).to eq(sparql_file)
+        expect { loader.send(:transform, sparql_file, '1234', true) }.to raise_error(StandardError)
         expect(File).not_to exist(sparql_file)
         expect(Rialto::Etl::Transformer).to have_received(:new).once
         expect(Rialto::Etl::CLI::ErrorReporter).to have_received(:log_exception)
@@ -167,7 +167,7 @@ RSpec.describe Rialto::Etl::CLI::Grants do
         ndj_file = File.join(dir, 'sera-1234.ndj')
         File.open(ndj_file, 'w') { |file| file.write('test') }
         expect(File).to exist(ndj_file)
-        expect(loader.send(:extract, row, '1234', true)).to eq(ndj_file)
+        expect { loader.send(:extract, row, '1234', true) }.to raise_error(StandardError)
         expect(Rialto::Etl::Extractors::Sera).to have_received(:new)
           .with(sunetid: 'vjarrett')
         expect(File).not_to exist(ndj_file)
