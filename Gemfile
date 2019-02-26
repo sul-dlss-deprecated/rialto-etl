@@ -24,7 +24,7 @@ gem 'ruby-progressbar'
 gem 'sparql'
 gem 'sparql-client', '~> 3.0'
 gem 'thor', '~> 0.20'
-gem 'traject_plus', '>= 0.0.2'
+gem 'traject_plus', '~> 1.0'
 gem 'uuid'
 gem 'whenever', '~> 0.10.0', require: false
 
