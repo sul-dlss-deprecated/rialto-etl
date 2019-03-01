@@ -26,10 +26,10 @@ every :wednesday, at: '09:30am' do
 end
 
 # Grant ETL
-every 2.months do
-  exe 'exe/transform call StanfordPeopleList -i data/researchers.ndj > data/researchers.csv ' \
-    '&& exe/grants load -s 3 -i data/researchers.csv -d data/raw/grants -o data/grants'
-end
+# every 2.months do
+#   exe 'exe/transform call StanfordPeopleList -i data/researchers.ndj > data/researchers.csv ' \
+#     '&& exe/grants load -s 3 -i data/researchers.csv -d data/raw/grants -o data/grants'
+# end
 
 # Publication ETL
 every 2.weeks do
