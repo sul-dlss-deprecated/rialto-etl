@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/oauth-xx/oauth2.git
-  revision: d7f21fa436d837da57ca63316900dafab82333ff
+  revision: f5d7cdaab23f5dc0e46705b9d393ce74e3246237
   specs:
     oauth2 (1.4.1)
       faraday (>= 0.8, < 2.0)
@@ -27,7 +27,7 @@ GEM
       bundler (>= 1.2.0, < 3)
       thor (~> 0.18)
     byebug (11.0.1)
-    capistrano (3.11.1)
+    capistrano (3.11.2)
       airbrussh (>= 1.0.0)
       i18n
       rake (>= 10.0.0)
@@ -137,7 +137,7 @@ GEM
       marc (~> 1.0)
     method_source (0.9.2)
     mini_portile2 (2.4.0)
-    minitest (5.12.0)
+    minitest (5.12.2)
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
@@ -234,7 +234,7 @@ GEM
       nokogiri (~> 1.9)
       slop (>= 3.4.5, < 4.0)
       yell
-    traject_plus (1.2.0)
+    traject_plus (2.0.0)
       activesupport
       deprecation
       jsonpath
@@ -247,7 +247,7 @@ GEM
     unicode-display_width (1.6.0)
     uuid (2.3.9)
       macaddr (~> 1.0)
-    webmock (3.7.5)
+    webmock (3.7.6)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
