@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/oauth-xx/oauth2.git
-  revision: 8a48def164cfe70ed00c47f8fdeaec86bcc8e7f3
+  revision: 8f422e11ee4221b4436d43b512fb203c74d5ebf8
   specs:
     oauth2 (1.4.1)
       faraday (>= 0.8, < 2.0)
@@ -123,7 +123,7 @@ GEM
     json-ld (3.0.2)
       multi_json (~> 1.12)
       rdf (>= 2.2.8, < 4.0)
-    jsonpath (1.0.4)
+    jsonpath (1.0.5)
       multi_json
       to_regexp (~> 0.2.1)
     jwt (2.2.1)
@@ -138,7 +138,7 @@ GEM
     method_source (0.9.2)
     mini_portile2 (2.4.0)
     minitest (5.12.2)
-    multi_json (1.14.0)
+    multi_json (1.14.1)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
     net-http-persistent (3.1.0)
@@ -167,7 +167,7 @@ GEM
       link_header (~> 0.0, >= 0.0.8)
     rdf-aggregate-repo (2.2.1)
       rdf (>= 2.2, < 4.0)
-    rdf-vocab (3.0.11)
+    rdf-vocab (3.0.12)
       rdf (~> 3.0, >= 3.0.11)
     rdf-xsd (3.0.1)
       rdf (~> 3.0)
