@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/oauth-xx/oauth2.git
-  revision: 8f422e11ee4221b4436d43b512fb203c74d5ebf8
+  revision: 3bef9feff5de9d46b35c7423061508e5092b1eac
   specs:
     oauth2 (1.4.1)
       faraday (>= 0.8, < 2.0)
@@ -148,7 +148,7 @@ GEM
     net-ssh (5.2.0)
     nokogiri (1.10.5)
       mini_portile2 (~> 2.4.0)
-    parallel (1.19.0)
+    parallel (1.19.1)
     parser (2.6.5.0)
       ast (~> 2.4.0)
     powerpack (0.1.2)
