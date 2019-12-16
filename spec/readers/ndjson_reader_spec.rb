@@ -44,7 +44,7 @@ RSpec.describe Rialto::Etl::Readers::NDJsonReader do
 
       it 'logs an error' do
         expect { decode }.not_to raise_error
-        expect(logger).to have_received(:error).with("Problem with JSON record on line 1: 785: unexpected token at '{'")
+        expect(logger).to have_received(:error).with("Problem with JSON record on line 1: 783: unexpected token at '{'")
       end
     end
   end
