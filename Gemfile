@@ -33,7 +33,8 @@ group :development, :test do
   gem 'rspec', '~> 3.0'
   gem 'rubocop', '~> 0.58.0'
   gem 'rubocop-rspec', '~> 1.21.0'
-  gem 'simplecov', require: false
+  # Codeclimate is not compatible with 0.18+. See https://github.com/codeclimate/test-reporter/issues/413
+  gem 'simplecov', '~> 0.17.1', require: false
   gem 'webmock'
 end
 
