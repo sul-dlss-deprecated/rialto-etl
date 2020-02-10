@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/oauth-xx/oauth2.git
-  revision: e9c6e6bf467760ba7c03d84d88eac0fc84d9e305
+  revision: e9479e5ac6370805e636d57594408fd3eecf4240
   specs:
     oauth2 (1.4.3)
       faraday (>= 0.8, < 2.0)
@@ -176,7 +176,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.10)
     public_suffix (4.0.3)
-    rack (2.1.2)
+    rack (2.2.1)
     rainbow (3.0.0)
     rake (12.3.3)
     rdf (3.1.1)
@@ -264,7 +264,7 @@ GEM
     unicode-display_width (1.6.1)
     uuid (2.3.9)
       macaddr (~> 1.0)
-    webmock (3.8.0)
+    webmock (3.8.1)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
