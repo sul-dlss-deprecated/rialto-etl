@@ -278,9 +278,9 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (~> 5.2)
-  capistrano-bundler (~> 1.4)
+  capistrano-bundler
   config
-  dlss-capistrano (~> 3.4)
+  dlss-capistrano
   faraday (~> 0.15.0)
   faraday_middleware
   honeybadger (~> 4.1)

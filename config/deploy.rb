@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# config valid for current version and patch releases of Capistrano
-lock '~> 3.11.0'
-
 set :application, 'rialto-etl'
 set :repo_url, 'https://github.com/sul-dlss/rialto-etl.git'
 
