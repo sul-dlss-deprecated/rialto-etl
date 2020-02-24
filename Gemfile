@@ -39,8 +39,8 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano-bundler', '~> 1.4'
-  gem 'dlss-capistrano', '~> 3.4'
+  gem 'capistrano-bundler'
+  gem 'dlss-capistrano'
 end
 
 # These dependencies are excluded on Travis-CI
