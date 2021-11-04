@@ -25,7 +25,16 @@ module Rialto
             result = fetch_results_for_page(page) { progress }
             # Yield the block for each result on the page
             result['values'].each do |val|
-              yield val.to_json
+
+              output_json = {
+                "affiliations": val["affiliations"],
+                "orgs": val['organizations'],
+                "ldapAdditionalInfo": val['ldapAdditionalInfo'],
+                "uid": val['uid'],
+                "universityId": val['universityId'] }
+
+              yield output_json.to_json # output only data noted above, to export all data, comment this line out, and uncomment line below
+              # yield val.to_json
             end
           end
         rescue StandardError => exception
